@@ -10,7 +10,7 @@ https://thriftngo.netlify.app/
 ```
 npm install
 ```
-You can run the Vue project on your local host now!
+_You can run the Vue project on your local host now!_
 
 
 ### Compiles and hot-reloads for development

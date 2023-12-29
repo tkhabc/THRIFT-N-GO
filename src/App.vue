@@ -1,7 +1,15 @@
+
 <template>
     <div id="nav">
+    <router-link to="/login">Login</router-link>
+    <router-link to="/register">Register</router-link>
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/about">About Us</router-link>
+    <router-link to="/foodlisting">Food List</router-link>
+    <router-link to="/itemlisting">Item List</router-link>
+    <router-link to="/cart">Cart</router-link>
+    <router-link to="/contact">Contact Us</router-link>
+    <router-link to="/profile">Profile</router-link>
     </div>
     <router-view/>
 

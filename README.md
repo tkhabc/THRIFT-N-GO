@@ -12,6 +12,7 @@ npm install
 ```
 You can run the Vue project on your local host now!
 
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

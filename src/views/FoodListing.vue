@@ -1,5 +1,68 @@
 <template>
-    <div class="about">
-      <h1>Food List</h1>
+  <div class="food-listing">
+    <div class="search-add-area">
+      <input type="text" placeholder="Enter your desired location" class="search-input">
+      <button class="add-food-button">Add food</button>
     </div>
-  </template>
+    <!-- Your food items here -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'FoodListing',
+  // Your script here
+}
+</script>
+
+<style scoped>
+.food-listing {
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.search-add-area {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.search-input {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.add-food-button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Adjust the button color to match your theme */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.add-food-button:hover {
+  background-color: #45a049;
+}
+
+/* Add responsiveness */
+@media (max-width: 768px) {
+  .search-add-area {
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .add-food-button {
+    width: 100%;
+  }
+}
+</style>

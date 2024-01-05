@@ -8,6 +8,7 @@ import Cart from '@/views/Cart.vue'
 import Contact from '@/views/Contact.vue'
 import FoodListing from '@/views/FoodListing.vue'
 import ItemListing from '@/views/ItemListing.vue'
+import AddFood from '@/views/AddFood.vue'
 
 const routes = [
   {
@@ -57,6 +58,11 @@ const routes = [
     path: '/itemlisting',
     name: 'ItemListing',
     component: ItemListing
+  },
+  {
+    path: '/addfood',
+    name: 'AddFood',
+    component: AddFood
   }
 ]
 

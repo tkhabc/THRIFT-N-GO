@@ -2,7 +2,7 @@
   <div class="food-listing">
     <div class="search-add-area">
       <input type="text" placeholder="Enter your desired location" class="search-input">
-      <button class="add-food-button">Add food</button>
+      <button class="add-food-button" @click="goToAddFood">Add food</button>
     </div>
     <!-- Your food items here -->
   </div>
@@ -11,9 +11,26 @@
 <script>
 export default {
   name: 'FoodListing',
-  // Your script here
+  data() {
+    return {
+      // Assuming you have a list of items in your data
+      items: []
+    };
+  },
+  methods: {
+    addNewItem(item) {
+      // This method should add the new food item to the list
+      this.items.push(item);
+    },
+    goToAddFood() {
+      // This method changes the route to '/addfood'
+      this.$router.push('/addfood');
+    }
+    // ...other methods...
+  }
 }
 </script>
+
 
 <style scoped>
 .food-listing {

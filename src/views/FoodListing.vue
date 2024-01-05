@@ -38,7 +38,7 @@ export default {
 
 .add-food-button {
   padding: 10px 20px;
-  background-color: #4CAF50; /* Adjust the button color to match your theme */
+  background-color: #1A6757; /* Adjust the button color to match your theme */
   color: white;
   border: none;
   border-radius: 20px;
@@ -47,7 +47,7 @@ export default {
 }
 
 .add-food-button:hover {
-  background-color: #45a049;
+  background-color: #43C3A0;
 }
 
 /* Add responsiveness */

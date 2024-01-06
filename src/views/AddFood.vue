@@ -9,39 +9,46 @@
   
       <!-- Item Name Field -->
       <div class="form-group">
-        <label for="item-name" class="form-label">Item Name</label>
+        <label for="item-name" class="form-label">Name of Food</label>
         <input type="text" id="item-name" v-model="newItem.name" required>
       </div>
   
-      <!-- Condition Field -->
+      <!-- Type of Food Field -->
       <div class="form-group">
-        <label for="condition" class="form-label">Condition</label>
-        <select id="condition" v-model="newItem.condition" required>
-          <option value="new">New</option>
-          <option value="used">Used</option>
-        </select>
+        <label for="food-type" class="form-label">Type of Food</label>
+        <input type="text" id="food-type" v-model="newItem.foodType" required>
       </div>
-  
-      <!-- Location Address Field -->
+
+      <!-- Brief Description Field -->
       <div class="form-group">
-        <label for="location-address" class="form-label">Location Address</label>
-        <textarea id="location-address" class="location-input" v-model="newItem.location" required rows="1"></textarea>
+        <label for="description" class="form-label">Brief Description</label>
+        <textarea id="description" class="description-input" v-model="newItem.description" required rows="2"></textarea>
       </div>
-  
+
+      <!-- Quantity Field -->
+      <div class="form-group">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" id="quantity" v-model="newItem.quantity" required>
+      </div>
+
       <!-- Price Field -->
       <div class="form-group">
         <label for="price" class="form-label">Price</label>
         <input type="text" id="price" v-model="newItem.price" required>
       </div>
-  
-      <!-- Collection Method Field -->
+
+      <!-- Expiry Date Field -->
       <div class="form-group">
-        <label for="collection-method" class="form-label">Collection Method</label>
-        <select id="collection-method" v-model="newItem.collectionMethod" required>
-          <option value="pick-up">Pick-up</option>
-          <option value="delivery">Delivery</option>
-        </select>
+        <label for="expiry-date" class="form-label">Expiry Date</label>
+        <input type="date" id="expiry-date" v-model="newItem.expiryDate" required>
       </div>
+
+      <!-- Location Address Field -->
+      <div class="form-group">
+        <label for="location-address" class="form-label">Location Address</label>
+        <textarea id="location-address" class="location-input" v-model="newItem.location" required rows="1"></textarea>
+      </div>
+
   
       <!-- Submit Button -->
       <div class="button-container">
@@ -53,41 +60,31 @@
 </template>
 
   
-  <script>
-  export default {
-    data() {
-      return {
-        newItem: {
-          photo: null,
-          name: '',
-          condition: '',
-          location: '',
-          price: '',
-          collectionMethod: ''
-        }
-      };
-    },
-    methods: {
-      handlePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-          // Assuming you want to save the photo as a data URL
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            this.newItem.photo = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      },
-      submitForm() {
-        // Process form submission, add to store/server, then redirect
-        this.$router.push('/foodlisting'); // Redirect to ItemListing after adding the item
+<script>
+export default {
+  data() {
+    return {
+      newItem: {
+        foodType: '',
+        description: '',
+        quantity: null,
+        price: '',
+        expiryDate: '',
+        location: ''
       }
+    };
+  },
+  methods: {
+    submitForm() {
+      // Process form submission, add to store/server, then redirect
+      this.$router.push('/foodlisting'); // Redirect to ItemListing after adding the item
     }
   }
-  </script>
+}
+</script>
+
   
-  <style scoped>
+<style scoped>
 .add-item-container {
   max-width: 800px;
   margin: 0 auto;
@@ -121,7 +118,10 @@
 }
 
 .form-group input[type="text"],
-.form-group select {
+.form-group input[type="number"], /* Added style for number input */
+.form-group input[type="date"], /* Added style for date input */
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -130,6 +130,7 @@
 }
 
 .form-group input[type="file"] {
+  width: 28%;
   border: none;
   font-size: 15px;
 }
@@ -142,7 +143,7 @@
   cursor: pointer;
   margin-top: 5px;
 }
-.form-group textarea.location-input {
+.form-group textarea.location-input, .form-group textarea.description-input {
   width: 100%;
   padding: 10px 10px 0 10px; /* Adjust padding-top as necessary */
   border: 1px solid #ccc;

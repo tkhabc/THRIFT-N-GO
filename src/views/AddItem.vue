@@ -130,6 +130,7 @@ export default {
 }
   
 .form-group input[type="file"] {
+    width: 28%;
     border: none;
     font-size: 15px;
 }

@@ -9,6 +9,7 @@ import Contact from '@/views/Contact.vue'
 import FoodListing from '@/views/FoodListing.vue'
 import ItemListing from '@/views/ItemListing.vue'
 import AddFood from '@/views/AddFood.vue'
+import AddItem from '@/views/AddItem.vue'
 
 const routes = [
   {
@@ -63,6 +64,11 @@ const routes = [
     path: '/addfood',
     name: 'AddFood',
     component: AddFood
+  },
+  {
+    path: '/additem',
+    name: 'AddItem',
+    component: AddItem
   }
 ]
 

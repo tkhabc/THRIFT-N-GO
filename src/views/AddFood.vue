@@ -1,22 +1,36 @@
 <template>
   <div class="add-item-container">
     <form @submit.prevent="submitForm">
-      <!-- Add Photo Field -->
+      <!-- Drag and Drop Photo Field -->
       <div class="form-group">
         <label1 for="add-photo" class="form-label">Add Photo (PNG, JPG only)</label1>
-        <input type="file" id="add-photo" accept=".png, .jpg" @change="handlePhotoUpload" required>
+        <div class="drag-drop-area" @dragover.prevent="handleDragOver" @drop.prevent="handleDrop">
+          Drag & Drop your files or <span class="browse-link" @click="triggerFileInput">Browse</span>
+          <input type="file" id="add-photo" ref="fileInput" accept=".png, .jpg" @change="handlePhotoUpload" multiple required style="display: none;">
+        </div>
       </div>
-  
+      <!-- Error Message Display -->
+      <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+      </div>
+      <!-- Image Previews -->
+      <div class="image-previews">
+        <div v-for="(photo, index) in newItem.photos" :key="index" class="image-preview-container">
+          <img :src="photo.url" :alt="'Photo ' + index" class="image-preview">
+          <button @click="removePhoto(index, $event)" class="delete-photo" aria-label="Remove photo">×</button>
+        </div>
+      </div>
+
       <!-- Item Name Field -->
       <div class="form-group">
         <label for="item-name" class="form-label">Name of Food</label>
-        <input type="text" id="item-name" v-model="newItem.name" required>
+        <input type="text" id="item-name" v-model="newItem.name" autocomplete="off" required>
       </div>
   
       <!-- Type of Food Field -->
       <div class="form-group">
         <label for="food-type" class="form-label">Type of Food</label>
-        <input type="text" id="food-type" v-model="newItem.foodType" required>
+        <input type="text" id="food-type" v-model="newItem.foodType" autocomplete="off" required>
       </div>
 
       <!-- Brief Description Field -->
@@ -28,13 +42,13 @@
       <!-- Quantity Field -->
       <div class="form-group">
         <label for="quantity" class="form-label">Quantity</label>
-        <input type="number" id="quantity" v-model="newItem.quantity" required>
+        <input type="text" id="quantity" v-model="newItem.quantity" @input="validateNumber($event)" autocomplete="off" required>
       </div>
 
       <!-- Price Field -->
       <div class="form-group">
         <label for="price" class="form-label">Price</label>
-        <input type="text" id="price" v-model="newItem.price" required>
+        <input type="text" id="price" v-model="newItem.price" autocomplete="off" required>
       </div>
 
       <!-- Expiry Date Field -->
@@ -65,23 +79,81 @@ export default {
   data() {
     return {
       newItem: {
+        photos: [], // Array to store photo URLs
         foodType: '',
         description: '',
         quantity: null,
         price: '',
         expiryDate: '',
-        location: ''
-      }
+        location: '',
+      },
+      errorMessage: '', // To display error messages
     };
   },
   methods: {
+    handlePhotoUpload(event) {
+      // Clear any previous error messages
+      this.errorMessage = '';
+
+      const files = event.target.files;
+      const validTypes = ['image/png', 'image/jpeg'];
+
+      Array.from(files).forEach(file => {
+        if (!validTypes.includes(file.type)) {
+          // If the file type is not allowed, set an error message
+          this.errorMessage = 'Only PNG and JPG images are allowed.';
+          // You can handle this error as needed, perhaps alerting the user or displaying a message
+          return;
+        }
+
+        // If the file type is valid, create a URL and add it to the photos array
+        const photoURL = URL.createObjectURL(file);
+        this.newItem.photos.push({ url: photoURL, file });
+      });
+    },
+    handleDragOver(event) {
+      event.preventDefault();
+      // Optionally, add visual feedback here
+    },
+    handleDrop(event) {
+      event.preventDefault();
+      if (event.dataTransfer.files) {
+        this.handlePhotoUpload({ target: { files: event.dataTransfer.files } });
+      }
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    removePhoto(index) {
+      event.preventDefault();  // Prevent default action
+      event.stopPropagation(); // Stop event bubbling
+      // Revoke the object URL to free up memory
+      URL.revokeObjectURL(this.newItem.photos[index].url);
+      // Remove the photo from the array
+      this.newItem.photos.splice(index, 1);
+    },
     submitForm() {
-      // Process form submission, add to store/server, then redirect
-      this.$router.push('/foodlisting'); // Redirect to ItemListing after adding the item
+      // Here you would handle the form submission
+      // Don't forget to revoke all object URLs to free up memory
+      this.newItem.photos.forEach(photo => {
+        URL.revokeObjectURL(photo.url);
+      });
+      // Clear the photos array after submission
+      this.newItem.photos = [];
+      // Log the submission or send it to your server
+      console.log('Form submitted', this.newItem);
+      // You might navigate away or reset the form state here
+    },
+    validateNumber(event) {
+      // Replace non-numeric characters with an empty string
+      event.target.value = event.target.value.replace(/[^0-9]+/g, '');
     }
   }
 }
 </script>
+
+
+
 
   
 <style scoped>
@@ -97,6 +169,70 @@ export default {
 .add-item-container form {
   display: flex;
   flex-direction: column;
+}
+
+.drag-drop-area {
+  padding: 20px;
+  border: 2px dashed #ccc; /* Dashed border for drag drop area */
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  position: relative; /* Allow absolute positioning inside */
+}
+
+.browse-link {
+  color: #1A6757;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.image-preview-container {
+  position: relative;
+  margin-right: 10px;
+}
+
+.image-preview {
+  max-width: 100px;
+  max-height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.delete-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ff4d4d; /* Red color for better visibility */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px; /* Bigger font size for 'X' to be clear */
+  line-height: 16px;
+  width: 24px; /* Size of the button */
+  height: 24px; /* Size of the button */
+  border-radius: 12px; /* Circular shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+}
+
+/* Add styles for the hidden file input */
+input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 .form-group {
@@ -127,12 +263,6 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
-}
-
-.form-group input[type="file"] {
-  width: 28%;
-  border: none;
-  font-size: 15px;
 }
 
 .form-group input[type="file"]::file-selector-button {

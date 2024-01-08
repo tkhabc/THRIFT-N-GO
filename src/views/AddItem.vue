@@ -1,3 +1,5 @@
+@import 'flowbite-vue';
+
 <template>
     <div class="add-item-container">
       <form @submit.prevent="submitForm">
@@ -24,12 +26,6 @@
         <div class="form-group">
           <label for="item-name" class="form-label">Name of Item</label>
           <input type="text" id="item-name" v-model="newItem.name" autocomplete="off" required>
-        </div>
-
-        <!-- Type of Food Field -->
-        <div class="form-group">
-          <label for="type-of-item" class="form-label">Type of Food</label>
-          <input type="text" id="type-of-item" v-model="newItem.typeOfItem" autocomplete="off" required>
         </div>
 
         <!-- Brief Description Field -->

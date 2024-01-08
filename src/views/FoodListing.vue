@@ -1,3 +1,7 @@
+<script setup>
+import { FwbCard, FwbButton } from 'flowbite-vue'
+</script>
+
 <template>
   <div class="food-listing">
     <div class="search-add-area">
@@ -6,6 +10,50 @@
     </div>
     <!-- Your food items here -->
   </div>
+ 
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <!-- <fwb-card
+      img-alt="Desk"
+      img-src="https://flowbite.com/docs/images/blog/image-1.jpg"
+      variant="image"
+    > -->
+    <div class="card-image-container">
+    <img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="Desk"> </div>
+      <div class="p-5">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Noteworthy technology acquisitions 2021
+        </h5>
+        <p class="font-normal text-gray-700 dark:text-gray-400">
+          Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+        </p>
+      </div>
+    <!-- </fwb-card> -->
+
+    <fwb-card
+      img-alt="Desk"
+      img-src="https://flowbite.com/docs/images/blog/image-1.jpg"
+      variant="image"
+    >
+      <div class="p-5">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Noteworthy technology acquisitions 2021
+        </h5>
+        <p class="font-normal text-gray-700 dark:text-gray-400">
+          Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+        </p>
+      </div>
+    </fwb-card>
+  </div>
+
+  <fwb-button color="">Default</fwb-button>
+  <fwb-button color="alternative">Alternative</fwb-button>
+  <fwb-button color="dark">Dark</fwb-button>
+  <fwb-button color="light">Light</fwb-button>
+  <fwb-button color="green">Green</fwb-button>
+  <fwb-button color="red">Red</fwb-button>
+  <fwb-button color="yellow">Yellow</fwb-button>
+  <fwb-button color="purple">Purple</fwb-button>
+  <fwb-button color="pink">Pink</fwb-button>
 </template>
 
 <script>
@@ -82,4 +130,16 @@ export default {
     width: 100%;
   }
 }
+.card-image-container {
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.card-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 </style>

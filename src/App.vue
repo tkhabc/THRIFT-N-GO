@@ -1,4 +1,3 @@
-
 <template>
     <div id="nav">
     <router-link to="/login">Login</router-link>
@@ -12,8 +11,7 @@
     <router-link to="/profile">Profile</router-link>
     </div>
     <router-view/>
-
-  <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+    
   <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
 </template>
 

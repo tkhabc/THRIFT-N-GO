@@ -1,10 +1,26 @@
 <template>
   <div class="item-listing">
+    <!-- Your code here -->
+  </div>
     <div class="search-add-area">
       <input type="text" placeholder="Enter your desired location" class="search-input">
       <button class="add-item-button" @click="goToAddItem">Add item</button>
     </div>
-    <!-- Your food items here -->
+    
+    <!-- List of food items -->
+    <div class="items-grid"></div>
+      <div class="item-card" v-for="item in items" :key="item.id">
+        <div class="item-image-container">
+          <img :src="item.image" :alt="item.name" class="item-image">
+        </div>
+        <div class="item-info">
+          <h3 class="item-name">{{ item.name }}</h3>
+          <p class="item-description">{{ item.description }}</p>
+          <div class="item-details">
+            <span class="item-shop">{{ item.shop }}</span>
+            <span class="item-price">{{ item.price }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -13,23 +29,28 @@ export default {
   name: 'ItemListing',
   data() {
     return {
-      // Assuming you have a list of items in your data
-      items: []
+      items: [] // existing items
     };
   },
   methods: {
     addNewItem(item) {
-      // This method should add the new food item to the list
       this.items.push(item);
     },
     goToAddItem() {
-      // This method changes the route to '/addfood'
       this.$router.push('/additem');
-    }
-    // ...other methods...
-  }
+    },
+    fetchItems() {
+      // Implement fetching logic here
+      // For example, fetch from a backend API or local storage
+    },
+    // ...other methods, if needed...
+  },
+  mounted() {
+    this.fetchItems();
+  },
 }
 </script>
+
 
 
 <style scoped>
@@ -80,6 +101,29 @@ export default {
 
   .add-item-button {
     width: 100%;
+  }
+
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .item-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .item-image {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/9; /* Adjust based on your image aspect ratio */
+  }
+
+  .item-info {
+    padding: 10px;
+    background-color: #f9f9f9;
   }
 }
 </style>

@@ -1,4 +1,6 @@
 <template>
+    <v-app style="background: linear-gradient(180deg, #FFFFFF 0%, #258744 100%); ">
+
     <div id="nav">
     <router-link to="/login">Login</router-link>
     <router-link to="/register">Register</router-link>
@@ -10,21 +12,33 @@
     <router-link to="/contact">Contact Us</router-link>
     <router-link to="/profile">Profile</router-link>
     </div>
+
+    <NavBar/>
     <router-view/>
     
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+    
+    </v-app>
 </template>
 
-<!-- <script>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+  import NavBar from '@/components/NavBar.vue'
 
+  export default {
+    name: 'App',
+    components: {
+      NavBar
+    }
+  }
+
+</script>
+
+<!-- import HelloWorld from './components/HelloWorld.vue'
 export default {
   name: 'App',
   components: {
     HelloWorld
   }
-}
-</script> -->
+} -->
 
 <style>
 #app {

@@ -1,6 +1,6 @@
 <template>
     <div class="about">
-      <h1>About Thrift Nfff Go</h1>
+      <h1>About Thrift N Go</h1>
     </div>
 </template>
 

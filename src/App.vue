@@ -1,6 +1,9 @@
 <template>
     <v-app style="background: linear-gradient(180deg, #FFFFFF 0%, #258744 100%); ">
 
+    <br>
+    <div></div>
+    
     <div id="nav">
     <router-link to="/login">Login</router-link>
     <router-link to="/register">Register</router-link>
@@ -12,12 +15,12 @@
     <router-link to="/contact">Contact Us</router-link>
     <router-link to="/profile">Profile</router-link>
     </div>
-
-    <NavBar/>
-    <router-view/>
-    
-    
+   
+    <router-view/> 
     </v-app>
+    <NavBar/>
+    
+    
 </template>
 
 <script>

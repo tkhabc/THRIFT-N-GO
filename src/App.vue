@@ -16,7 +16,7 @@
     <router-link to="/profile">Profile</router-link>
     </div>
 
-    <v-app-bar
+    <v-app-bar app
           color="teal-darken-4"
           image="https://picsum.photos/1920/1080?random"
         >
@@ -32,9 +32,9 @@
 
           <v-app-bar-title>Thrift N Go</v-app-bar-title>
 
-          <v-navigation-drawer v-model="drawer">
+          <v-navigation-drawer app v-model="drawer">
             <v-list>
-              <v-list-item v-for="item in menuItems" :key="item.title" @click="drawer = false">
+              <v-list-item app v-for="item in menuItems" :key="item.title" @click="drawer = false">
                 <v-list-item-content>
                   <v-list-item-title>
                     <router-link :to="item.path">{{ item.title }}</router-link>
@@ -44,7 +44,7 @@
             </v-list>
           </v-navigation-drawer>
 
-           <!-- <router-view></router-view>  -->
+          <!-- <router-view></router-view>  -->
 
           <v-spacer></v-spacer>
 

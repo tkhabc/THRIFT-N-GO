@@ -1,14 +1,15 @@
-<template>
-  <div class="item-listing">
+<!-- <template>
+  <div class="item-listing"> -->
     <!-- Your code here -->
-  </div>
+   
+  <!-- </div>
     <div class="search-add-area">
       <input type="text" placeholder="Enter your desired location" class="search-input">
       <button class="add-item-button" @click="goToAddItem">Add item</button>
-    </div>
+    </div> -->
     
     <!-- List of food items -->
-    <div class="items-grid"></div>
+    <!-- <div class="items-grid"></div>
       <div class="item-card" v-for="item in items" :key="item.id">
         <div class="item-image-container">
           <img :src="item.image" :alt="item.name" class="item-image">
@@ -21,6 +22,14 @@
             <span class="item-price">{{ item.price }}</span>
       </div>
     </div>
+  </div> -->
+<template>
+  <div v-for="item in items" :key="item.id" class="item-card">
+    <img :src="item.image" :alt="item.name" class="item-image">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description }}</p>
+    <p>Shop: {{ item.shop }}</p>
+    <p>Price: {{ item.price }}</p>
   </div>
 </template>
 
@@ -29,9 +38,15 @@ export default {
   name: 'ItemListing',
   data() {
     return {
-      items: [] // existing items
+      items: [{id: 1, 
+    name: 'Item Name', 
+    description: 'Item Description', 
+    shop: 'Item Shop', 
+    price: 'Item Price',
+    image: '/src/assets/food.jpg'}] // existing items
     };
   },
+  
   methods: {
     addNewItem(item) {
       this.items.push(item);

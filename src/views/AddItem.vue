@@ -142,6 +142,7 @@
       this.newItem.photos.splice(index, 1);
     },
     submitForm() {
+      
       // Here you would handle the form submission
       // Don't forget to revoke all object URLs to free up memory
       this.newItem.photos.forEach(photo => {

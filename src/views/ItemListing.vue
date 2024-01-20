@@ -1,69 +1,75 @@
-<!-- <template>
-  <div class="item-listing"> -->
-    <!-- Your code here -->
-   
-  <!-- </div>
+<template>
+  <div class="item-listing">
     <div class="search-add-area">
       <input type="text" placeholder="Enter your desired location" class="search-input">
       <button class="add-item-button" @click="goToAddItem">Add item</button>
-    </div> -->
-    
-    <!-- List of food items -->
-    <!-- <div class="items-grid"></div>
-      <div class="item-card" v-for="item in items" :key="item.id">
-        <div class="item-image-container">
-          <img :src="item.image" :alt="item.name" class="item-image">
-        </div>
-        <div class="item-info">
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-description">{{ item.description }}</p>
-          <div class="item-details">
-            <span class="item-shop">{{ item.shop }}</span>
-            <span class="item-price">{{ item.price }}</span>
-      </div>
     </div>
-  </div> -->
-<template>
-  <div v-for="item in items" :key="item.id" class="item-card">
-    <img :src="item.image" :alt="item.name" class="item-image">
-    <h3>{{ item.name }}</h3>
-    <p>{{ item.description }}</p>
-    <p>Shop: {{ item.shop }}</p>
-    <p>Price: {{ item.price }}</p>
+
+    <!-- Iterate over items array and display each item in a Vuetify card -->
+    <div class="items-grid">
+      <v-card v-for="item in items" :key="item.id" class="mx-auto item-card" max-width="400">
+        <v-img class="align-end" height="200" :src="item.image" cover>
+          <v-card-title class="text-white">{{ item.name }}</v-card-title>
+        </v-img>
+
+        <v-card-subtitle class="pt-4">{{ item.shop }}</v-card-subtitle>
+
+        <v-card-text>
+          <div>{{ item.description }}</div>
+          <div>Price: {{ item.price }}</div>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn color="orange"> Add to cart </v-btn>
+         
+        </v-card-actions>
+      </v-card>
+    </div>
   </div>
 </template>
+
 
 <script>
 export default {
   name: 'ItemListing',
+
   data() {
     return {
-      items: [{id: 1, 
-    name: 'Item Name', 
-    description: 'Item Description', 
-    shop: 'Item Shop', 
-    price: 'Item Price',
-    image: '/src/assets/food.jpg'}] // existing items
+      items: []
     };
   },
-  
+
   methods: {
     addNewItem(item) {
       this.items.push(item);
+      localStorage.setItem('items', JSON.stringify(this.items));
     },
+    
     goToAddItem() {
       this.$router.push('/additem');
     },
-    fetchItems() {
-      // Implement fetching logic here
-      // For example, fetch from a backend API or local storage
-    },
-    // ...other methods, if needed...
+
+    loadItems() {
+      const storedItems = localStorage.getItem('items');
+      if (storedItems) {
+        this.items = JSON.parse(storedItems);
+      }
+    }
   },
+
+  // mounted() {
+  //   this.loadItems();
+
+  //   if (this.$route.query.newItem) {
+  //     const newItem = JSON.parse(this.$route.query.newItem);
+  //     this.addNewItem(newItem);
+  //   }
+  // }
   mounted() {
-    this.fetchItems();
-  },
-}
+    // Load items from Local Storage
+    this.items = JSON.parse(localStorage.getItem('items')) || [];
+  }
+};
 </script>
 
 
@@ -105,9 +111,16 @@ export default {
 
 /* Add responsiveness */
 @media (max-width: 768px) {
-  .search-add-area {
-    flex-direction: column;
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for smaller screens */
   }
+}
+
+@media (max-width: 480px) {
+  .items-grid {
+    grid-template-columns: 1fr; /* 1 column for very small screens */
+  }
+}
 
   .search-input {
     width: 100%;
@@ -119,10 +132,10 @@ export default {
   }
 
   .items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px;
+}
 
   .item-card {
     border: 1px solid #ddd;
@@ -140,5 +153,10 @@ export default {
     padding: 10px;
     background-color: #f9f9f9;
   }
+
+.v-card-title {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  color: white;
+  padding: 8px; /* Add some padding around the text */
 }
 </style>

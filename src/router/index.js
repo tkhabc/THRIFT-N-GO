@@ -10,6 +10,8 @@ import FoodListing from '@/views/FoodListing.vue'
 import ItemListing from '@/views/ItemListing.vue'
 import AddFood from '@/views/AddFood.vue'
 import AddItem from '@/views/AddItem.vue'
+import UserLocation from '@/views/UserLocation.vue'
+
 
 const routes = [
   {
@@ -69,6 +71,11 @@ const routes = [
     path: '/additem',
     name: 'AddItem',
     component: AddItem
+  },
+  {
+    path: '/userlocation',
+    name: 'UserLocation',
+    component: UserLocation
   }
 ]
 

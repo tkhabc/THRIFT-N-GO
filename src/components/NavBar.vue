@@ -50,6 +50,7 @@ export default {
       { title: 'Cart', path: '/cart' },
       { title: 'Contact', path: '/contact' },
       { title: 'Profile', path: '/profile' },
+      { title: 'UserLocation', path: '/userlocation' },
     ]
   }),
   methods: {

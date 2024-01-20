@@ -3,7 +3,8 @@
   <v-card max-width="448" class="mx-auto" color="grey-lighten-3">
       <v-layout>
         <!-- <v-app> -->
-        <v-app-bar
+
+        <!-- <v-app-bar
           color="teal-darken-4"
           image="https://picsum.photos/1920/1080?random"
         >
@@ -31,7 +32,7 @@
             </v-list>
           </v-navigation-drawer>
 
-          <!-- <router-view></router-view> -->
+           <router-view></router-view> 
 
           <v-spacer></v-spacer>
 
@@ -46,7 +47,8 @@
           <v-btn icon>
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
-        </v-app-bar>
+        </v-app-bar> -->
+
         <!-- </v-app> -->
       </v-layout>
   </v-card>
@@ -54,19 +56,19 @@
 
 <script>
 export default {
-  data: () => ({
-    drawer: false,
-    menuItems: [
-      { title: 'Register', path: '/register' },
-      { title: 'Login', path: '/login' },
-      { title: 'Home', path: '/' },
-      { title: 'About Us', path: '/about' },
-      { title: 'Food Listing', path: '/foodlisting' },
-      { title: 'Item Listing', path: '/itemlisting' },
-      { title: 'Cart', path: '/cart' },
-      { title: 'Contact', path: '/contact' },
-      { title: 'Profile', path: '/profile' },
-    ]
-  }),
+  // data: () => ({
+  //   drawer: false,
+  //   menuItems: [
+  //     { title: 'Register', path: '/register' },
+  //     { title: 'Login', path: '/login' },
+  //     { title: 'Home', path: '/' },
+  //     { title: 'About Us', path: '/about' },
+  //     { title: 'Food Listing', path: '/foodlisting' },
+  //     { title: 'Item Listing', path: '/itemlisting' },
+  //     { title: 'Cart', path: '/cart' },
+  //     { title: 'Contact', path: '/contact' },
+  //     { title: 'Profile', path: '/profile' },
+  //   ]
+  // }),
 };
 </script>

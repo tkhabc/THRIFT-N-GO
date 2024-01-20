@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="auth-form">
     <div class="auth-inner-wrapper">
       <h1> Register now to reduce the food wastage in your area!</h1>
@@ -24,40 +24,84 @@
       </p>
     </div>
   </div>
+</template> -->
+
+<template>
+  <h1>Register now to reduce the food wastage in your area!</h1>
+  <p class="form-email form">
+        <label class="label-email">Your Email </label>
+        <input type="email" placeholder="Email" @keydown.enter="login" v-model="email">
+  </p>
+  <p class="form-password form">
+    <label class="label-password">Password </label>
+    <input type="password" placeholder="Password" @keydown.enter="login" v-model="password">
+  </p>
+
+  <p><v-btn @click="register">Submit</v-btn></p>
+  <p><v-btn @click="register">Submit</v-btn></p>
+  <p><v-btn @click="signInWithGoogle">signInWithGoogle</v-btn></p>
 </template>
 
-<script>
+<script setup>
+import router from '@/router';
+import {auth, createUserWithEmailAndPassword} from '@/firebase/firebaseInit'
+import {ref} from 'vue';
+
+const email = ref('');
+const password = ref('');
+const register = () => {
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+  .then((userCredential) => {
+    console.log("Successfully registered!")
+    console.log(auth.currentUser)
+    router.push('/login')
+    //const user = userCredential.user;  
+  })
+  .catch((error) => {
+    console.log(error.code);
+    alert(error.message);
+    // const errorCode = error.code;
+    // const errorMessage = error.message;
+    // console.log("Error registering: " + errorMessage)
+  });
+}
+const signInWithGoogle = () => {
+
+}
+
+
   //import axios from 'axios';
-  export default {
-    name: 'signup-form',
-    data() {
-      return{
-        user: {
-          username: '',
-          password: ''
-        }
-      }
-    },
-    computed:{
-      errors () {
-        return this.$store.getters.errors
-      }
-    },
-    methods:{
-      signIn: function() {
-        let user = {
-          "user": {
-            "username": this.user.username,
-            "password": this.user.password
-          } 
-        }
-        //this.$store.dispatch('signUserIn',user).then((e)=>e? this.$router.push('/login') : undefined);     
-        this.$store.dispatch('signUserIn',user).then( ()=>{
-        this.$router.push('/login')})                                       
-      },
-      clearErrors: function() {
-        this.$store.dispatch('clearErrors');
-      }
-    }
-  }
+
+  // export default {
+  //   name: 'signup-form',
+  //   data() {
+  //     return{
+  //       user: {
+  //         username: '',
+  //         password: ''
+  //       }
+  //     }
+  //   },
+  //   computed:{
+  //     errors () {
+  //       return this.$store.getters.errors
+  //     }
+  //   },
+  //   methods:{
+  //     signIn: function() {
+  //       let user = {
+  //         "user": {
+  //           "username": this.user.username,
+  //           "password": this.user.password
+  //         } 
+  //       }
+  //       //this.$store.dispatch('signUserIn',user).then((e)=>e? this.$router.push('/login') : undefined);     
+  //       this.$store.dispatch('signUserIn',user).then( ()=>{
+  //       this.$router.push('/login')})                                       
+  //     },
+  //     clearErrors: function() {
+  //       this.$store.dispatch('clearErrors');
+  //     }
+  //   }
+  // }
 </script>

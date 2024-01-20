@@ -31,6 +31,15 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <!-- v-if="isLoggedIn" inside the button -->
+        <v-list-item >  
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-btn @click="handleSignOut">Sign Out</v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -59,4 +68,32 @@ export default {
     }
   }
 };
+</script>
+
+<script setup>
+import {onMounted, ref} from 'vue'
+import {auth, onAuthStateChanged, signOut} from '@/firebase/firebaseInit'
+import router from '@/router'
+
+const isLoggedIn = ref(false);
+
+onMounted(() => {
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isLoggedIn.value = true
+    } 
+    else {
+      isLoggedIn.value = false
+    }
+  })
+})
+
+const handleSignOut = () => {
+  signOut(auth).then(() => {
+    router.push('/')
+    // console.log("Successfully signed out!")
+  })
+}
+
 </script>

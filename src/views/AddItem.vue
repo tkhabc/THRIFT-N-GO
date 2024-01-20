@@ -101,26 +101,32 @@
       };
     },
     methods: {
-    handlePhotoUpload(event) {
-      // Clear any previous error messages
-      this.errorMessage = '';
+      handlePhotoUpload(event) {
+    // Clear any previous error messages
+    this.errorMessage = '';
 
-      const files = event.target.files;
-      const validTypes = ['image/png', 'image/jpeg'];
+    const files = event.target.files;
+    const validTypes = ['image/png', 'image/jpeg'];
 
-      Array.from(files).forEach(file => {
-        if (!validTypes.includes(file.type)) {
-          // If the file type is not allowed, set an error message
-          this.errorMessage = 'Only PNG and JPG images are allowed.';
-          // You can handle this error as needed, perhaps alerting the user or displaying a message
-          return;
-        }
+    Array.from(files).forEach(file => {
+      if (!validTypes.includes(file.type)) {
+        // If the file type is not allowed, set an error message
+        this.errorMessage = 'Only PNG and JPG images are allowed.';
+        return;
+      }
 
-        // If the file type is valid, create a URL and add it to the photos array
-        const photoURL = URL.createObjectURL(file);
-        this.newItem.photos.push({ url: photoURL, file });
-      });
-    },
+      // FileReader to convert the image file to a Base64 string
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const photoBase64 = e.target.result;
+        this.newItem.photos.push({ url: photoBase64 });
+
+        // Optionally, you can store the Base64 string in Local Storage
+        localStorage.setItem('uploadedImage', photoBase64);
+      };
+      reader.readAsDataURL(file);
+    });
+  },
     handleDragOver(event) {
       event.preventDefault();
       // Optionally, add visual feedback here
@@ -148,6 +154,7 @@
       this.newItem.photos.forEach(photo => {
         URL.revokeObjectURL(photo.url);
       });
+
       // Clear the photos array after submission
       this.newItem.photos = [];
 
@@ -156,7 +163,8 @@
       console.log('Form submitted', this.newItem);
       // You might navigate away or reset the form state here
 
-     
+      this.$router.push({ name: 'ItemListing', query: { newItem: JSON.stringify(this.newItem) } });
+
     },
     
     validateNumber(event) {

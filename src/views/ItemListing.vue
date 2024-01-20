@@ -59,8 +59,24 @@ export default {
     // ...other methods, if needed...
   },
   mounted() {
-    this.fetchItems();
-  },
+  // Check if newItem exists in the route query
+  if (this.$route.query.newItem) {
+    const newItem = JSON.parse(this.$route.query.newItem);
+    
+    // Retrieve the image from Local Storage
+    const uploadedImage = localStorage.getItem('uploadedImage');
+
+    // If an image was uploaded, add it to the newItem object
+    if (uploadedImage) {
+      newItem.image = uploadedImage;
+      // Optionally clear the image from Local Storage after adding it
+      localStorage.removeItem('uploadedImage');
+    }
+
+    // Add the newItem to the items array
+    this.items.push(newItem);
+  }
+}
 };
 </script>
 

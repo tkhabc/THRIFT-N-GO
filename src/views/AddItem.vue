@@ -82,6 +82,7 @@
   
     
   <script>
+
   export default {
     data() {
       return {
@@ -149,16 +150,23 @@
       });
       // Clear the photos array after submission
       this.newItem.photos = [];
+
+
       // Log the submission or send it to your server
       console.log('Form submitted', this.newItem);
       // You might navigate away or reset the form state here
+
+     
     },
+    
     validateNumber(event) {
     // Replace non-numeric characters with an empty string
     event.target.value = event.target.value.replace(/[^0-9]+/g, '');
-    }
+    },
   }
+
   }
+  
   </script>
     
 <style scoped>

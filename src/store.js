@@ -12,7 +12,8 @@ export const store = new Vuex.Store({
     listings: {},
     users: {},
     session: { currentUser:getUser},
-    errors: null
+    errors: null,
+    
   },
   getters: {
     listings: state => state.listings,
@@ -21,6 +22,7 @@ export const store = new Vuex.Store({
     errors: state => state.errors
   },
   mutations: {
+    
     ADD_CURRENT_USER (state, payload) {
       const currentUser = {
         id: payload.id,
@@ -62,6 +64,7 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+  
     addListing (context) {
       context.commit('ADD_LISTING');
     },

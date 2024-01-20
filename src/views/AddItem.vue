@@ -82,47 +82,46 @@
   
     
   <script>
+export default {
+  data() {
+    return {
+      newItem: {
+        photos: [], 
+        name: '',
+        typeOfItem: '',
+        description: '',  
+        condition: '',
+        quantity: '',
+        price: '',
+        location: '',
+        collectionMethod: '',
+      },
+      errorMessage: '',
+    };
+  },
 
-  export default {
-    data() {
-      return {
-        newItem: {
-          photos: [], // Updated to store multiple photos
-          name: '',
-          typeOfItem: '',
-          description: '',  
-          condition: '',
-          quantity: '',
-          price: '',
-          location: '',
-          collectionMethod: '',
-        },
-        errorMessage: '', // To display error messages
-      };
-    },
-    methods: {
-      handlePhotoUpload(event) {
-    // Clear any previous error messages
-    this.errorMessage = '';
+  methods: {
+    handlePhotoUpload(event) {
+      this.errorMessage = '';
+    this.newItem.photos = [];
 
     const files = event.target.files;
     const validTypes = ['image/png', 'image/jpeg'];
 
+    if (files.length === 0) {
+      return; // No file was selected
+    }
+
     Array.from(files).forEach(file => {
       if (!validTypes.includes(file.type)) {
-        // If the file type is not allowed, set an error message
         this.errorMessage = 'Only PNG and JPG images are allowed.';
         return;
       }
 
-      // FileReader to convert the image file to a Base64 string
       const reader = new FileReader();
       reader.onload = (e) => {
         const photoBase64 = e.target.result;
         this.newItem.photos.push({ url: photoBase64 });
-
-        // Optionally, you can store the Base64 string in Local Storage
-        localStorage.setItem('uploadedImage', photoBase64);
       };
       reader.readAsDataURL(file);
     });
@@ -149,33 +148,36 @@
       this.newItem.photos.splice(index, 1);
     },
     submitForm() {
-      // Here you would handle the form submission
-      // Don't forget to revoke all object URLs to free up memory
+      // Form submission logic
+
+      // Check if there are photos
+      if (this.newItem.photos.length > 0) {
+        // Assume the first photo is the primary one
+        this.newItem.primaryPhoto = this.newItem.photos[0].url;
+      }
+      // Save the new item data to Local Storage
+      let items = JSON.parse(localStorage.getItem('items')) || [];
+      items.push(this.newItem);
+      localStorage.setItem('items', JSON.stringify(items));
+
+      // Clear the photos array after submission
       this.newItem.photos.forEach(photo => {
         URL.revokeObjectURL(photo.url);
       });
-
-      // Clear the photos array after submission
       this.newItem.photos = [];
 
-
-      // Log the submission or send it to your server
-      console.log('Form submitted', this.newItem);
-      // You might navigate away or reset the form state here
-
-      this.$router.push({ name: 'ItemListing', query: { newItem: JSON.stringify(this.newItem) } });
-
+      // Navigate to ItemListing
+      this.$router.push('/itemlisting');
     },
-    
+
+
     validateNumber(event) {
-    // Replace non-numeric characters with an empty string
-    event.target.value = event.target.value.replace(/[^0-9]+/g, '');
-    },
+      event.target.value = event.target.value.replace(/[^0-9]+/g, '');
+    }
   }
+}
+</script>
 
-  }
-  
-  </script>
     
 <style scoped>
 .add-item-container {

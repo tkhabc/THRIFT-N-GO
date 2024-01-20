@@ -30,53 +30,45 @@
 
 
 <script>
-
-
 export default {
   name: 'ItemListing',
-  
+
   data() {
     return {
-      items: [{name:"abc",description:"fgfd",shop:"trt",price:"ee",image:require('@/assets/food.jpg')},
-      {name:"abc",description:"fgfd",shop:"trt",price:"ee",image:require('@/assets/food.jpg')},
-      {name:"abc",description:"fgfd",shop:"trt",price:"ee",image:require('@/assets/food.jpg')},
-      {name:"abc",description:"fgfd",shop:"trt",price:"ee",image:require('@/assets/food.jpg')}]
-      // existing items
+      items: []
     };
-    },
-  
+  },
+
   methods: {
     addNewItem(item) {
       this.items.push(item);
+      localStorage.setItem('items', JSON.stringify(this.items));
     },
+    
     goToAddItem() {
       this.$router.push('/additem');
     },
-    fetchItems() {
-      // Implement fetching logic here
-      // For example, fetch from a backend API or local storage
-    },
-    // ...other methods, if needed...
-  },
-  mounted() {
-  // Check if newItem exists in the route query
-  if (this.$route.query.newItem) {
-    const newItem = JSON.parse(this.$route.query.newItem);
-    
-    // Retrieve the image from Local Storage
-    const uploadedImage = localStorage.getItem('uploadedImage');
 
-    // If an image was uploaded, add it to the newItem object
-    if (uploadedImage) {
-      newItem.image = uploadedImage;
-      // Optionally clear the image from Local Storage after adding it
-      localStorage.removeItem('uploadedImage');
+    loadItems() {
+      const storedItems = localStorage.getItem('items');
+      if (storedItems) {
+        this.items = JSON.parse(storedItems);
+      }
     }
+  },
 
-    // Add the newItem to the items array
-    this.items.push(newItem);
+  // mounted() {
+  //   this.loadItems();
+
+  //   if (this.$route.query.newItem) {
+  //     const newItem = JSON.parse(this.$route.query.newItem);
+  //     this.addNewItem(newItem);
+  //   }
+  // }
+  mounted() {
+    // Load items from Local Storage
+    this.items = JSON.parse(localStorage.getItem('items')) || [];
   }
-}
 };
 </script>
 

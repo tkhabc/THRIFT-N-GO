@@ -47,18 +47,23 @@
           <p v-if="errMsg" class="error-message">{{ errMsg }}</p>
 
           <v-btn
-            color="primary"
+            color="teal-darken-2"
             @click="register"
             large
             block
+            class="mb-2 text-bold"
           >Submit</v-btn>
 
           <v-btn
-            color="secondary"
+            color="teal-lighten-1"
+            class="text-bold"
             @click="signInWithGoogle"
             large
             block
-          >Sign In With Google</v-btn>
+          >
+            <img class="google-icon" alt="Google Logo" src="../assets/GoogleLogo.png"/>
+            Sign In With Google
+          </v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -117,6 +122,8 @@ const signInWithGoogle = () => {
     console.log(error.code);
     alert(error.message);
   });
+
+  const googleLogo = require('@/assets/GoogleLogo.png');
 }
 
 </script>
@@ -134,6 +141,7 @@ const signInWithGoogle = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: -2vh; /* Negative margin to move up */
 }
 
 .logo {
@@ -147,12 +155,34 @@ const signInWithGoogle = () => {
 }
 
 .headline {
+  font-family: 'Roboto', sans-serif; /* This is an example; choose a font that fits your design */
+  font-size: 1.3rem; /* Example size, adjust as needed */
+  font-weight: bold;
+  color: #000000; /* Choose a color that fits your design */
   text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+  letter-spacing: 0.05em; /* Adjust as needed */
+  margin-top: 10px; /* Adjust as needed */
+  margin-bottom: 10px; /* Adjust as needed */
 }
 
 .error-message {
   color: red;
   text-align: center;
+}
+
+.mb-2 {
+  margin-bottom: 16px; /* Adjust the value as needed for desired spacing */
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.google-icon {
+  height: 20px; /* or the size you want */
+  width: 20px; /* or the size you want */
+  margin-right: 3px; /* to add some space between the icon and the text */
 }
 </style>
 

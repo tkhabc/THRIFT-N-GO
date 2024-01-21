@@ -28,10 +28,10 @@
       </div>
   
       <!-- Type of Food Field -->
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="food-type" class="form-label">Type of Food</label>
         <input type="text" id="food-type" v-model="newItem.foodType" autocomplete="off" required>
-      </div>
+      </div> -->
 
       <!-- Brief Description Field -->
       <div class="form-group">

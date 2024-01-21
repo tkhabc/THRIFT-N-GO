@@ -4,8 +4,7 @@
     <template v-if="!notSignedIn">
       
     </template>
-    
-     <NavBar />    
+    <NavBar /> 
      <!-- // later hide it -->
 
     <v-main>

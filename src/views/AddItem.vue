@@ -1,5 +1,3 @@
-@import 'flowbite-vue';
-
 <template>
     <div class="add-item-container">
       <form @submit.prevent="submitForm">
@@ -81,7 +79,10 @@
   </template>
   
     
-  <script>
+<script>
+import { db } from '@/firebase/firebaseInit'
+import { collection, addDoc } from 'firebase/firestore'
+
 export default {
   data() {
     return {
@@ -147,28 +148,58 @@ export default {
       // Remove the photo from the array
       this.newItem.photos.splice(index, 1);
     },
-    submitForm() {
-      // Form submission logic
 
-      // Check if there are photos
-      if (this.newItem.photos.length > 0) {
-        // Assume the first photo is the primary one
-        this.newItem.primaryPhoto = this.newItem.photos[0].url;
+    async submitForm() {
+      // Additional validation checks can be added here
+
+      try {
+        // Store the newItem object in Firestore
+        await addDoc(collection(db, 'items'), this.newItem);
+        this.resetForm();
+        this.$router.push('/itemlisting');
+        alert('Item added successfully');
+      } catch (error) {
+        console.error('Error adding document: ', error);
       }
-      // Save the new item data to Local Storage
-      let items = JSON.parse(localStorage.getItem('items')) || [];
-      items.push(this.newItem);
-      localStorage.setItem('items', JSON.stringify(items));
-
-      // Clear the photos array after submission
-      this.newItem.photos.forEach(photo => {
-        URL.revokeObjectURL(photo.url);
-      });
-      this.newItem.photos = [];
-
-      // Navigate to ItemListing
-      this.$router.push('/itemlisting');
     },
+
+    resetForm() {
+      // Clearing the form and revoking URLs
+      this.newItem.photos.forEach(photo => URL.revokeObjectURL(photo.url));
+      this.newItem = {
+        photos: [],
+        name: '',
+        description: '',  
+        condition: '',
+        quantity: '',
+        price: '',
+        location: '',
+        collectionMethod: '',
+      };
+    },
+
+    // submitForm() {
+    //   // Form submission logic
+
+    //   // Check if there are photos
+    //   if (this.newItem.photos.length > 0) {
+    //     // Assume the first photo is the primary one
+    //     this.newItem.primaryPhoto = this.newItem.photos[0].url;
+    //   }
+    //   // Save the new item data to Local Storage
+    //   let items = JSON.parse(localStorage.getItem('items')) || [];
+    //   items.push(this.newItem);
+    //   localStorage.setItem('items', JSON.stringify(items));
+
+    //   // Clear the photos array after submission
+    //   this.newItem.photos.forEach(photo => {
+    //     URL.revokeObjectURL(photo.url);
+    //   });
+    //   this.newItem.photos = [];
+
+    //    //Navigate to ItemListing
+    //   this.$router.push('/itemlisting');
+    // },
 
 
     validateNumber(event) {
@@ -319,7 +350,7 @@ input[type="file"] {
 }
   
 button[type="submit"] {
-    width: 100%;
+    width: 22%;
     padding: 10px 15px;
     background-color: #1A6757;
     color: white;

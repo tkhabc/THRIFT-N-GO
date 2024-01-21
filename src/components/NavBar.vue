@@ -15,27 +15,6 @@
     <v-spacer></v-spacer>
   </v-app-bar>
 
-  <!-- <v-navigation-drawer location="right" width="0" v-model="drawer">
-      <v-list>
-        <v-list-item v-for="item in menuItems" :key="item.title" @click="drawer = false">
-          <v-list-item-content>
-            <v-list-item-title>
-              <router-link :to="item.path" class="black--text">{{ item.title }}</router-link>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item> -->
-
-        <!-- v-if="isLoggedIn" inside the button -->
-        <!-- <v-list-item >  
-          <v-list-item-content>
-            <v-list-item-title>
-              <v-btn @click="handleSignOut">Sign Out</v-btn>
-            </v-list-item-title>
-          </v-list-item-content>
-         </v-list-item>
-      </v-list>
-    </v-navigation-drawer> -->
-
     <v-navigation-drawer location="right" width="0" v-model="drawer">
     <v-list dense>
       <v-list-item 
@@ -72,9 +51,6 @@ export default {
   data: () => ({
     drawer: false,
     menuItems: [
-      // { title: 'Register', path: '/register' },
-      // { title: 'Login', path: '/login' },
-      // { title: 'Home', path: '/' },
       { title: 'About Us', path: '/about' },
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
@@ -82,6 +58,8 @@ export default {
       { title: 'Contact', path: '/contact' },
       { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
+      { title: 'Chat', path: '/chat' },
+      { title: 'Test', path: '/test'}
     ]
   }),
   methods: {

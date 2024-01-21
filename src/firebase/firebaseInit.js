@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 import {getFirestore, collection, getDoc, getDocs} from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
+import { ref, onUnmounted } from 'vue'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,6 +25,29 @@ const firebase = initializeApp(firebaseConfig);
 const auth = getAuth(firebase);
 const db = getFirestore(firebase);
 const analytics = getAnalytics(firebase);
+const itemsCollection = collection(db, 'items')
 
 export default firebase
 export {auth, createUserWithEmailAndPassword, onAuthStateChanged, db, collection, getDoc, getDocs, signInWithEmailAndPassword, signOut}
+
+export const createItem = item => {
+  return itemsCollection.add(item)
+}
+export const getItem = async id => {
+  const item = await itemsCollection.doc(id).get()
+  return item.exists ? item.data() : null
+}
+export const updateItem = (id, item) => {
+  return itemsCollection.doc(id).update(item)
+}
+export const deleteItem = id => {
+  return itemsCollection.doc(id).delete()
+}
+export const useLoadUsers = () => {
+  const items = ref([])
+  const close = itemsCollection.onSnapshot(snapshot => {
+    items.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  })
+  onUnmounted(close)
+  return items
+}

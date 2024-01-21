@@ -30,13 +30,16 @@
 
         <v-card-actions>
           <v-btn color="orange"> Add to cart </v-btn>
-         
+          <v-btn color="blue" @click="goToLocation(item)">Location</v-btn>
         </v-card-actions>
       </v-card>
   </div>
 </template>
 
 <script>
+import { db } from '@/firebase/firebaseInit'
+import { collection, query, getDocs } from 'firebase/firestore'
+
 export default {
   name: 'ItemListing',
 
@@ -47,38 +50,28 @@ export default {
   },
 
   methods: {
-    addNewItem(item) {
-      this.items.push(item);
-      localStorage.setItem('items', JSON.stringify(this.items));
+    async fetchItems() {
+      const q = query(collection(db, 'items'));
+      try {
+        const querySnapshot = await getDocs(q);
+        this.items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } 
+      catch (error) {
+        console.error("Error fetching items: ", error);
+      }
     },
     
     goToAddItem() {
       this.$router.push('/additem');
     },
+
     goToLocation(item) {
-    this.$router.push({ name: 'UserLocation', query: { location: item.location } });
+      this.$router.push({ name: 'UserLocation', query: { location: item.location } });
+    },
   },
 
-    loadItems() {
-      const storedItems = localStorage.getItem('items');
-      if (storedItems) {
-        this.items = JSON.parse(storedItems);
-      }
-    }
-  },
-
-  // mounted() {
-  //   this.loadItems();
-
-  //   if (this.$route.query.newItem) {
-  //     const newItem = JSON.parse(this.$route.query.newItem);
-  //     this.addNewItem(newItem);
-  //   }
-  // }
   mounted() {
-    // Load items from Local Storage
-    this.items = JSON.parse(localStorage.getItem('items')) || [];
-    
+    this.fetchItems();
   }
 };
 </script>

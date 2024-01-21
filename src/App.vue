@@ -2,9 +2,12 @@
   <v-app style="background: #FFFFFF">
     
     <template v-if="!notSignedIn">
-      <NavBar />
+      
     </template>
     
+     <NavBar />    
+     <!-- // later hide it -->
+
     <v-main>
       <router-view></router-view>
     </v-main>

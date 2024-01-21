@@ -33,7 +33,6 @@
          
         </v-card-actions>
       </v-card>
-    </div>
   </div>
 </template>
 

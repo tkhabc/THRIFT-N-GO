@@ -211,5 +211,35 @@
     top: 0;
     bottom: 0;
   }
+  @media (max-width: 430px) {
+  .ui.form .field .input input[type="text"] {
+    width: 100%; /* Make input take full width */
+  }
+
+  .ui.button {
+    width: 100%; /* Optional: Make button take full width */
+    margin-top: 10px; /* Optional: Add some space above the button */
+  }
+
+  
+  .column {
+    padding: 0 15px; /* Add some padding on the sides */
+    width:100%;
+  }
+
+  .ui.form {
+    margin-top: 20px; /* Add some space above the form */
+  }
+}
+
+/* Adjust the overall layout for smaller screens */
+@media (max-width: 768px) {
+  .ui.two.column.centered.grid {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    padding: 0;
+  }
+}
   </style>
   

@@ -319,7 +319,7 @@ input[type="file"] {
 }
   
 button[type="submit"] {
-    width: 100%;
+    width: 22%;
     padding: 10px 15px;
     background-color: #1A6757;
     color: white;

@@ -7,7 +7,8 @@
     
      <NavBar />    
      <!-- // later hide it -->
-
+     <ItemListing @add-to-cart="addToCart" />
+      <Cart :cartItems="cart" />
     <v-main>
       <router-view></router-view>
     </v-main>
@@ -17,13 +18,26 @@
 
 <script>
   import NavBar from '@/components/NavBar.vue'
+  import ItemListing from './views/ItemListing.vue';
+  import Cart from './views/Cart.vue';
 
   export default {
     name: 'App',
     components: {
     NavBar
+    
   },
-
+  data() {
+    return {
+      cart: [] // Initialize cart as an empty array
+    }
+  },
+  methods: {
+    addToCart(item) {
+      this.cart.push(item);
+      console.log('Cart updated:', this.cart);
+    }
+  },
   computed: {
     notSignedIn() {
       return this.$route.path == '/login' || this.$route.path == '/register' || this.$route.path == '/'

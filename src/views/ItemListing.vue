@@ -29,8 +29,8 @@
       </v-card-text>
 
         <v-card-actions>
-          <v-btn color="orange"> Add to cart </v-btn>
-         
+          <v-btn color="orange" @click="addToCart(item)"> Add to Cart </v-btn>
+          <v-btn color="blue" @click="goToLocation(item)">Location</v-btn>
         </v-card-actions>
       </v-card>
   </div>
@@ -42,11 +42,15 @@ export default {
 
   data() {
     return {
-      items: []
+      items: [],
+      cartItems: []
     };
   },
 
   methods: {
+    addToCart(item) {
+      this.$emit('add-to-cart', item); // Emit the whole item object
+    },
     addNewItem(item) {
       this.items.push(item);
       localStorage.setItem('items', JSON.stringify(this.items));
@@ -59,10 +63,14 @@ export default {
     this.$router.push({ name: 'UserLocation', query: { location: item.location } });
   },
 
-    loadItems() {
-      const storedItems = localStorage.getItem('items');
-      if (storedItems) {
-        this.items = JSON.parse(storedItems);
+  loadItems() {
+      try {
+        const storedItems = localStorage.getItem('items');
+        if (storedItems) {
+          this.items = JSON.parse(storedItems);
+        }
+      } catch (error) {
+        console.error("Error parsing items from Local Storage:", error);
       }
     }
   },
@@ -76,10 +84,31 @@ export default {
   //   }
   // }
   mounted() {
-    // Load items from Local Storage
-    this.items = JSON.parse(localStorage.getItem('items')) || [];
-    
+  // Load existing items from Local Storage
+  const storedItems = localStorage.getItem('items');
+  if (storedItems) {
+    try {
+      this.items = JSON.parse(storedItems);
+    } catch (error) {
+      console.error("Error parsing items from Local Storage:", error);
+    }
   }
+
+  // Check if newItem exists in the route query
+  if (this.$route.query.newItem) {
+    const newItem = JSON.parse(this.$route.query.newItem);
+    
+    // Retrieve the image from Local Storage
+    const uploadedImage = localStorage.getItem('uploadedImage');
+    if (uploadedImage) {
+      newItem.image = uploadedImage;
+      localStorage.removeItem('uploadedImage');
+    }
+    
+    // Add the newItem to the items array
+    this.items.push(newItem);
+  }
+}
 };
 </script>
 
@@ -108,7 +137,7 @@ export default {
 
 .add-item-button {
   padding: 10px 20px;
-  background-color: #1A6757; /* Adjust the button color to match your theme */
+  background-color: #1A6757;
   color: white;
   border: none;
   border-radius: 20px;
@@ -120,39 +149,44 @@ export default {
   background-color: #43C3A0;
 }
 
-/* Add responsiveness */
-@media (max-width: 768px) {
+/* Adjustments for screens up to 932px wide */
+@media (max-width: 932px) {
   .items-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns for smaller screens */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for screens <= 932px */
+    gap: 20px;
   }
 }
 
-@media (max-width: 480px) {
+/* Further adjustments for smaller screens */
+@media (max-width: 430px) {
+  .search-input, .add-item-button {
+    width: 100%; /* Full width for smaller screens */
+    margin-bottom: 10px;
+  }
+
+  .item-card {
+    max-width: 100%; /* Ensure card does not exceed container width */
+    margin: 0 auto; /* Center align the card */
+  }
+}
+
   .items-grid {
     grid-template-columns: 1fr; /* 1 column for very small screens */
   }
 }
 
-  .search-input {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .add-item-button {
-    width: 100%;
-  }
-
-  .items-grid {
+.items-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
   gap: 20px;
 }
 
-  .item-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-  }
+.item-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
   .item-image {
     width: 100%;

@@ -4,15 +4,13 @@
       <section class="your-orders">
         <h1>Your Orders</h1>
         <!-- Repeat this block for each item in the cart -->
-        <div class="order-item">
-          <img src="pizza.png" alt="Italy Pizza">
-          <div class="item-description">
-            <h2>Italy Pizza</h2>
-            <p>Extra cheese and topping</p>
-          </div>
-          <div class="quantity">1</div>
-          <div class="price">RM9</div>
-        </div>
+        <div v-for="(item, index) in cartItems" :key="index" class="order-item">
+      <!-- Display item details like name, description, and price -->
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description }}</p>
+      <div>Price: {{ item.price }}</div>
+      </div>
+
         <!-- ... other items ... -->
       </section>
 
@@ -41,13 +39,27 @@
 </div>
 </template>
 
-<!-- <script>
+<script>
 export default {
-  name: 'Cart',
-  // Include data, methods, computed properties, etc.
+  props: {
+    cartItems: {
+      type: Array,
+      default: () => [
+        // Default item
+        {
+          name: 'Sample Item',
+          description: 'Sample description',
+          price: '10.00'
+          // Add other necessary properties for the item
+        }
+      ]
+    }
+  },
+  methods: {
+    
+  }
 };
-</script> -->
-
+</script>
 <style scoped>
 .container {
   font-family: 'Arial', sans-serif;

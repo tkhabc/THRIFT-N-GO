@@ -42,24 +42,34 @@
     },
   
     mounted() {
-      var autocomplete = new google.maps.places.Autocomplete(
-        this.$refs["autocomplete"],
-        {
-          bounds: new google.maps.LatLngBounds(
-            new google.maps.LatLng(5.3558,100.2900)
-          ),
-        }
-      );
-  
-      autocomplete.addListener("place_changed", () => {
-        var place = autocomplete.getPlace();
-  
-        this.showLocationOnTheMap(
-          place.geometry.location.lat(),
-          place.geometry.location.lng()
-        );
-      });
-    },
+  //this.initializeAutocomplete();
+
+  // Initialize the Google Places Autocomplete
+  var autocomplete = new google.maps.places.Autocomplete(
+    this.$refs["autocomplete"],
+    {
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(5.3558,100.2900)
+      ),
+    }
+  );
+
+  autocomplete.addListener("place_changed", () => {
+    var place = autocomplete.getPlace();
+
+    this.showLocationOnTheMap(
+      place.geometry.location.lat(),
+      place.geometry.location.lng()
+    );
+  });
+
+  // Check if there's a location query parameter and set the address
+  if (this.$route.query.location) {
+    this.address = this.$route.query.location;
+    // Optionally, you can also show this location on the map:
+    // this.showLocationOnTheMap(...); // Provide the latitude and longitude
+  }
+},
   
     methods: {
       locatorButtonPressed() {

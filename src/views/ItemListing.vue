@@ -28,11 +28,12 @@
         <div>Price: {{ item.price }}</div>
       </v-card-text>
 
-      <v-card-actions>
-        <v-btn color="orange"> Add to cart </v-btn>
-        
-      </v-card-actions>
-    </v-card>
+        <v-card-actions>
+          <v-btn color="orange"> Add to cart </v-btn>
+         
+        </v-card-actions>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -55,6 +56,9 @@ export default {
     goToAddItem() {
       this.$router.push('/additem');
     },
+    goToLocation(item) {
+    this.$router.push({ name: 'UserLocation', query: { location: item.location } });
+  },
 
     loadItems() {
       const storedItems = localStorage.getItem('items');
@@ -75,6 +79,7 @@ export default {
   mounted() {
     // Load items from Local Storage
     this.items = JSON.parse(localStorage.getItem('items')) || [];
+    
   }
 };
 </script>

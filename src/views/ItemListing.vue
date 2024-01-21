@@ -1,33 +1,40 @@
 <template>
-  <div class="item-listing">
-    <div class="search-add-area">
-      <input type="text" placeholder="Enter your desired location" class="search-input">
-      <button class="add-item-button" @click="goToAddItem">Add item</button>
-    </div>
+    <v-container>
+    <v-row>
+      <v-col>
+        <div class="item-listing"></div>
+        <div class="search-add-area"></div>
+        <input type="text" placeholder="Enter your desired location" class="search-input">
+      </v-col>
+    </v-row>
+    <v-row class="tight-row-spacing">
+      <v-col>
+        <button class="add-item-button" @click="goToAddItem">Add item</button>
+      </v-col>
+    </v-row>
+  </v-container> 
 
-    <!-- Iterate over items array and display each item in a Vuetify card -->
-    <div class="items-grid">
-      <v-card v-for="item in items" :key="item.id" class="mx-auto item-card" max-width="400">
-        <v-img class="align-end" height="200" :src="item.image" cover>
-          <v-card-title class="text-white">{{ item.name }}</v-card-title>
-        </v-img>
+  <!-- Iterate over items array and display each item in a Vuetify card -->
+  <div class="items-grid">
+    <v-card v-for="item in items" :key="item.id" class="mx-auto item-card" max-width="400">
+      <v-img class="align-end" height="200" :src="item.image" cover>
+        <v-card-title class="text-white">{{ item.name }}</v-card-title>
+      </v-img>
 
-        <v-card-subtitle class="pt-4">{{ item.shop }}</v-card-subtitle>
+      <v-card-subtitle class="pt-4">{{ item.shop }}</v-card-subtitle>
 
-        <v-card-text>
-          <div>{{ item.description }}</div>
-          <div>Price: {{ item.price }}</div>
-        </v-card-text>
+      <v-card-text>
+        <div>{{ item.description }}</div>
+        <div>Price: {{ item.price }}</div>
+      </v-card-text>
 
-        <v-card-actions>
-          <v-btn color="orange"> Add to cart </v-btn>
-         
-        </v-card-actions>
-      </v-card>
-    </div>
+      <v-card-actions>
+        <v-btn color="orange"> Add to cart </v-btn>
+        
+      </v-card-actions>
+    </v-card>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -84,7 +91,7 @@ export default {
 .search-add-area {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0;
+  margin: 15px;
 }
 
 .search-input {

@@ -17,7 +17,6 @@
       </section>
 
       <aside>
-  <button class="checkout-button">CHECKOUT</button>
 
   <div class="order-summary">
     <h1>Order Summary</h1>
@@ -37,6 +36,9 @@
 </aside>
     </main>
   </div>
+<div class="d-flex justify-center align-center">
+  <v-btn variant="outlined">Checkout</v-btn>
+</div>
 </template>
 
 <!-- <script>

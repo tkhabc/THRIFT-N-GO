@@ -1,14 +1,15 @@
 <template>
-  <v-app style="background: linear-gradient(180deg, #FFFFFF 0%, #258744 100%); ">
+  <v-app style="background: #FFFFFF">
     
-    <NavBar/>
-
+    <template v-if="!notSignedIn">
+      <NavBar />
+    </template>
+    
     <v-main>
       <router-view></router-view>
     </v-main>
 
   </v-app>
-    
 </template>
 
 <script>
@@ -18,9 +19,14 @@
     name: 'App',
     components: {
     NavBar
+  },
+
+  computed: {
+    notSignedIn() {
+      return this.$route.path == '/login' || this.$route.path == '/register' || this.$route.path == '/'
+    }
   }
 }
-
 </script>
 
 <style>
@@ -31,7 +37,6 @@
   text-align: center;
   color: #2c3e50;
 }
-
 
 /* Apply a reset to remove default styles */
 * {

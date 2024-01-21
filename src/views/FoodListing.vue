@@ -48,7 +48,7 @@ export default {
 
 <style scoped>
 .food-listing {
-  max-width: 1200px;
+  max-width: 600px;
   margin: auto;
   font-family: 'Arial', sans-serif;
 }
@@ -56,7 +56,7 @@ export default {
 .search-add-area {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0;
+  margin: 2px;
 }
 
 .search-input {

@@ -53,7 +53,7 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs,addDoc } from 'firebase/firestore'
+import { collection, query, getDocs } from 'firebase/firestore'
 
 export default {
   name: 'ItemListing',

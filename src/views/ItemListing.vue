@@ -54,6 +54,7 @@
 <script>
 import { db } from '@/firebase/firebaseInit'
 import { collection, query, getDocs } from 'firebase/firestore'
+import { cartStore } from '@/cartStore';
 
 export default {
   name: 'ItemListing',
@@ -71,12 +72,13 @@ export default {
       return this.items.filter(item => {
         return item.name  && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
-    }
+    },
+    
   },
 
   methods: {
     addToCart(item) {
-      this.$emit('add-to-cart', this.item); // Emit the whole item object
+      cartStore.addToCart(item);
     },
     async fetchItems() {
       const q = query(collection(db, 'items'));

@@ -2,7 +2,7 @@
   <div class="container">
     <main>
       <section class="your-orders">
-        <h1>Your Orders</h1>
+        <h1>Your Ordershaha</h1>
         <!-- Repeat this block for each item in the cart -->
         <div v-for="item in cartItems" :key="item.id" class="order-item">
           
@@ -11,7 +11,7 @@
             <p>{{ item.description }}</p>
             <div class="price">Price: RM{{ item.price }}</div>
           </div>
-          <v-btn color="red" @click="deleteItem(item.id)">Delete</v-btn>
+          <v-btn color="red" @click="removeFromCart(index)">Delete</v-btn>
 
         </div>
         <div v-if="cartItems.length === 0">
@@ -24,8 +24,8 @@
 
   <div class="order-summary">
     <h1>Order Summary</h1>
-    <div>3 items</div>
-    <div>Total RM29</div>
+    <div>{{ itemCount }} items</div>
+    <div>Total RM{{ totalPrice }}</div>
   </div>
 
   <div class="payment-methods">
@@ -48,31 +48,33 @@
 <script>
 import { db } from '@/firebase/firebaseInit'
 import { collection, query, getDocs, onSnapshot,doc,deleteDoc,addDoc } from 'firebase/firestore'
+import { cartStore } from '@/cartStore';
 
 export default {
   name: 'Cart',
-  props: {
-    cartItems: {
-      type: Array,
-      default: () => [
-        // Default item
-        {
-          name: 'Sample Item',
-          description: 'Sample description',
-          price: '10.00'
-          // Add other necessary properties for the item
-        }
-      ]
-    }
+  computed: {
+    cartItems() {
+      return cartStore.items;
+    },
+    itemCount() {
+      return cartStore.items.length;
+    },
+    totalPrice() {
+    return cartStore.items.reduce((total, item) => {
+      return total + Number(item.price);
+    }, 0);
+  }
   },
 
-  data() {
-    return {
-     //cartItems: []
-    };
-  },
+  // data() {
+  //   return {
+  //    //cartItems: []
+  //   };
+  // },
 
-  methods: {},
+  methods: {removeFromCart(index) {
+      cartStore.removeFromCart(index);
+    }},
   
 //     async deleteItem(documentId) {
 //   const docRef = doc(db, 'cart', documentId);

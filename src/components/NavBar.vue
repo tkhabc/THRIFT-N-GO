@@ -59,7 +59,8 @@ export default {
       { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'Chat', path: '/chat' },
-      { title: 'ChatHistory', path: '/chathistory' }
+      { title: 'ChatHistory', path: '/chathistory' },
+      { title: 'ChatComponent', path: '/chatcomponent' }
     ]
   }),
   methods: {
@@ -111,6 +112,6 @@ const handleSignOut = () => {
 }
 
 .v-list-item.active-item:not(.v-list-item--disabled) {
-  background-color: #43C3A0 !important;
+  background-color: #E0E0E0 !important;
 }
 </style>

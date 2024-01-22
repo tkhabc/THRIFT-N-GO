@@ -1,4 +1,5 @@
 <template>
+  <div>
     <v-container class="container-padding">
     <v-row>
       <v-col>
@@ -19,51 +20,60 @@
     </v-row>
   </v-container> 
   
-    <!-- <v-card v-for="item in filteredItems" :key="item.id" class="mx-auto item-card" width="300"> -->
-    <v-row class="row-padding">
-      <v-col cols="6" xs="6" v-for="item in items" :key="item.id">
-    <v-card  class="mx-auto" > 
-      <v-img  height="200" :src="getPhoto(item)" @error="imageLoadError" cover>
-        
-      </v-img>
-      <v-card-title class="text-white">{{ item.name }}</v-card-title>
-
-      <!-- <v-card-subtitle class="pt-4">{{ item.shop }}</v-card-subtitle> -->
-
-      <v-card-text>
-        <div>{{ item.description }}</div>
-        <div>Price: RM {{ item.price }}</div>
-      </v-card-text>
-
-        <v-card-actions>
-          <v-row>
-            <v-col cols="6">
-              <v-btn color="orange" block @click="addToCart(item)">Add to Cart</v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn color="blue" block @click="goToLocation(item)">Location</v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
+  <v-row class="row-padding">
+      <v-col cols="6" xs="6" v-for="item in filteredItems" :key="item.id">
+        <v-card class="mx-auto">
+          <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
+          <v-card-title class="text-white">{{ item.name }}</v-card-title>
+          <v-card-text>
+            <div>{{ item.description }}</div>
+            <div>Price: RM {{ item.price }}</div>
+          </v-card-text>
+          <v-card-actions>
+            <v-row>
+              <v-col cols="6">
+                <v-btn color="orange" block @click="addToCart(item)">Book</v-btn>
+              </v-col>
+              <v-col cols="6">
+                <v-btn color="blue" block @click="goToLocation(item)">Location</v-btn>
+              </v-col>
+              <v-col cols="12">
+                <v-btn block @click.stop="showModal(item)">Show More Details</v-btn>
+              </v-col>
+            </v-row>
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
-  
+    
+    <ItemDetailsModal
+      :item="selectedItem"
+      :visible="isModalVisible"
+      @close="hideModal"
+    />
+  </div>
 </template>
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs } from 'firebase/firestore'
+import { collection, query, getDocs } from 'firebase/firestore' 
 import { cartStore } from '@/cartStore';
+import ItemDetailsModal from '@/components/ItemDetailsModal.vue';
 
 export default {
   name: 'ItemListing',
+
+  components: {
+    ItemDetailsModal // Register the ItemDetailsModal component
+  },
 
   data() {
     return {
       items: [],
       searchQuery: '',
-      cartItems: []
+      cartItems: [],
+      selectedItem: null,
+      isModalVisible: false
     };
   },
 
@@ -77,6 +87,15 @@ export default {
   },
 
   methods: {
+    showModal(item) {
+      this.selectedItem = item;
+      this.isModalVisible = true;
+    },
+    
+    hideModal() {
+      this.isModalVisible = false;
+    },
+
     addToCart(item) {
       cartStore.addToCart(item);
     },

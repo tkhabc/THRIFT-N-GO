@@ -13,6 +13,7 @@ import AddItem from '@/views/AddItem.vue'
 import UserLocation from '@/views/UserLocation.vue'
 import Chat from '@/views/Chat.vue'
 import ChatHistory from '@/views/ChatHistory.vue'
+import ChatComponent from '@/components/ChatComponent.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -89,7 +90,12 @@ const routes = [
     path: '/chathistory',
     name: 'ChatHistory',
     component: ChatHistory
-  }
+  },
+  {
+    path: '/chatcomponent',
+    name: 'ChatComponent',
+    component: ChatComponent
+  },
 ]
 
 const router = createRouter({

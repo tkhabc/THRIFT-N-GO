@@ -207,7 +207,6 @@ export default {
   }
 }
 </script>
-
     
 <style scoped>
 .add-item-container {

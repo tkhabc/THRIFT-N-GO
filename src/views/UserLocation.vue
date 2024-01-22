@@ -1,32 +1,37 @@
-
-
 <template>
-    <div>
-      <section class="ui two column centered grid" style="position:relative;z-index:1">
-        <div class="column">
-          <form @submit.prevent="submitForm" class="ui segment large form">
-            <div class="ui message red" v-show="error">{{error}}</div>
-            <div class="ui segment">
-              <div class="field">
-                <div class="ui right icon input large" :class="{loading:spinner}">
-                  <input
-                    type="text"
-                    placeholder="Enter your address"
-                    v-model="address"
-                    ref="autocomplete"
-                  />
-                  <i class="dot circle link icon" @click="locatorButtonPressed"></i>
-                </div>
+  <div>
+    <section class="ui two column centered grid" style="position:relative;z-index:1">
+      <div class="column">
+        <form @submit.prevent="submitForm" class="ui segment large form">
+          <div class="ui message red" v-show="error">{{error}}</div>
+          <div class="ui segment">
+            <div class="field">
+              <div class="ui right icon input large" :class="{loading:spinner}">
+                <input
+                  type="text"
+                  placeholder="Enter your address"
+                  v-model="address"
+                  ref="autocomplete"
+                />
+                <i class="dot circle link icon" @click="locatorButtonPressed"></i>
               </div>
-              <button class="ui button"  type="submit">Go</button>
             </div>
-          </form>
-        </div>
-      </section>
-  
-      <section id="map" ref="map"></section>
-    </div>
-  </template>
+            <div class="submit-distance-container">
+              <button class="ui button" type="submit">Go</button>
+              <div v-if="distance" class="route-info-display">
+                Distance: {{ distance }}<br>
+                Estimated Duration: {{ duration }}
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="map" ref="map"></section>
+  </div>
+</template>
+
 
 <script>
 /* global google */
@@ -38,6 +43,8 @@
         address: "",
         error: "",
         spinner: false,
+        distance: '',
+        duration: '',
       };
     },
   
@@ -72,6 +79,10 @@
 },
   
     methods: {
+      displayRouteInfo(distance, duration) {
+        this.distance = distance;
+        this.duration = duration;
+      },
       locatorButtonPressed() {
         this.spinner = true;
   
@@ -142,74 +153,107 @@
         });
       },
       submitForm() {
-      this.spinner = true;
+  this.spinner = true;
 
-      // Initialize directions service and renderer
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer();
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      this.calculateRoute(position.coords.latitude, position.coords.longitude);
+    }, error => {
+      this.error = "Unable to access your current location: " + error.message;
+      this.spinner = false;
+    });
+  } else {
+    this.error = "Geolocation is not supported by this browser.";
+    this.spinner = false;
+  }
+},
 
-      // Initialize your map (you might already have this in showLocationOnTheMap)
-      const map = new google.maps.Map(this.$refs.map, {
-        zoom: 7, // Adjust zoom level as needed
-        center: { lat:5.3558,lng:100.2900} // Adjust the center as needed
-      });
-      directionsRenderer.setMap(map);
+calculateRoute(lat, lng) {
+  const origin = { lat, lng };
+  const destination = this.address;
 
-      // Replace 'Your Origin' with the actual origin, e.g., user's current location
-      const origin = { lat:5.3558,lng:100.2900};
-      const destination = this.address;
+  // Initialize directions service and renderer
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
 
-      directionsService.route({
-        origin: origin,
-        destination: destination,
-        travelMode: 'DRIVING'
-      }, (response, status) => {
-        if (status === 'OK') {
-          directionsRenderer.setDirections(response);
-          this.error = ""; // Reset error message on success
-        } else {
-          console.error('Directions request failed', status, response);
-          this.error = 'Directions request failed due to ' + status;
-        }
-        this.spinner = false;
-      });
-    },
+  // Initialize the map
+  const map = new google.maps.Map(this.$refs.map, {
+    zoom: 7,
+    center: origin
+  });
+  directionsRenderer.setMap(map);
+
+  directionsService.route({
+    origin: origin,
+    destination: destination,
+    travelMode: 'DRIVING'
+  }, (response, status) => {
+    if (status === 'OK') {
+      directionsRenderer.setDirections(response);
+      // Extract and display the distance and duration
+      const distance = response.routes[0].legs[0].distance.text;
+      const duration = response.routes[0].legs[0].duration.text;
+      this.displayRouteInfo(distance, duration);
+
+      this.error = "";
+    } else {
+      console.error('Directions request failed', status, response);
+      this.error = 'Directions request failed due to ' + status;
+    }
+    this.spinner = false;
+  });
+}
+
     },
   };
   </script>
   
   
   <style>
-  .ui.button,
-  .dot.circle.icon {
-    background-color: #ff5a5f;
-    color: white;
-  }
-  
-  .pac-icon {
-    display: none;
-  }
-  
-  .pac-item {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .pac-item:hover {
-    background-color: #ececec;
-  }
-  
-  .pac-item-query {
-    font-size: 16px;
-  }
-  
-  #map {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-  }
-  </style>
-  
+.ui.button,
+.dot.circle.icon {
+  background-color: #ff5a5f;
+  color: white;
+}
+
+.pac-icon {
+  display: none;
+}
+
+.pac-item {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.pac-item:hover {
+  background-color: #ececec;
+}
+
+.pac-item-query {
+  font-size: 16px;
+}
+
+#map {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.submit-distance-container {
+  display: flex;
+  align-items: center; /* Align vertically */
+  justify-content: space-between; /* Space between button and distance display */
+}
+
+.route-info-display {
+  background-color: #f0f0f0; /* Light background for visibility */
+  padding: 10px;
+  font-size: 16px;
+  margin-left: 10px; /* Space from the button */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+</style>

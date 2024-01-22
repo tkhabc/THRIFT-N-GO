@@ -82,6 +82,9 @@
 <script>
 import { db } from '@/firebase/firebaseInit'
 import { collection, addDoc } from 'firebase/firestore'
+import { storage } from '@/firebase/firebaseInit.js'
+import { ref as storageRef } from "firebase/storage";
+
 
 export default {
   data() {
@@ -104,29 +107,51 @@ export default {
   methods: {
     handlePhotoUpload(event) {
       this.errorMessage = '';
-    this.newItem.photos = [];
+      this.newItem.photos = [];
 
-    const files = event.target.files;
-    const validTypes = ['image/png', 'image/jpeg'];
+      const files = event.target.files;
+      const validTypes = ['image/png', 'image/jpeg'];
 
-    if (files.length === 0) {
-      return; // No file was selected
-    }
-
-    Array.from(files).forEach(file => {
-      if (!validTypes.includes(file.type)) {
-        this.errorMessage = 'Only PNG and JPG images are allowed.';
-        return;
+      if (files.length === 0) {
+        return; // No file was selected
       }
 
+      const processFile = async(file) => {
+        if (!validTypes.includes(file.type)) {
+          this.errorMessage = 'Only PNG and JPG images are allowed.';
+          return;
+        }
+
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async(e) => {
         const photoBase64 = e.target.result;
-        this.newItem.photos.push({ url: photoBase64 });
+        const randomId = Math.random().toString(36).substring(2);
+        // Create a reference to the Firestore storage location
+        console.log(storage);
+        storageRef = storage.ref().child(`images/${randomId}.jpg`);
+
+        try {
+          // Upload the Base64-encoded image to Firestore
+          const snapshot = await storageRef.putString(photoBase64, 'data_url');
+
+          // Get the download URL of the uploaded image
+          const downloadURL = await snapshot.ref.getDownloadURL();
+
+          // Add the download URL to your data structure or Firestore database
+          this.newItem.photos.push({ url: downloadURL });
+        } 
+        catch (error) {
+          console.error('Error uploading image to Firestore:', error);
+        }
       };
       reader.readAsDataURL(file);
-    });
+    };
+
+    for (const file of files) {
+      processFile(file);
+    } 
   },
+
     handleDragOver(event) {
       event.preventDefault();
       // Optionally, add visual feedback here
@@ -177,30 +202,6 @@ export default {
         collectionMethod: '',
       };
     },
-
-    // submitForm() {
-    //   // Form submission logic
-
-    //   // Check if there are photos
-    //   if (this.newItem.photos.length > 0) {
-    //     // Assume the first photo is the primary one
-    //     this.newItem.primaryPhoto = this.newItem.photos[0].url;
-    //   }
-    //   // Save the new item data to Local Storage
-    //   let items = JSON.parse(localStorage.getItem('items')) || [];
-    //   items.push(this.newItem);
-    //   localStorage.setItem('items', JSON.stringify(items));
-
-    //   // Clear the photos array after submission
-    //   this.newItem.photos.forEach(photo => {
-    //     URL.revokeObjectURL(photo.url);
-    //   });
-    //   this.newItem.photos = [];
-
-    //    //Navigate to ItemListing
-    //   this.$router.push('/itemlisting');
-    // },
-
 
     validateNumber(event) {
       event.target.value = event.target.value.replace(/[^0-9]+/g, '');

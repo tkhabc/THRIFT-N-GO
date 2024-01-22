@@ -4,14 +4,18 @@
       <section class="your-orders">
         <h1>Your Orders</h1>
         <!-- Repeat this block for each item in the cart -->
-        <div class="order-item">
-          <img src="pizza.png" alt="Italy Pizza">
+        <div v-for="item in cartItems" :key="item.id" class="order-item">
+          
           <div class="item-description">
-            <h2>Italy Pizza</h2>
-            <p>Extra cheese and topping</p>
+            <h2>{{ item.name }}</h2>
+            <p>{{ item.description }}</p>
+            <div class="price">Price: RM{{ item.price }}</div>
           </div>
-          <div class="quantity">1</div>
-          <div class="price">RM9</div>
+          <v-btn color="red" @click="deleteItem(item.id)">Delete</v-btn>
+
+        </div>
+        <div v-if="cartItems.length === 0">
+         No items in the cart.
         </div>
         <!-- ... other items ... -->
       </section>
@@ -41,12 +45,74 @@
 </div>
 </template>
 
-<!-- <script>
+<script>
+import { db } from '@/firebase/firebaseInit'
+import { collection, query, getDocs, onSnapshot,doc,deleteDoc,addDoc } from 'firebase/firestore'
+
 export default {
   name: 'Cart',
-  // Include data, methods, computed properties, etc.
-};
-</script> -->
+  props: {
+    cartItems: {
+      type: Array,
+      default: () => [
+        // Default item
+        {
+          name: 'Sample Item',
+          description: 'Sample description',
+          price: '10.00'
+          // Add other necessary properties for the item
+        }
+      ]
+    }
+  },
+
+  data() {
+    return {
+     //cartItems: []
+    };
+  },
+
+  methods: {},
+  
+//     async deleteItem(documentId) {
+//   const docRef = doc(db, 'cart', documentId);
+
+//   try {
+//     // Delete the document from Firestore
+//     await deleteDoc(docRef);
+//     console.log("Document deleted from cart:", documentId);
+
+//     // Update the local cartItems array to reflect the deletion
+//   this.cartItems = this.cartItems.filter(item => item.id !== documentId);
+//   } catch (error) {
+//     console.error("Error deleting document from cart: ", error);
+//   }
+// },
+// async fetchCartItems() {
+//   const cartCollectionRef = collection(db, 'cart');
+//   try {
+//     const querySnapshot = await getDocs(cartCollectionRef);
+//     this.cartItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     console.log("Cart items fetched:", this.cartItems);
+//   } catch (error) {
+//     console.error("Error fetching cart items:", error);
+//   }
+// },
+
+//   mounted() {
+//     this.fetchCartItems();
+//   },
+
+//   // Optional: Clean up the listener when the component is destroyed
+//   unmounted() {
+//     if (this.unsubscribe) {
+//       this.unsubscribe();
+//     }
+//   }
+// }
+// }
+}
+</script>
 
 <style scoped>
 .container {

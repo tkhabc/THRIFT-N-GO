@@ -2,13 +2,11 @@
 import { initializeApp } from "firebase/app";
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 import {getFirestore, collection, getDoc, getDocs} from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics"
 import { ref, onUnmounted } from 'vue'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getStorage } from "firebase/storage"
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
 const firebaseConfig = {
   apiKey: "AIzaSyA6S7aZW7uV16DrxD7YGjikYHCHI5XN_gQ",
   authDomain: "cat-project-vue.firebaseapp.com",
@@ -25,10 +23,11 @@ const firebase = initializeApp(firebaseConfig);
 const auth = getAuth(firebase);
 const db = getFirestore(firebase);
 const analytics = getAnalytics(firebase);
+const storage = getStorage(firebase);
 const itemsCollection = collection(db, 'items')
 
 export default firebase
-export {auth, createUserWithEmailAndPassword, onAuthStateChanged, db, collection, getDoc, getDocs, signInWithEmailAndPassword, signOut}
+export {auth, storage, createUserWithEmailAndPassword, onAuthStateChanged, db, collection, getDoc, getDocs, signInWithEmailAndPassword, signOut}
 
 export const createItem = item => {
   return itemsCollection.add(item)

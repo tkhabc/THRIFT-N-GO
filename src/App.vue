@@ -2,7 +2,8 @@
   <v-app style="background: #FFFFFF">
     
     <template v-if="!notSignedIn">
-      
+      <Cart :cartItems = "cart"></Cart>
+      <ItemListing  @add-to-cart = "addToCart"></ItemListing>
     </template>
     <NavBar /> 
      <!-- // later hide it -->
@@ -16,11 +17,23 @@
 
 <script>
   import NavBar from '@/components/NavBar.vue'
-
+  import ItemListing from './views/ItemListing.vue';
+  import Cart from './views/Cart.vue';
   export default {
     name: 'App',
     components: {
     NavBar
+  },
+  data() {
+    return {
+      cart: [] // Initialize cart as an empty array
+    }
+  },
+  methods: {
+    addToCart(item) {
+      this.cart.push(item);
+      console.log('Cart updated:', this.cart);
+    }
   },
 
   computed: {

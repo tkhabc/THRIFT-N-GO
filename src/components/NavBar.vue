@@ -59,7 +59,7 @@ export default {
       { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'Chat', path: '/chat' },
-      { title: 'Test', path: '/test'}
+      { title: 'ChatHistory', path: '/chathistory' }
     ]
   }),
   methods: {

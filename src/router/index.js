@@ -12,7 +12,7 @@ import AddFood from '@/views/AddFood.vue'
 import AddItem from '@/views/AddItem.vue'
 import UserLocation from '@/views/UserLocation.vue'
 import Chat from '@/views/Chat.vue'
-import Test from '@/views/Test.vue'
+import ChatHistory from '@/views/ChatHistory.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -86,9 +86,9 @@ const routes = [
     component: Chat
   },
   {
-    path: '/test',
-    name: 'Test',
-    component: Test
+    path: '/chathistory',
+    name: 'ChatHistory',
+    component: ChatHistory
   }
 ]
 

@@ -82,9 +82,8 @@
 <script>
 import { db } from '@/firebase/firebaseInit'
 import { collection, addDoc } from 'firebase/firestore'
-import { storage } from '@/firebase/firebaseInit.js'
-import { ref as storageRef } from "firebase/storage";
-
+import { storage } from '@/firebase/firebaseInit'
+import { ref,  uploadString, getDownloadURL} from "firebase/storage";
 
 export default {
   data() {
@@ -127,15 +126,14 @@ export default {
         const photoBase64 = e.target.result;
         const randomId = Math.random().toString(36).substring(2);
         // Create a reference to the Firestore storage location
-        console.log(storage);
-        storageRef = storage.ref().child(`images/${randomId}.jpg`);
+        const storageRef = ref(storage, `images/${randomId}.jpg`);
 
         try {
           // Upload the Base64-encoded image to Firestore
-          const snapshot = await storageRef.putString(photoBase64, 'data_url');
+          const snapshot = await uploadString(storageRef, photoBase64, 'data_url');
 
           // Get the download URL of the uploaded image
-          const downloadURL = await snapshot.ref.getDownloadURL();
+          const downloadURL = await getDownloadURL(snapshot.ref);
 
           // Add the download URL to your data structure or Firestore database
           this.newItem.photos.push({ url: downloadURL });

@@ -22,8 +22,8 @@
     <!-- <v-card v-for="item in filteredItems" :key="item.id" class="mx-auto item-card" width="300"> -->
     <v-row class="row-padding">
       <v-col cols="6" xs="6" v-for="item in items" :key="item.id">
-    <v-card  class="mx-auto" >
-      <v-img  height="200" :src="getFirstPhoto(item)" @error="imageLoadError" cover>
+    <v-card  class="mx-auto" > 
+      <v-img  height="200" :src="getPhoto(item)" @error="imageLoadError" cover>
         
       </v-img>
       <v-card-title class="text-white">{{ item.name }}</v-card-title>
@@ -84,11 +84,12 @@ export default {
         const querySnapshot = await getDocs(q);
         this.items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       } 
+      
       catch (error) {
         console.error("Error fetching items: ", error);
       }
     },
-  
+    
   // async addToCart(item) {
   //   // Firestore collection reference
   //   const cartCollectionRef = collection(db, 'cart');
@@ -100,12 +101,19 @@ export default {
   //     console.error("Error adding item to cart: ", error);
   //   }
   // },
-  getFirstPhoto(item) {
-    return item.photos && item.photos.length > 0 ? item.photos[0] : 'default-image-url.jpg';
+
+  getPhoto(item) {
+    if (item.photos && item.photos.length > 0) {
+      return item.photos[0].url; 
+    } 
+    else {
+      return 'https://loremflickr.com/640/360';
+      }
   },
 
   imageLoadError() {
     console.error('Error loading image');
+    event.target.src = 'https://via.placeholder.com/200';
   },
     
     goToAddItem() {
@@ -141,7 +149,6 @@ export default {
   width: 100%; /* Ensure card takes the full width of the column */
   margin: 0;
 }
-
 
 .search-add-area {
   display: flex;

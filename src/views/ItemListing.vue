@@ -32,7 +32,9 @@
           <v-card-actions>
             <v-row>
               <v-col cols="6">
-                <v-btn color="orange" block @click="addToCart(item)">Book</v-btn>
+                <v-btn :color="item.booked ? 'grey' : 'orange'" block @click="addToCart(item)">
+                {{ item.booked ? 'Booked' : 'Book' }}
+                </v-btn>
               </v-col>
               <v-col cols="6">
                 <v-btn color="blue" block @click="goToLocation(item)">Location</v-btn>
@@ -97,13 +99,16 @@ export default {
     },
 
     addToCart(item) {
+    if (!item.booked) {
       cartStore.addToCart(item);
-    },
+      item.booked = true; // Mark the item as booked
+    }
+},
     async fetchItems() {
       const q = query(collection(db, 'items'));
       try {
         const querySnapshot = await getDocs(q);
-        this.items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        this.items = querySnapshot.docs.map(doc => ({ id: doc.id,booked: false, ...doc.data() }));
       } 
       
       catch (error) {

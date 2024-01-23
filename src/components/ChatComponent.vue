@@ -1,18 +1,18 @@
 <template>
-    <div class="chat-container">
-      <div v-if="user">
-        <div class="messages">
-          <div v-for="message in messages" :key="message.id" class="message">
-            <span>{{ message.userEmail }}:</span> {{ message.text }}
-          </div>
+  <div class="chat-container">
+    <div v-if="user">
+      <div class="messages">
+        <div v-for="message in messages" :key="message.id" class="message">
+          <span>{{ message.userEmail }}:</span> {{ message.text }}
         </div>
-        <input type="text" v-model="newMessage" @keyup.enter="sendMessage">
       </div>
-      <div v-else>
-        <p>Please log in to view messages.</p>
-      </div>
+      <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type Your Message...">
     </div>
-  </template>
+    <div v-else>
+      <p>Please log in to view messages.</p>
+    </div>
+  </div>
+</template>
   
   
 <script>

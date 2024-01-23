@@ -56,5 +56,18 @@ export default {
   overflow-y: auto; /* Allows scrolling within the modal */
   margin: 20px; /* Space around the modal */
 }
+.item-photo {
+  max-width: 100%; /* Ensures the image width does not exceed the modal width */
+  height: auto; /* Maintains the image's aspect ratio */
+}
+.modal-content button {
+  background-color: red; /* Red background */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 10px 20px; /* Padding for size */
+  border-radius: 5px; /* Rounded corners */
+  font-weight: bold; /* Bold font */
+}
+
 </style>
   

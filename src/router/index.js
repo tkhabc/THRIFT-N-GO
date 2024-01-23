@@ -11,9 +11,9 @@ import ItemListing from '@/views/ItemListing.vue'
 import AddFood from '@/views/AddFood.vue'
 import AddItem from '@/views/AddItem.vue'
 import UserLocation from '@/views/UserLocation.vue'
-import Chat from '@/views/Chat.vue'
 import ChatHistory from '@/views/ChatHistory.vue'
 import ChatComponent from '@/components/ChatComponent.vue'
+import EditItem from '@/components/EditItem.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -82,11 +82,6 @@ const routes = [
     component: UserLocation
   },
   {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat
-  },
-  {
     path: '/chathistory',
     name: 'ChatHistory',
     component: ChatHistory
@@ -95,6 +90,12 @@ const routes = [
     path: '/chatcomponent',
     name: 'ChatComponent',
     component: ChatComponent
+  },
+  {
+    path: '/edit-item/:itemId',
+    name: 'EditItem',
+    component: EditItem,
+    props: true
   },
 ]
 

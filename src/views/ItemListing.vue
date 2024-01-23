@@ -22,6 +22,8 @@
 
     <v-row class="row-padding">
       <v-col cols="6" xs="6" v-for="item in filteredItems" :key="item.id">
+      <!-- <v-col cols="6" xs="6" v-for="item in items" :key="item.id">  //For normal loop -->
+
         <v-card :class="{'booked-item': item.booked}" class="mx-auto">
           <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
           <v-card-title class="text-white">{{ item.name }}</v-card-title>
@@ -42,6 +44,12 @@
               <v-col cols="12">
                 <v-btn block @click.stop="showModal(item)">Show More Details</v-btn>
               </v-col>
+              <v-col cols="6">
+                <button v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
+              </v-col>
+              <v-col cols="6">
+                <button v-if="isOwner(item.uid)" @click="deleteItem(item.id)">Delete</button>
+              </v-col>
             </v-row>
           </v-card-actions>
           <div v-if="item.booked" class="booked-badge">Booked</div>
@@ -60,9 +68,11 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs } from 'firebase/firestore' 
-import { cartStore } from '@/cartStore';
-import ItemDetailsModal from '@/components/ItemDetailsModal.vue';
+import { collection, query, getDocs, doc, deleteDoc } from 'firebase/firestore' 
+import { cartStore } from '@/cartStore'
+import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
+import { auth } from "@/firebase/firebaseInit"
+
 
 export default {
   name: 'ItemListing',
@@ -92,6 +102,27 @@ export default {
   },
 
   methods: {
+    isOwner(itemUploaderUID) {
+      const currentUser = auth.currentUser;
+      return currentUser && currentUser.uid === itemUploaderUID;
+    },
+    editItem(itemId) {
+    this.$router.push({ name: 'EditItem', params: { itemId: itemId }});
+  },
+
+  async deleteItem(itemId) {
+    // Correctly reference the Firestore instance
+    const docRef = doc(db, "items", itemId);
+    try {
+      await deleteDoc(docRef);
+      console.log("Item successfully deleted!");
+      this.items = this.items.filter(item => item.id !== itemId);
+      // Optionally, refresh the items list or navigate away
+    } catch (error) {
+      console.error("Error removing item: ", error);
+    }
+  },
+
     showModal(item) {
       this.selectedItem = item;
       this.isModalVisible = true;
@@ -118,18 +149,6 @@ export default {
         console.error("Error fetching items: ", error);
       }
     },
-    
-  // async addToCart(item) {
-  //   // Firestore collection reference
-  //   const cartCollectionRef = collection(db, 'cart');
-
-  //   try {
-  //     await addDoc(cartCollectionRef, item); // Add item to Firestore collection
-  //     console.error("Item added to cart");
-  //   } catch (error) {
-  //     console.error("Error adding item to cart: ", error);
-  //   }
-  // },
 
   getPhoto(item) {
     if (item.photos && item.photos.length > 0) {
@@ -220,16 +239,26 @@ export default {
   background-color: #f9f9f9;
 }
 
-.v-card-title {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-  color: white;
-  padding: 8px; /* Add some padding around the text */
+.v-card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add shadow for depth */
+  transition: 0.3s; /* Smooth transition for hover effects */
+  border-radius: 10px; /* Softer edges on the card */
+  overflow: hidden; /* Ensures nothing spills out of the card */
 }
 
-.v-card-text {
-  margin-bottom: -20px; /* Or, increase top padding of the text */
-  margin-top:10px;
+.v-card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Larger shadow on hover */
 }
+
+.v-card-title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker background for better readability */
+  padding: 12px; /* More padding for title */
+}
+
 .booked-item {
   opacity: 0.6; /* Makes the card slightly transparent */
   border: 2px solid grey; /* Adds a grey border to indicate it's booked */

@@ -5,7 +5,7 @@
         <img v-if="item.photos && item.photos.length" :src="item.photos[0].url" alt="Item photo" class="item-photo">
   
         <h2>{{ item.name }}</h2>
-        <p>{{ item.description }}</p>
+        <p>Item Description: {{ item.description }}</p>
         <!-- Display additional fields -->
         <p v-if="item.condition">Condition: {{ item.condition }}</p>
         <p v-if="item.quantity">Quantity: {{ item.quantity }}</p>

@@ -1,6 +1,6 @@
 <template>
     <div class="add-item-container">
-      <form @submit.prevent="submitForm">
+      <form @submit.prevent="">
         <!-- Drag and Drop Photo Field -->
         <div class="form-group">
           <label1 for="add-photo" class="form-label">Add Photo (PNG, JPG only)</label1>
@@ -71,8 +71,8 @@
     
         <!-- Submit Button -->
         <div class="button-container">
-          <button type="submit">Confirm & Add</button>
-        </div>
+          <button @click="addItem(); submitForm()" type="submit">Confirm & Add</button>
+        </div> 
   
       </form>
     </div>
@@ -83,7 +83,8 @@
 import { db } from '@/firebase/firebaseInit'
 import { collection, addDoc } from 'firebase/firestore'
 import { storage } from '@/firebase/firebaseInit'
-import { ref,  uploadString, getDownloadURL} from "firebase/storage";
+import { ref,  uploadString, getDownloadURL} from "firebase/storage"
+import { auth } from "@/firebase/firebaseInit" 
 
 export default {
   data() {
@@ -98,12 +99,27 @@ export default {
         price: '',
         location: '',
         collectionMethod: '',
+        uid: '',
       },
       errorMessage: '',
     };
   },
 
   methods: {
+    
+    addItem() {
+    const user = auth.currentUser;
+    console.log("Current User UID: ", user ? user.uid : "No User");
+
+    if (user) {
+      this.newItem.uid = user.uid; // Assigning UID to newItem
+      // Code to add newItem to Firestore
+      console.log("New Item with UID: ", this.newItem);
+    } else {
+      console.error("No user logged in!");
+    }
+  },
+
     handlePhotoUpload(event) {
       this.errorMessage = '';
       this.newItem.photos = [];

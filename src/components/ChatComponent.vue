@@ -38,7 +38,7 @@ export default {
       });
 
       // Load messages from Firestore
-      const messagesRef = collection(db, 'messages');
+      const messagesRef = collection(db, 'messagesTesting');
       const q = query(messagesRef, orderBy('timestamp'));
       onSnapshot(q, async (snapshot) => {
         const messagesWithUsernames = [];
@@ -55,7 +55,7 @@ export default {
       if (!newMessage.value.trim() || !user.value) return;
 
       try {
-        await addDoc(collection(db, 'messages'), {
+        await addDoc(collection(db, 'messagesTesting'), {
           userId: user.value.uid, // Use user's UID as identifier
          // userEmail: user.value.email, // Optionally use email
           text: newMessage.value,

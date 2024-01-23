@@ -348,15 +348,15 @@ input[type="file"] {
 }
   
 button[type="submit"] {
-    width: 22%;
-    padding: 10px 15px;
-    background-color: #1A6757;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 10px;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #1A6757;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 10px;
 }
   
 button[type="submit"]:hover {

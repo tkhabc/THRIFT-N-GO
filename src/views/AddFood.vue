@@ -153,9 +153,6 @@ export default {
 </script>
 
 
-
-
-  
 <style scoped>
 .add-item-container {
   max-width: 800px;

@@ -5,7 +5,7 @@
     </header>
     <main class="main-content">
       <section class="your-orders">
-        <div v-for="item in cartItems" :key="item.id" class="order-item">
+        <div  v-for="(item, index) in cartItems" :key="item.id" class="order-item">
           <div class="item-description">
             <h2 class="item-name">{{ item.name }}</h2>
             <div class="price">RM{{ item.price }}</div>
@@ -65,9 +65,12 @@ export default {
   //   };
   // },
 
-  methods: {removeFromCart(index) {
+  methods: {
+    removeFromCart(index) {
       cartStore.removeFromCart(index);
-    }},
+      console.log("Item removed from cart:", index);
+    }
+  },
   
 //     async deleteItem(documentId) {
 //   const docRef = doc(db, 'cart', documentId);

@@ -1,28 +1,28 @@
 <template>
   <div>
     <v-container class="container-padding">
-    <v-row>
-      <v-col>
-        <div class="item-listing"></div>
-        <div class="search-add-area"></div>
-        <input type="text" placeholder="Enter your desired location" class="search-input">
-      </v-col>
-    </v-row>
-    <v-row class="tight-row-spacing">
-      <v-col>
-        <button class="add-item-button" @click="goToAddItem">Add item</button>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <input type="text" v-model="searchQuery" placeholder="Search items..." class="search-input">
-      </v-col>
-    </v-row>
-  </v-container> 
-  
-  <v-row class="row-padding">
+      <v-row>
+        <v-col>
+          <div class="item-listing"></div>
+          <div class="search-add-area"></div>
+          <input type="text" placeholder="Enter your desired location" class="search-input">
+        </v-col>
+      </v-row>
+      <v-row class="tight-row-spacing">
+        <v-col>
+          <button class="add-item-button" @click="goToAddItem">Add item</button>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <input type="text" v-model="searchQuery" placeholder="Search items..." class="search-input">
+        </v-col>
+      </v-row>
+    </v-container> 
+
+    <v-row class="row-padding">
       <v-col cols="6" xs="6" v-for="item in filteredItems" :key="item.id">
-        <v-card class="mx-auto">
+        <v-card :class="{'booked-item': item.booked}" class="mx-auto">
           <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
           <v-card-title class="text-white">{{ item.name }}</v-card-title>
           <v-card-text>
@@ -33,7 +33,7 @@
             <v-row>
               <v-col cols="6">
                 <v-btn :color="item.booked ? 'grey' : 'orange'" block @click="addToCart(item)">
-                {{ item.booked ? 'Booked' : 'Book' }}
+                  {{ item.booked ? 'Booked' : 'Book' }}
                 </v-btn>
               </v-col>
               <v-col cols="6">
@@ -44,6 +44,7 @@
               </v-col>
             </v-row>
           </v-card-actions>
+          <div v-if="item.booked" class="booked-badge">Booked</div>
         </v-card>
       </v-col>
     </v-row>
@@ -55,6 +56,7 @@
     />
   </div>
 </template>
+
 
 <script>
 import { db } from '@/firebase/firebaseInit'
@@ -81,10 +83,11 @@ export default {
 
   computed: {
     filteredItems() {
-      return this.items.filter(item => {
-        return item.name  && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-      });
-    },
+  return this.items.filter(item => {
+    item.booked = cartStore.isItemBooked(item.id); // Update booked status
+    return item.name && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+  });
+},
     
   },
 
@@ -99,10 +102,10 @@ export default {
     },
 
     addToCart(item) {
-    if (!item.booked) {
-      cartStore.addToCart(item);
-      item.booked = true; // Mark the item as booked
-    }
+  if (!cartStore.isItemBooked(item.id)) {
+    cartStore.addToCart(item);
+    // No need to update item.booked here, it will be computed based on cartStore
+  }
 },
     async fetchItems() {
       const q = query(collection(db, 'items'));
@@ -227,5 +230,21 @@ export default {
   margin-bottom: -20px; /* Or, increase top padding of the text */
   margin-top:10px;
 }
+.booked-item {
+  opacity: 0.6; /* Makes the card slightly transparent */
+  border: 2px solid grey; /* Adds a grey border to indicate it's booked */
+}
+
+.booked-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: grey;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+}
+
 
 </style>

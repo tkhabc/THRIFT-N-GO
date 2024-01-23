@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
 import {getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
-import {getFirestore, collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs} from "firebase/firestore"
+import {getFirestore, collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs, doc} from "firebase/firestore"
 import { getAnalytics } from "firebase/analytics"
 import { ref, onUnmounted, computed } from 'vue'
 import { getStorage } from "firebase/storage"
@@ -27,7 +27,7 @@ const storage = getStorage(firebase);
 const itemsCollection = collection(db, 'items')
 
 export default firebase
-export {auth, storage, createUserWithEmailAndPassword, onAuthStateChanged, db, collection, getDoc, getDocs, signInWithEmailAndPassword, signOut}
+export {auth, storage, createUserWithEmailAndPassword, onAuthStateChanged, db, collection, getDoc, getDocs, doc, signInWithEmailAndPassword, signOut}
 
 //for get and set
 export const createItem = item => {

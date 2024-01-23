@@ -75,12 +75,35 @@
   </div>
 </template>
 
+hiiii
 
 <script setup>
 import router from '@/router';
-import {auth, createUserWithEmailAndPassword} from '@/firebase/firebaseInit'
+import {auth, createUserWithEmailAndPassword, db} from '@/firebase/firebaseInit'
 import {GoogleAuthProvider, signInWithPopup} from "firebase/auth"
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import {ref} from 'vue'
+
+const storeUserInFirestore = async (user) => {
+  const userRef = doc(db, 'users', user.uid);
+  const docSnap = await getDoc(userRef);
+
+  if (!docSnap.exists()) {
+    // User doesn't exist in Firestore, so create a new record
+    await setDoc(userRef, {
+      username: user.displayName || 'Anonymous', // Use Google display name
+      email: user.email,
+      // Add other relevant user info
+    });
+  }
+};
+
+// Example usage after successful Google sign-in
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    storeUserInFirestore(user);
+  }
+});
 
 const email = ref('')
 const password = ref('')

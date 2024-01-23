@@ -1,9 +1,9 @@
-<template>
+<template>hhhhhh
   <div class="chat-container">
     <div v-if="user">
       <div class="messages">
         <div v-for="message in messages" :key="message.id" class="message">
-          <span>{{ message.userEmail }}:</span> {{ message.text }}
+          <span>{{ message.username || 'Unknown User' }}:</span> {{ message.text }}
         </div>
       </div>
       <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type Your Message...">
@@ -17,7 +17,7 @@
   
 <script>
 import { ref, onMounted } from 'vue';
-import { auth, db, collection } from '@/firebase/firebaseInit';
+import { auth, db, collection, doc, getDoc } from '@/firebase/firebaseInit';
 import { addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
 export default {
@@ -40,8 +40,14 @@ export default {
       // Load messages from Firestore
       const messagesRef = collection(db, 'messages');
       const q = query(messagesRef, orderBy('timestamp'));
-      onSnapshot(q, (snapshot) => {
-        messages.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      onSnapshot(q, async (snapshot) => {
+        const messagesWithUsernames = [];
+        for (const doc of snapshot.docs) {
+          const messageData = doc.data();
+          const username = await fetchUsername(messageData.userId);
+          messagesWithUsernames.push({ id: doc.id, username, ...messageData });
+        }
+        messages.value = messagesWithUsernames;
       });
     });
 
@@ -51,7 +57,7 @@ export default {
       try {
         await addDoc(collection(db, 'messages'), {
           userId: user.value.uid, // Use user's UID as identifier
-          userEmail: user.value.email, // Optionally use email
+         // userEmail: user.value.email, // Optionally use email
           text: newMessage.value,
           timestamp: serverTimestamp(),
         });
@@ -62,6 +68,14 @@ export default {
         // Handle error
       }
     };
+
+     // Function to fetch username from Firestore
+     async function fetchUsername(userId) {
+  const userRef = doc(db, 'users', userId);
+  const userDoc = await getDoc(userRef);
+  return userDoc.exists() ? userDoc.data().username : 'Unknown User';
+}
+
 
     return { newMessage, messages, user, sendMessage };
   },

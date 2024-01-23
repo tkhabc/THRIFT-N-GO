@@ -10,7 +10,7 @@
       </v-row>
       <v-row class="tight-row-spacing">
         <v-col>
-          <button class="add-item-button" @click="goToAddItem">Add item</button>
+          <button class="add-item-button" @click="goToAddItem">Press Here To Sell Your Item</button>
         </v-col>
       </v-row>
       <v-row>

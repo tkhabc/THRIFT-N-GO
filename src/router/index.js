@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/views/Home.vue'
+import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Register from '@/views/Register.vue'
@@ -20,8 +20,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    name: 'Landing',
+    component: Landing,
     meta: {
       requiresAuth: true
     }

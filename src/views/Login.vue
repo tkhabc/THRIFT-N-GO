@@ -22,6 +22,7 @@
           <v-card-title class="headline">Log In And Start To Thrift N Go!</v-card-title>
           <v-card-text>
             <v-form>
+          <div>
           <v-text-field
             label="Email"
             required
@@ -64,6 +65,16 @@
             <img class="google-icon" alt="Google Logo" src="../assets/GoogleLogo.png"/>
             Sign In With Google
           </v-btn>
+
+          <v-btn
+            color="teal-darken-2"
+            @click="goToRegister"
+            large
+            block
+            class="mb-2 text-bold"
+          >Haven't Registered?</v-btn>
+
+        </div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -105,6 +116,10 @@ auth.onAuthStateChanged((user) => {
 const email = ref('');
 const password = ref('');
 const errMsg =ref();
+
+const goToRegister = () => {
+  router.push('/register')
+}
 
 const register = () => {
   signInWithEmailAndPassword(auth, email.value, password.value)

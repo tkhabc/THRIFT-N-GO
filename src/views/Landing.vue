@@ -7,7 +7,7 @@
     <img class="zoom-effect" alt="Thrift N Go Logo" width="100%" src="../assets/ThriftNGoLogo.png">
   </span>
   <div class="heading-text text-h6 color:white text-center font-weight-bold color-transition shake-on-hover">
-    Save Planet Earth By Thrifting and Sharing Unwanted Goods With The Community
+    Save Our Earth By Thrifting and Sharing Unwanted Goods With The Community
   </div>
     <div>
     <v-btn @click="goToLogin" class="custom-btn" color="teal-lighten-1">Login</v-btn>

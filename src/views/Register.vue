@@ -63,9 +63,18 @@
                   large
                   block
                 >
-                  <img class="google-icon" alt="Google Logo" src="../assets/GoogleLogo.png"/>
+                  <img class="google-icon" alt="Google Logo" src="@/assets/GoogleLogo.png"/>
                   Sign Up With Google
                 </v-btn>
+
+                <v-btn
+                  color="teal-darken-2"
+                  @click="goToLogin"
+                  large
+                  block
+                  class="mb-2 text-bold"
+                >Already Registered?</v-btn>
+
               </div>
             </v-form>
           </v-card-text>
@@ -74,8 +83,6 @@
     </div>
   </div>
 </template>
-
-hiiii
 
 <script setup>
 import router from '@/router';
@@ -135,6 +142,11 @@ const handleAuthError = (error) => {
   alert(error.message);
 };
 
+
+function goToLogin(){
+    router.push('/login')
+  }
+  
 const register = () => {
   if (!isValidEmail()) {
     alert('Please enter a valid email address.');

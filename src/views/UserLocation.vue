@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="ui two column centered grid" style="position:relative;z-index:1">
-      <div class="column">
+      <div class="sixteen wide column">
         <form @submit.prevent="submitForm" class="ui segment large form">
           <div class="ui message red" v-show="error">{{error}}</div>
           <div class="ui segment">
@@ -63,6 +63,8 @@
 
   autocomplete.addListener("place_changed", () => {
     var place = autocomplete.getPlace();
+    // Update this.address with the formatted address from the selected place
+    this.address = place.formatted_address;
 
     this.showLocationOnTheMap(
       place.geometry.location.lat(),
@@ -76,6 +78,9 @@
     // Optionally, you can also show this location on the map:
     // this.showLocationOnTheMap(...); // Provide the latitude and longitude
   }
+
+  const trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(map);
 },
   
     methods: {
@@ -256,4 +261,8 @@ calculateRoute(lat, lng) {
   border-radius: 5px; /* Rounded corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
+.ui.segment.large.form {
+    padding: 20px; /* Adjust as needed */
+    /* Additional styles */
+  }
 </style>

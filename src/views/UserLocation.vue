@@ -1,4 +1,8 @@
 <template>
+hi
+</template>
+
+<!-- <template>
   <div>
     <section class="ui two column centered grid" style="position:relative;z-index:1">
       <div class="sixteen wide column">
@@ -211,9 +215,9 @@ calculateRoute(lat, lng) {
 
     },
   };
-  </script>
+  </script> -->
   
-  
+<!--   
   <style>
 .ui.button,
 .dot.circle.icon {
@@ -265,4 +269,4 @@ calculateRoute(lat, lng) {
     padding: 20px; /* Adjust as needed */
     /* Additional styles */
   }
-</style>
+</style> -->

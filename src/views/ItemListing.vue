@@ -3,17 +3,28 @@
     <v-container class="container-padding">
       <v-row>
         <v-col>
-          <div class="item-listing"></div>
-          <div class="search-add-area"></div>
-          <v-slider
-            v-model="maxDistance"
-            :max="20"
-            step="5"
-            show-ticks="always"
-            tick-size="4"
-            class="distance-slider"
-            thumb-label="always"
-          ></v-slider>        
+          <div class="slider-caption">
+      <label for="distance-slider">Filter Items by Distance (up to 20 km)</label>
+    </div>
+    <v-slider
+      v-model="maxDistance"
+      :max="20"
+      step="5"
+      show-ticks="always"
+      tick-size="4"
+      class="distance-slider"
+      thumb-label="always"
+      id="distance-slider"
+      @change="filterItemsByDistance"
+    >
+      <template v-slot:append>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <span v-on="on">{{ maxDistance }} km</span>
+          </template>
+        </v-tooltip>
+      </template>
+    </v-slider>        
       </v-col>
       </v-row>
       <v-row>
@@ -23,10 +34,23 @@
       </v-row>
       <v-row class="tight-row-spacing">
         <v-col>
-          <button class="add-item-button" @click="goToAddItem">Sell Your Item</button>
+          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Item</button>
         </v-col>
       </v-row>
     </v-container> 
+    <v-dialog v-model="isQuantityDialogOpen" max-width="290">
+    <v-card>
+      <v-card-title class="headline">Select Quantity</v-card-title>
+      <v-card-text>
+        <v-text-field v-model="selectedQuantity" type="number" label="Quantity" min="1" :max="selectedItemForBooking?.quantity"></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="green darken-1" text @click="confirmBooking">Confirm</v-btn>
+        <v-btn color="red darken-1" text @click="isQuantityDialogOpen = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
     <v-row class="row-padding">
       <v-col cols="6" xs="6" v-for="item in processAndFilterItems(items)" :key="item.id">
@@ -35,7 +59,8 @@
           <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
           <button class="edit-button traditional-button" v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
           <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
-          <v-card-title>{{ item.name }}</v-card-title>
+          <v-card-title>{{ item.name }}
+            <span class="item-quantity-display">{{ item.quantity }} in stock</span></v-card-title>
           <v-card-text>
             <div v-if="item.distance">{{ item.distance }} away</div>
             <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
@@ -44,9 +69,16 @@
           <v-card-actions>
             <v-row>
               <v-col cols="6" class="bookButton">
-                <v-btn :color="item.booked ? 'grey' : 'orange'" block @click.stop="addToCart(item)">
-                  {{ item.booked ? 'Booked' : 'Book' }}
+                <v-btn 
+                :color="getItemColor(item.quantity)" 
+                block 
+                @click.stop="item.quantity === 0 ? null : addToCart(item)"
+                :disabled="item.quantity === 0"
+                
+                >
+                  {{ getItemLabel(item.quantity) }}
                 </v-btn>
+
               </v-col>
               <v-col cols="6" class="locationButton">
                 <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
@@ -73,7 +105,7 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs, doc, deleteDoc } from 'firebase/firestore' 
+import { collection, query, getDocs, doc, deleteDoc, setDoc } from 'firebase/firestore' 
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
@@ -94,6 +126,10 @@ export default {
       selectedItem: null,
       isModalVisible: false,
       maxDistance: 20,
+      isQuantityDialogOpen: false,
+    selectedQuantity: 1, // Default quantity
+    selectedItemForBooking: null// To keep track of the item being booked
+  
     };
   },
 
@@ -109,16 +145,21 @@ export default {
 
   methods: {
     processAndFilterItems(items) {
-      return items.filter(item => {
-        item.booked = cartStore.isItemBooked(item.id); // Update booked status
-        return item.name && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-      });
-    },
-    async goToChat(sellerId) {
-    const currentUser = auth.currentUser;
-    const chatroomId = await createOrGetChatroom(sellerId, currentUser.uid);
-    this.$router.push({ name: 'ChatRoom', params: { chatroomId } });
+    return items.filter(item => {
+      // Convert distance to a number and check if it's within the maxDistance
+      const distanceKm = parseFloat(item.distance);
+      const isWithinDistance = !isNaN(distanceKm) && distanceKm <= this.maxDistance;
+
+      // Check if the item matches the search query
+      const matchesSearchQuery = item.name && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+      // Only include items that match both the distance and search criteria
+      return isWithinDistance && matchesSearchQuery;
+    });
   },
+  isItemBooked(itemId) {
+      return cartStore.bookedItems.has(itemId);
+    },
     isOwner(itemUploaderUID) {
       const currentUser = auth.currentUser;
       return currentUser && currentUser.uid === itemUploaderUID;
@@ -150,9 +191,37 @@ export default {
     },
 
     addToCart(item) {
-  if (!cartStore.isItemBooked(item.id)) {
-    cartStore.addToCart(item);
-    // No need to update item.booked here, it will be computed based on cartStore
+    if (!cartStore.isItemBooked(item.id)) {
+      
+      this.selectedItemForBooking = item;
+      this.isQuantityDialogOpen = true;
+    }
+},
+async confirmBooking() {
+  if (this.selectedItemForBooking) {
+    // Calculate new quantity
+    const newQuantity = this.selectedItemForBooking.quantity - this.selectedQuantity;
+
+    try {
+      // Update Firestore
+      const itemRef = doc(db, "items", this.selectedItemForBooking.id);
+      await setDoc(itemRef, { quantity: newQuantity }, { merge: true });
+      
+      // Update local items array
+      this.items = this.items.map(item => {
+        if (item.id === this.selectedItemForBooking.id) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+
+      // Add to cart and close dialog
+      cartStore.addToCart(this.selectedItemForBooking);
+      this.isQuantityDialogOpen = false;
+      console.log("Quantity updated in Firestore and locally");
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
   }
 },
     async fetchItems() {
@@ -166,6 +235,19 @@ export default {
         console.error("Error fetching items: ", error);
       }
     },
+   async updateItemQuantityInFirestore(item) {
+    const newQuantity = item.quantity - this.selectedQuantity; // Calculate new quantity
+    const itemRef = doc(db, "items", item.id);
+    console.log("Original item quantity:", item.quantity);
+    console.log("Selected quantity to book:", this.selectedQuantity);
+    console.log("Current item quantity:", newQuantity);
+    try {
+      await setDoc(itemRef, { quantity: newQuantity }, { merge: true });
+      console.log("Quantity updated in Firestore");
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  },
 
   getPhoto(item) {
     if (item.photos && item.photos.length > 0) {
@@ -188,7 +270,15 @@ export default {
     goToLocation(item) {
       this.$router.push({ name: 'UserLocation', query: { location: item.location } });
     },
+    getItemColor(quantity) {
+      return quantity === 0 ? 'grey' : 'orange';
+    },
+
+    getItemLabel(quantity) {
+      return quantity === 0 ? 'Booked' : 'Book';
+    },
   },
+ 
 
   mounted() {
     this.fetchItems();
@@ -205,9 +295,14 @@ export default {
   padding-right: 0; 
   /* background-color: #FFB74D; */
 }
+.slider-caption {
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
 .distance-slider {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .locationButton{
@@ -239,17 +334,17 @@ export default {
   z-index: 10; /* Ensure the button is above other elements */
 }
 
-
+  
 .delete-button {
   position: absolute;
   top: 0px;
   right: 0px;
-  font-size: 0.9rem; /* Adjust as needed */
+  font-size: 0.9rem; 
   color: white;
-  background-color: red; /* Or any other color you prefer */
+  background-color: red; 
   border: none;
   border-radius: 50%; /* To make it look like a circle */
-  padding: 5px 7px; /* Adjust the padding to ensure it's circular */
+  padding: 5px 7px; /*
   line-height: 1; /* Aligns the text 'X' in the center */
   width: 1.5em; /* Ensures the width is enough for the content */
   height: 1.5em; /* Ensures the height is equal to width to make a circle */
@@ -395,5 +490,14 @@ export default {
 
 .donation-item {
   border: 2px solid #4CAF50; /* Green border for donation items */
+}
+.item-quantity-display {
+  margin-left: 10px; /* Space from the item name */
+  background-color: #4CAF50; /* Green background for visibility */
+  color: white; /* White text for contrast */
+  font-weight: bold; /* Bold font */
+  padding: 3px 6px; /* Padding around the text */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 0.8rem; /* Smaller font size */
 }
 </style>

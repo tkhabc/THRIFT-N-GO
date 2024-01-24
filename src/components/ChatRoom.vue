@@ -5,7 +5,7 @@
             <div class="message-info">
                 <span class="message-time, timestamp">{{ formatTimestamp(message.timestamp) }}</span>
                 <!-- <span class="message-time">{{ new Date(message.timestamp.toDate()).toLocaleString() }}</span> -->
-                <div class="message-username">{{ message.username }}</div>
+                <div class="message-username" @click="goToUserProfile(message.senderId)">{{ message.username }}</div>
                 <div class="message-text">{{ message.text }}</div>
             </div>
         </div>
@@ -29,6 +29,7 @@
   import { ref, onMounted, computed, nextTick } from 'vue'
   import { db, auth } from '@/firebase/firebaseInit'
   import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
+  import router from '@/router/index'
 
   
   export default {
@@ -42,6 +43,9 @@
       const messagesContainer = ref(null); // Reference to the messages container
       //const currentUserId = computed(() => auth.currentUser?.uid);
   
+      const goToUserProfile = (userId) => {
+      router.push({ path: `/userprofile/${userId}` });
+        };
 
       const scrollToBottom = () => {
         nextTick(() => {
@@ -75,7 +79,7 @@
         };
 
       onMounted(loadMessages);
-      return { messages, newMessage, sendMessage,  messagesContainer };
+      return { messages, newMessage, sendMessage,  messagesContainer, goToUserProfile  };
     },
 
     methods: {
@@ -104,6 +108,10 @@
   </script>
   
   <style scoped>
+  .user-item {
+  cursor: pointer;
+  color: blue; /* Style as needed */
+}
  .message-time {
   font-size: 0.75em; /* Reduced font size for timestamp */
   color: #999;
@@ -139,7 +147,8 @@
   
 .mine {
   align-self: flex-end;
-  background-color: #daf8cb;
+  color: #1A6757;
+  background-color: #54c71b;
 }
 
 .theirs {

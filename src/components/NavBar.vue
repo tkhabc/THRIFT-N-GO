@@ -51,11 +51,11 @@ export default {
   data: () => ({
     drawer: false,
     menuItems: [
+      { title: 'UserProfile', path: '/userprofile' },
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
       { title: 'Booking', path: '/booking' },
       { title: 'Contact', path: '/contact' },
-      { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'ChatHistory', path: '/chathistory' },
       { title: 'ChatList', path: '/chatlist' },

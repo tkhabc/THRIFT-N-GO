@@ -1,4 +1,7 @@
-import { reactive } from 'vue';
+import { reactive } from 'vue'
+import { db } from '@/firebase/firebaseInit'; // adjust the path as necessary
+import { collection, addDoc, doc, setDoc } from 'firebase/firestore'
+
 
 export const cartStore = reactive({
   items: [],
@@ -6,9 +9,11 @@ export const cartStore = reactive({
 
 
   addToCart(item) {
-    this.items.push(item);
+    const timestamp = Date.now(); // Current time in milliseconds
+    this.items.push({ ...item, addedAt: timestamp });
     this.bookedItems.add(item.id); // Mark as booked
   },
+    
   removeFromCart(index) {
     if (index >= 0 && index < this.items.length) {
       const item = this.items[index];

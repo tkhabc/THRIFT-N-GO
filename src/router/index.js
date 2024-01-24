@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
-import Profile from '@/views/Profile.vue'
 import Register from '@/views/Register.vue'
 import Booking from '@/views/Booking.vue'
 import Contact from '@/views/Contact.vue'
@@ -15,6 +14,7 @@ import EditItem from '@/components/EditItem.vue'
 import ChatRoom from '@/components/ChatRoom.vue'
 import ChatList from '@/views/ChatList.vue'
 import ChatTesting from '@/views/ChatTesting.vue'
+import UserProfile from '@/components/UserProfile.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -31,11 +31,6 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile
   },
   {
     path: '/register',
@@ -103,6 +98,11 @@ const routes = [
     path: '/chattesting',
     name: 'ChatTesting',
     component: ChatTesting
+  },
+  {
+    path: '/userprofile/:userId',
+    name: 'UserProfile',
+    component: UserProfile
   },
 ]
 

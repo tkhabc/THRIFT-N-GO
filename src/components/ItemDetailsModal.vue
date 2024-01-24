@@ -1,12 +1,18 @@
 <template>
   <div class="modal-background" v-if="visible" @click.self="close">
     <div class="modal-content">
-      <div class="image-container" v-if="item.photos && item.photos.length > 1">
+      <div class="image-slider-container">
         <img :src="currentImageUrl" alt="Item photo" class="item-photo">
-        <div class="nav-arrow left-arrow" @click="prevImage"></div>
-        <div class="nav-arrow right-arrow" @click="nextImage"></div>
+        <div class="dots-container">
+          <span 
+            v-for="(photo, index) in item.photos" 
+            :key="index" 
+            class="dot" 
+            :class="{ active: currentIndex === index }" 
+            @click="setCurrentIndex(index)">
+          </span>
+        </div>
       </div>
-      <img v-else-if="item.photos && item.photos.length" :src="item.photos[0].url" alt="Item photo" class="item-photo">
       <h1>{{ item.name }}</h1>
       <p>{{ item.description }}</p>
       <hr class="modal-divider"> 
@@ -24,7 +30,10 @@
 <script>
 export default {
   props: {
-    item: Object,
+    item: {
+      type: Object,
+      default: () => ({ photos: [] }),
+    },
     visible: Boolean
   },
   data() {
@@ -34,18 +43,15 @@ export default {
   },
   computed: {
     currentImageUrl() {
-      return this.item.photos[this.currentIndex].url;
+      return this.item.photos.length > 0 ? this.item.photos[this.currentIndex].url : '';
     }
   },
   methods: {
     close() {
       this.$emit('close');
     },
-    nextImage() {
-      this.currentIndex = (this.currentIndex + 1) % this.item.photos.length;
-    },
-    prevImage() {
-      this.currentIndex = (this.currentIndex - 1 + this.item.photos.length) % this.item.photos.length;
+    setCurrentIndex(index) {
+      this.currentIndex = index;
     }
   }
 }
@@ -91,6 +97,7 @@ export default {
   border-top-left-radius: 10px; /* Rounded top corners */
   border-top-right-radius: 10px; /* Rounded top corners */
   height: auto; /* Maintain aspect ratio */
+  display:b
 }
 
 .modal-content h2 {

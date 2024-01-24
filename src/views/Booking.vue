@@ -9,6 +9,9 @@
           <div class="item-description">
             <h2 class="item-name">{{ item.name }}</h2>
             <div class="price">RM{{ item.price }}</div>
+            <div class="countdown">
+            Time left: {{ calculateRemainingTime(item.addedAt) }}
+            </div>
           </div>
           <v-btn class="delete-btn" @click="removeFromCart(index)">Remove</v-btn>
         </div>
@@ -56,8 +59,35 @@ export default {
     removeFromCart(index) {
       cartStore.removeFromCart(index);
       console.log("Item removed from cart:", index);
-    }
+    },
+  
+  calculateRemainingTime(addedAt) {
+      const now = Date.now();
+      const duration = 30 * 60 * 1000; // 30 minutes in milliseconds
+      const timeLeft = addedAt + duration - now;
+      if (timeLeft <= 0) {
+        return "Time's up";
+      }
+      return this.formatTime(timeLeft);
+    },
+    formatTime(milliseconds) {
+      const minutes = Math.floor(milliseconds / 60000);
+      const seconds = ((milliseconds % 60000) / 1000).toFixed(0);
+      return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+    },
+    forceUpdate() {
+    this.$forceUpdate(); // Force Vue to re-render the component
   },
+
+beforeDestroy() {
+  clearInterval(this.interval); // Clear the interval when the component is destroyed
+}
+  },
+  mounted() {
+  this.interval = setInterval(() => {
+    this.forceUpdate(); // Method to force a component update
+  }, 1000);
+},
   
 //     async deleteItem(documentId) {
 //   const docRef = doc(db, 'cart', documentId);

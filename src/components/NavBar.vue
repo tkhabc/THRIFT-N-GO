@@ -59,7 +59,8 @@ export default {
       { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'ChatHistory', path: '/chathistory' },
-      { title: 'ChatComponent', path: '/chatcomponent' }
+      { title: 'ChatComponent', path: '/chatcomponent' },
+      { title: 'ChatList', path: '/chatlist' }
     ]
   }),
   methods: {

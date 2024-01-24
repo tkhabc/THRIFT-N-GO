@@ -4,8 +4,8 @@
       <!-- If your item has photos, show the first one -->
       <img v-if="item.photos && item.photos.length" :src="item.photos[0].url" alt="Item photo" class="item-photo">
 
-      <h2>{{ item.name }}</h2>
-      <hr class="modal-divider"> <!-- Horizontal line after the item name -->
+      <h1>{{ item.name }}</h1>
+
       <h2>Description</h2>
       <p>{{ item.description }}</p>
       <hr class="modal-divider"> <!-- Horizontal line after the description -->

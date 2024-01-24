@@ -14,6 +14,8 @@ import UserLocation from '@/views/UserLocation.vue'
 import ChatHistory from '@/views/ChatHistory.vue'
 import ChatComponent from '@/components/ChatComponent.vue'
 import EditItem from '@/components/EditItem.vue'
+import ChatRoom from '@/components/ChatRoom.vue'
+import ChatList from '@/components/ChatList.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -96,6 +98,17 @@ const routes = [
     name: 'EditItem',
     component: EditItem,
     props: true
+  },
+  {
+    path: '/chatroom/:chatroomId',
+    name: 'ChatRoom',
+    component: ChatRoom,
+    props: true
+  },
+  {
+    path: '/chatlist',
+    name: 'ChatList',
+    component: ChatList
   },
 ]
 

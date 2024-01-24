@@ -42,7 +42,7 @@
                 <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
               </v-col>
               <v-col cols="12">
-                <v-btn color="blue" block @click="initiateChat(item.uid)">Chat with Seller</v-btn>
+                <v-btn color="blue" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
               </v-col>
             </v-row>
           </v-card-actions>
@@ -66,7 +66,7 @@ import { collection, query, getDocs, doc, deleteDoc } from 'firebase/firestore'
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
-
+import { createOrGetChatroom } from "@/firebase/chatService"
 
 export default {
   name: 'ItemListing',
@@ -102,6 +102,11 @@ export default {
         return item.name && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
     },
+    async goToChat(sellerId) {
+    const currentUser = auth.currentUser;
+    const chatroomId = await createOrGetChatroom(sellerId, currentUser.uid);
+    this.$router.push({ name: 'ChatRoom', params: { chatroomId } });
+  },
     isOwner(itemUploaderUID) {
       const currentUser = auth.currentUser;
       return currentUser && currentUser.uid === itemUploaderUID;

@@ -1,8 +1,7 @@
-
 <template>
   <div>
     <section class="ui two column centered grid" style="position:relative;z-index:1">
-      <div class="sixteen wide column">
+      <div class="column">
         <form @submit.prevent="submitForm" class="ui segment large form">
           <div class="ui message red" v-show="error">{{error}}</div>
           <div class="ui segment">
@@ -46,61 +45,36 @@
         spinner: false,
         distance: '',
         duration: '',
-        map: null, // Added map as a data property
       };
     },
   
     mounted() {
-      this.initializeMap();
-    },
-  
+  //this.initializeAutocomplete();
+  // Initialize the Google Places Autocomplete
+  var autocomplete = new google.maps.places.Autocomplete(
+    this.$refs["autocomplete"],
+    {
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(5.3558,100.2900)
+      ),
+    }
+  );
+  autocomplete.addListener("place_changed", () => {
+    var place = autocomplete.getPlace();
+    this.showLocationOnTheMap(
+      place.geometry.location.lat(),
+      place.geometry.location.lng()
+    );
+  });
+  // Check if there's a location query parameter and set the address
+  if (this.$route.query.location) {
+    this.address = this.$route.query.location;
+    // Optionally, you can also show this location on the map:
+    // this.showLocationOnTheMap(...); // Provide the latitude and longitude
+  }
+},
   
     methods: {
-      initializeMap() {
-      // Initialize the Google Places Autocomplete
-      const autocomplete = new google.maps.places.Autocomplete(
-        this.$refs["autocomplete"],
-        {
-          bounds: new google.maps.LatLngBounds(
-            new google.maps.LatLng(5.3558,100.2900)
-          ),
-        }
-      );
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        this.address = place.formatted_address;
-        this.showLocationOnTheMap(
-          place.geometry.location.lat(),
-          place.geometry.location.lng()
-        );
-      });
-
-      if (this.$route.query.location) {
-        this.address = this.$route.query.location;
-      }
-
-      // Initialize the map
-      this.map = new google.maps.Map(this.$refs["map"], {
-        zoom: 15,
-        center: new google.maps.LatLng(5.3558,100.2900), // Default center
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-      });
-
-      // Initialize traffic layer
-      const trafficLayer = new google.maps.TrafficLayer();
-      trafficLayer.setMap(this.map);
-
-      // Real-time location tracking
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((position) => {
-          const currentLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          this.map.setCenter(currentLocation);
-        });
-      }
-    },
       displayRouteInfo(distance, duration) {
         this.distance = distance;
         this.duration = duration;
@@ -176,7 +150,6 @@
       },
       submitForm() {
   this.spinner = true;
-
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       this.calculateRoute(position.coords.latitude, position.coords.longitude);
@@ -189,22 +162,18 @@
     this.spinner = false;
   }
 },
-
 calculateRoute(lat, lng) {
   const origin = { lat, lng };
   const destination = this.address;
-
   // Initialize directions service and renderer
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
-
   // Initialize the map
   const map = new google.maps.Map(this.$refs.map, {
     zoom: 7,
     center: origin
   });
   directionsRenderer.setMap(map);
-
   directionsService.route({
     origin: origin,
     destination: destination,
@@ -216,7 +185,6 @@ calculateRoute(lat, lng) {
       const distance = response.routes[0].legs[0].distance.text;
       const duration = response.routes[0].legs[0].duration.text;
       this.displayRouteInfo(distance, duration);
-
       this.error = "";
     } else {
       console.error('Directions request failed', status, response);
@@ -225,37 +193,31 @@ calculateRoute(lat, lng) {
     this.spinner = false;
   });
 }
-
     },
   };
-  </script> 
+  </script>
   
-
+  
   <style>
 .ui.button,
 .dot.circle.icon {
   background-color: #ff5a5f;
   color: white;
 }
-
 .pac-icon {
   display: none;
 }
-
 .pac-item {
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
 }
-
 .pac-item:hover {
   background-color: #ececec;
 }
-
 .pac-item-query {
   font-size: 16px;
 }
-
 #map {
   position: absolute;
   left: 0;
@@ -263,13 +225,11 @@ calculateRoute(lat, lng) {
   top: 0;
   bottom: 0;
 }
-
 .submit-distance-container {
   display: flex;
   align-items: center; /* Align vertically */
   justify-content: space-between; /* Space between button and distance display */
 }
-
 .route-info-display {
   background-color: #f0f0f0; /* Light background for visibility */
   padding: 10px;
@@ -278,8 +238,4 @@ calculateRoute(lat, lng) {
   border-radius: 5px; /* Rounded corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
-.ui.segment.large.form {
-    padding: 20px; /* Adjust as needed */
-    /* Additional styles */
-  }
 </style>

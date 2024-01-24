@@ -51,7 +51,6 @@ export default {
   data: () => ({
     drawer: false,
     menuItems: [
-      { title: 'About Us', path: '/about' },
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
       { title: 'Orders', path: '/cart' },

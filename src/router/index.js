@@ -3,7 +3,6 @@ import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Register from '@/views/Register.vue'
-import About from '@/views/About.vue'
 import Cart from '@/views/Cart.vue'
 import Contact from '@/views/Contact.vue'
 import FoodListing from '@/views/FoodListing.vue'
@@ -27,11 +26,6 @@ const routes = [
     meta: {
       requiresAuth: true
     }
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: About
   },
   {
     path: '/login',

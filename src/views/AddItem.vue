@@ -60,6 +60,14 @@
           <textarea id="location-address" class="location-input" v-model="newItem.location" required rows="1"></textarea>
         </div>
     
+        <div class="form-group">
+          <label for="item-type" class="form-label">Type of Listing</label>
+          <select id="item-type" v-model="newItem.listingType" required>
+            <option value="sell">Sell</option>
+            <option value="donate">Donate</option>
+          </select>
+        </div>
+
         <!-- Collection Method Field -->
         <div class="form-group">
           <label for="collection-method" class="form-label">Collection Method</label>
@@ -86,6 +94,7 @@ import { storage } from '@/firebase/firebaseInit'
 import { ref,  uploadString, getDownloadURL} from "firebase/storage"
 import { auth } from "@/firebase/firebaseInit" 
 
+
 export default {
   data() {
     return {
@@ -98,14 +107,33 @@ export default {
         quantity: '',
         price: '',
         location: '',
+        listingType: '', 
         collectionMethod: '',
         uid: '',
       },
       errorMessage: '',
+      userCurrentLocation: null, // Added to track the user's current location
     };
   },
 
   methods: {
+    getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.userCurrentLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    },
     
     addItem() {
     const user = auth.currentUser;
@@ -189,8 +217,7 @@ export default {
     },
 
     async submitForm() {
-      // Additional validation checks can be added here
-
+   
       try {
         // Store the newItem object in Firestore
         await addDoc(collection(db, 'items'), this.newItem);
@@ -220,7 +247,10 @@ export default {
     validateNumber(event) {
       event.target.value = event.target.value.replace(/[^0-9]+/g, '');
     }
-  }
+  },
+  mounted() {
+    this.getCurrentLocation(); // Get the user's current location when the component mounts
+  },
 }
 </script>
     

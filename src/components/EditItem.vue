@@ -1,7 +1,7 @@
 <template>
     <form v-if="item" @submit.prevent="updateItem">
       <!-- Form fields bound to 'item' properties -->
-      <input v-model="item.title" type="text" placeholder="Title">
+      <input v-model="item.name" type="text" placeholder="Name">
       <input v-model="item.description" type="text" placeholder="Description">
       <!-- Add other fields as necessary -->
       

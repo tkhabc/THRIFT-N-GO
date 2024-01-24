@@ -29,12 +29,13 @@
           <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
           <v-card-title>{{ item.name }}</v-card-title>
           <v-card-text>
-            <div>RM {{ item.price }}</div>
+            <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
+            <div v-else> RM {{ item.price }}</div>
           </v-card-text>
           <v-card-actions>
             <v-row>
               <v-col cols="6">
-                <v-btn :color="item.booked ? 'grey' : 'orange'" block @click="addToCart(item)">
+                <v-btn :color="item.booked ? 'grey' : 'orange'" block @click.stop="addToCart(item)">
                   {{ item.booked ? 'Booked' : 'Book' }}
                 </v-btn>
               </v-col>
@@ -46,6 +47,7 @@
               </v-col>
             </v-row>
           </v-card-actions>
+          <div v-if="item.listingType === 'donate'" class="donation-badge">Donation</div>
           <div v-if="item.booked" class="booked-badge">Booked</div>
         </v-card>
       </v-col>
@@ -202,7 +204,7 @@ export default {
 
 .edit-button {
   position: absolute;
-  top: 0px;
+  bottom: 128px;
   left: 0px;
   z-index: 10; /* Ensure the button is above other elements */
 }
@@ -336,5 +338,20 @@ export default {
   border-radius: 5px;
   font-size: 0.8em;
   background-color: #F44336; /* Red accent for urgency */
+}
+.donation-badge {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  background-color: #4CAF50; /* Green color for donation badge */
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+
+.donation-item {
+  border: 2px solid #4CAF50; /* Green border for donation items */
 }
 </style>

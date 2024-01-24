@@ -5,12 +5,10 @@
       <img v-if="item.photos && item.photos.length" :src="item.photos[0].url" alt="Item photo" class="item-photo">
 
       <h1>{{ item.name }}</h1>
-
-      <h2>Description</h2>
       <p>{{ item.description }}</p>
       <hr class="modal-divider"> <!-- Horizontal line after the description -->
       <!-- Display additional fields -->
-      <h2>Details</h2>
+      <h2>Information</h2>
       <p v-if="item.condition">Condition: {{ item.condition }}</p>
       <p v-if="item.quantity">Quantity: {{ item.quantity }}</p>
       <p>Price: RM {{ item.price }}</p>
@@ -20,7 +18,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 export default {

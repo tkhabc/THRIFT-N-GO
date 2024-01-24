@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="ui two column centered grid" style="position:relative;z-index:1">
-      <div class="column">
+      <div class="sixteen wide column">
         <form @submit.prevent="submitForm" class="ui segment large form">
           <div class="ui message red" v-show="error">{{error}}</div>
           <div class="ui segment">

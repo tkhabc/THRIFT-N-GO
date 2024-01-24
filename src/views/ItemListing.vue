@@ -5,8 +5,16 @@
         <v-col>
           <div class="item-listing"></div>
           <div class="search-add-area"></div>
-          <input type="text" placeholder="Enter your desired location" class="search-input">
-        </v-col>
+          <v-slider
+            v-model="maxDistance"
+            :max="20"
+            step="5"
+            show-ticks="always"
+            tick-size="4"
+            class="distance-slider"
+            thumb-label="always"
+          ></v-slider>        
+      </v-col>
       </v-row>
       <v-row>
         <v-col>
@@ -15,7 +23,7 @@
       </v-row>
       <v-row class="tight-row-spacing">
         <v-col>
-          <button class="add-item-button" @click="goToAddItem">Sell Your Item Here</button>
+          <button class="add-item-button" @click="goToAddItem">Sell Your Item</button>
         </v-col>
       </v-row>
     </v-container> 
@@ -29,6 +37,7 @@
           <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
           <v-card-title>{{ item.name }}</v-card-title>
           <v-card-text>
+            <div v-if="item.distance">{{ item.distance }} away</div>
             <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
             <div v-else> RM {{ item.price }}</div>
           </v-card-text>
@@ -83,7 +92,8 @@ export default {
       searchQuery: '',
       cartItems: [],
       selectedItem: null,
-      isModalVisible: false
+      isModalVisible: false,
+      maxDistance: 20,
     };
   },
 
@@ -194,6 +204,10 @@ export default {
 .bookButton {
   padding-right: 0; 
   /* background-color: #FFB74D; */
+}
+.distance-slider {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .locationButton{

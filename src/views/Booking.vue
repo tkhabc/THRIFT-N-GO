@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <header class="orders-header">
-      <h1 class="section-title">YOUR ORDERS</h1>
+      <h1 class="section-title">YOUR BOOKINGS</h1>
     </header>
     <main class="main-content">
       <section class="your-orders">
@@ -13,25 +13,12 @@
           <v-btn class="delete-btn" @click="removeFromCart(index)">Remove</v-btn>
         </div>
         <div v-if="cartItems.length === 0" class="empty-cart">
-          No items in the cart.
+          You did not book any food or item.
         </div>
       </section>
-      <!-- <section class="payment-methods">
-        <h2 class="section-title">Payment Methods</h2>
-        <div class="payment-logos">
-          <img src="../assets/visa.png" alt="Visa">
-          <img src="../assets/mastercard.png" alt="Mastercard">
-          <img src="../assets/fpx.png" alt="FPX">
-          <img src="../assets/tng.png" alt="Touch 'n Go">
-        </div>
-      </section> -->
     </main>
-    <!-- <div class="checkout-container">
-      <v-btn class="checkout-btn">Checkout</v-btn>
-    </div> -->
-
     <footer class="order-summary">
-      <h2 class="section-title-2">Order Summary</h2>
+      <h2 class="section-title-2">Booking Summary</h2>
       <div class="summary-details">{{ itemCount }} items</div>
       <div class="summary-total">Total RM{{ totalPrice }}</div>
     </footer>
@@ -44,7 +31,7 @@ import { collection, query, getDocs, onSnapshot,doc,deleteDoc,addDoc } from 'fir
 import { cartStore } from '@/cartStore';
 
 export default {
-  name: 'Cart',
+  name: 'Booking',
   computed: {
     cartItems() {
       return cartStore.items;

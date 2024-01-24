@@ -3,18 +3,17 @@ import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Register from '@/views/Register.vue'
-import Cart from '@/views/Cart.vue'
+import Booking from '@/views/Booking.vue'
 import Contact from '@/views/Contact.vue'
 import FoodListing from '@/views/FoodListing.vue'
 import ItemListing from '@/views/ItemListing.vue'
-import AddFood from '@/views/AddFood.vue'
-import AddItem from '@/views/AddItem.vue'
+import AddFood from '@/components/AddFood.vue'
+import AddItem from '@/components/AddItem.vue'
 import UserLocation from '@/views/UserLocation.vue'
 import ChatHistory from '@/views/ChatHistory.vue'
-import ChatComponent from '@/components/ChatComponent.vue'
 import EditItem from '@/components/EditItem.vue'
 import ChatRoom from '@/components/ChatRoom.vue'
-import ChatList from '@/components/ChatList.vue'
+import ChatList from '@/views/ChatList.vue'
 import ChatTesting from '@/views/ChatTesting.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
@@ -44,9 +43,9 @@ const routes = [
     component: Register
   },
   {
-    path: '/cart',
-    name: 'Cart',
-    component: Cart
+    path: '/booking',
+    name: 'Booking',
+    component: Booking
   },
   {
     path: '/contact',
@@ -82,11 +81,6 @@ const routes = [
     path: '/chathistory',
     name: 'ChatHistory',
     component: ChatHistory
-  },
-  {
-    path: '/chatcomponent',
-    name: 'ChatComponent',
-    component: ChatComponent
   },
   {
     path: '/edit-item/:itemId',

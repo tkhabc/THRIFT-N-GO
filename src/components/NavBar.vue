@@ -53,12 +53,11 @@ export default {
     menuItems: [
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
-      { title: 'Orders', path: '/cart' },
+      { title: 'Booking', path: '/booking' },
       { title: 'Contact', path: '/contact' },
       { title: 'Profile', path: '/profile' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'ChatHistory', path: '/chathistory' },
-      { title: 'ChatComponent', path: '/chatcomponent' },
       { title: 'ChatList', path: '/chatlist' },
       { title: 'Chat Testing', path: '/chattesting' },
     ]

@@ -18,7 +18,7 @@
 <script>
   import NavBar from '@/components/NavBar.vue'
   import ItemListing from './views/ItemListing.vue';
-  import Cart from './views/Cart.vue';
+  import Cart from './views/Booking.vue';
   export default {
     name: 'App',
     components: {

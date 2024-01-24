@@ -11,8 +11,15 @@
         </div>
       </div>
       <div class="message-input">
+        <v-btn
+        @click="$router.go(-1)"
+        style="width: 60px; height: 50px; background-color: #1A6757" 
+        class="ma-2"
+        >
+        <v-icon icon="mdi-arrow-left" size="25"> </v-icon>
+        </v-btn>
         <input v-model="newMessage" @keyup.enter="sendMessageForChatRoom" placeholder="Type a message...">
-        <button @click="sendMessageForChatRoom">Send</button>
+        <v-btn class="ma-2" style="width: 90px; height: 50px" @click="sendMessageForChatRoom">Send</v-btn>
       </div>
     </div>
   </template>
@@ -140,47 +147,50 @@
   background-color: #f0f0f0;
 }
 
-    .message-time {
-    /* Style for Date-Time Display */
-    display: block;
-    font-size: 0.8em;
-    margin-top: 5px;
-    text-align: right;
-    opacity: 0.7;
+.message-time {
+/* Style for Date-Time Display */
+display: block;
+font-size: 0.8em;
+margin-top: 5px;
+text-align: right;
+opacity: 0.7;
 }
 
-    .message-info {
-    /* Container for Text and Time */
-    }
+.message-info {
+/* Container for Text and Time */
+}
 
-    .message-text {
-    /* Style for Message Text */
-    }
+.message-text {
+/* Style for Message Text */
+}
     
 .message-input {
+    display: flex;
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%; /* Ensure input stretches across the full width */
-  background: #FFF; /* Match the background to your theme */
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Optional: add shadow for depth */
+  right: 0;
+  padding: 10px;
+  background: #f8f8f8;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
   
   .message-input input {
     flex-grow: 1;
-    margin-right: 10px;
-    padding: 10px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 2px solid #ddd;
+  margin-right: 10px;
   }
   
   .message-input button {
     padding: 10px 20px;
-    border-radius: 20px;
-    background-color: #4CAF50;
+    border-radius: 25px;
+    background-color: #1A6757;
     color: white;
     border: none;
     cursor: pointer;
+    font-weight: bold;
   }
   </style>
   

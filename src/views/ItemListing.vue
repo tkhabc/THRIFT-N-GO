@@ -34,16 +34,16 @@
           </v-card-text>
           <v-card-actions>
             <v-row>
-              <v-col cols="6">
+              <v-col cols="6" class="bookButton">
                 <v-btn :color="item.booked ? 'grey' : 'orange'" block @click.stop="addToCart(item)">
                   {{ item.booked ? 'Booked' : 'Book' }}
                 </v-btn>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="6" class="locationButton">
                 <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
               </v-col>
-              <v-col cols="12">
-                <v-btn color="blue" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
+              <v-col cols="12" class="chatButton">
+                <v-btn color="white" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
               </v-col>
             </v-row>
           </v-card-actions>
@@ -191,6 +191,22 @@ export default {
   font-size: 0.65rem; /* Reduce font size; adjust as needed */
 }
 
+.bookButton {
+  padding-right: 0; 
+  /* background-color: #FFB74D; */
+}
+
+.locationButton{
+  padding-right: 0; 
+  /* background-color: #AED581; */
+}
+
+.chatButton {
+  padding-right: 0; /* Remove right padding */
+  background-color: #00897B;
+  height: 100%;
+}
+
 .traditional-button {
   font-size: 0.8rem; /* Adjust the font size as needed */
   background-color: #3498db; /* A nice blue shade */
@@ -204,7 +220,7 @@ export default {
 
 .edit-button {
   position: absolute;
-  bottom: 128px;
+  top: 12px;
   left: 0px;
   z-index: 10; /* Ensure the button is above other elements */
 }
@@ -228,8 +244,8 @@ export default {
 }
 
 .v-card-actions .v-col {
-  padding-top: 0; /* Remove padding at the top of the column */
-  padding-bottom: 0; /* Remove padding at the bottom of the column */
+  margin: 0;
+  padding: 0;
 }
 .container-padding {
   padding-left: 16px; /* Adjust the value as needed */
@@ -313,6 +329,16 @@ export default {
   background-color: #FAFAFA;
 }
 
+/* Add a pseudo-element for the grey line */
+.v-card-text::after {
+  content: '';
+  display: block;
+  height: 1px; /* Make line thinner */
+  background-color: #E0E0E0; /* Grey line color */
+  margin-top: 12px; /* Increase space at the top */
+  margin-bottom: 0; /* Adjust bottom margin as needed */
+}
+
 .v-card-text {
   color: #757575;
   font-weight: bold;
@@ -322,6 +348,8 @@ export default {
   line-height: 1.4; /* Improve line spacing */
   background-color: #FAFAFA;
   line-height: 1 !important; 
+  padding-bottom: 0; /* Remove padding at the bottom */
+  margin-bottom: 0;
 }
 
 .booked-item {

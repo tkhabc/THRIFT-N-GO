@@ -1,10 +1,11 @@
 <template>
     <div class="chatroom">
-      <div class="messages">
+      <div class="messages" ref="messagesContainer" >
         <div v-for="message in messages" :key="message.id" :class="{ 'message': true, 'mine': message.senderId === currentUserId, 'theirs': message.senderId !== currentUserId }">
             <div class="message-info">
-                <span class="message-time">{{ new Date(message.timestamp.toDate()).toLocaleString() }}</span>
-                <span class="message-username">{{ message.username }}</span>
+                <span class="message-time, timestamp">{{ formatTimestamp(message.timestamp) }}</span>
+                <!-- <span class="message-time">{{ new Date(message.timestamp.toDate()).toLocaleString() }}</span> -->
+                <div class="message-username">{{ message.username }}</div>
                 <div class="message-text">{{ message.text }}</div>
             </div>
         </div>
@@ -18,7 +19,7 @@
   
   <script>
   import { getUserById, sendMessage, sendMessage as sendChatMessage} from '@/firebase/chatService'
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted, computed, nextTick } from 'vue'
   import { db, auth } from '@/firebase/firebaseInit'
   import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
 
@@ -31,8 +32,24 @@
       const messages = ref([]);
       const newMessage = ref('');
       const messagesRef = collection(db, 'messages');
-      const currentUserId = computed(() => auth.currentUser?.uid);
+      const messagesContainer = ref(null); // Reference to the messages container
+      //const currentUserId = computed(() => auth.currentUser?.uid);
   
+
+      const scrollToBottom = () => {
+        nextTick(() => {
+            console.log("Attempting to scroll to bottom"); 
+            if (messagesContainer.value) {
+                console.log("Scroll Height:", messagesContainer.value.scrollHeight); // Log scrollHeight
+                console.log("Current Scroll:", messagesContainer.value.scrollTop); // Log current scroll position
+                messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+            }
+            else {
+                console.log("messagesContainer ref is not attached to a DOM element");
+                }
+        });
+        };
+
       const loadMessages = async () => {
         const q = query(messagesRef, where('chatroomId', '==', props.chatroomId), orderBy('timestamp', 'asc')); // Sorting by timestamp
         onSnapshot(q, async (snapshot) => {
@@ -42,17 +59,16 @@
             return { id: doc.id, username, ...data };
             });
             messages.value = await Promise.all(messagePromises);
+            nextTick(() => {
+                nextTick(() => {
+                    scrollToBottom();
+                });
+            });
         });
         };
-  
-    //   const sendMessage = () => {
-    //     if (newMessage.value.trim() !== '') {
-    //       sendMessage(props.chatroomId, currentUserId, newMessage.value);
-    //       newMessage.value = '';
-    //     }
-    //   };
+
       onMounted(loadMessages);
-      return { messages, newMessage, sendMessage };
+      return { messages, newMessage, sendMessage,  messagesContainer };
     },
 
     methods: {
@@ -64,21 +80,42 @@
         this.newMessage = '';
       }
     },
+    formatTimestamp(timestamp) {
+        const date = new Date(timestamp.toDate()); // Convert Firestore timestamp to JavaScript Date
+        // Example formatting: 'Jan 1, 2020, 12:00 PM'
+        return date.toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: 'numeric', 
+        hour12: true 
+    });
+    }
   },
   };
   </script>
   
   <style scoped>
-  .chatroom {
-    /* Your styles for the chatroom layout */
-  }
+ .message-time {
+  font-size: 0.75em; /* Reduced font size for timestamp */
+  color: #999;
+  display: block;
+  margin-top: 5px;
+  text-align: right;
+  opacity: 0.7;
+}
+.chatroom {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Use the full height of the viewport */
+}
   
-  .messages {
-    /* Style for the messages container */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.messages {
+  overflow-y: auto;
+  flex-grow: 1; /* Allow messages container to grow and fill available space */
+  padding-bottom: 70px; /* Adjust based on the height of your message input */
+}
   
   .message {
     /* General style for each message */
@@ -93,14 +130,12 @@
     font-weight: bold;
   }
   
-  .mine {
-  /* Styles for Messages Sent by Current User */
+.mine {
   align-self: flex-end;
   background-color: #daf8cb;
-    }
+}
 
-    .theirs {
-  /* Styles for Messages Received */
+.theirs {
   align-self: flex-start;
   background-color: #f0f0f0;
 }
@@ -122,11 +157,14 @@
     /* Style for Message Text */
     }
     
-  .message-input {
-    /* Style for the message input area */
-    display: flex;
-    padding: 10px;
-  }
+.message-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%; /* Ensure input stretches across the full width */
+  background: #FFF; /* Match the background to your theme */
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Optional: add shadow for depth */
+}
   
   .message-input input {
     flex-grow: 1;

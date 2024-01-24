@@ -1,6 +1,7 @@
 <template>
   <div class="chatlist">
-    <div v-for="chatroom in chatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" class="chatroom-entry">
+    <div v-if="isLoading" class="loading">Loading chatrooms...</div> 
+    <div v-for="chatroom in chatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" class="chatroom-entry" v-else>
       <div class="chatroom-info">
         <span class="chatroom-participant">{{ chatroom.participantName }}</span>
         <span class="last-message">{{ chatroom.lastMessage }}</span>
@@ -19,6 +20,7 @@ import { getUserById } from '@/firebase/chatService'; // Make sure this function
 
 export default {
 setup() {
+  const isLoading = ref(true);
   const chatrooms = ref([]);
   const chatroomsRef = collection(db, 'chatrooms');
   let currentUserId = auth.currentUser?.uid; // Using optional chaining
@@ -29,20 +31,24 @@ setup() {
       const chatroomData = doc.data();
       const otherUserId = chatroomData.userIds.find(id => id !== currentUserId);
       const participantName = await getUserById(otherUserId); // Fetch the participant's name
+      const lastMessage = chatroomData.lastMessageText;
       return {
         id: doc.id,
         participantName,
+        lastMessage,
         ...chatroomData
       };
     }));
   };
 
   const loadChatrooms = async () => {
+    isLoading.value = true;
     const q = query(chatroomsRef, where('userIds', 'array-contains', currentUserId));
     onSnapshot(q, async (snapshot) => {
       const chatroomsWithNames = await fetchParticipantNames(snapshot);
       chatrooms.value = chatroomsWithNames;
     });
+    isLoading.value = false;
   };
 
   onMounted(loadChatrooms);
@@ -51,8 +57,9 @@ setup() {
     router.push({ name: 'ChatRoom', params: { chatroomId } });
   };
 
-  return { chatrooms, goToChatroom };
+  return { chatrooms, goToChatroom, isLoading };
 }
+
 };
 </script>
   

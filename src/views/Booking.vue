@@ -24,7 +24,14 @@
               @error="imageLoadError"
             ></v-img>
             </div>
-            <div>Price: RM{{ item.price }} x {{ item.quantity }}</div>
+            <div>
+            <template v-if="item.price === '' || item.price === 0">
+              <span class="free-label">Free</span> x {{ item.quantity }}
+            </template>
+            <template v-else>
+              RM{{ item.price }} x {{ item.quantity }}
+            </template>
+          </div>
             <div>Time left: {{ calculateRemainingTime(item.addedAt) }}</div>
           </v-card-text>
           <v-card-actions>
@@ -60,7 +67,9 @@ export default {
       return cartStore.items;
     },
     itemCount() {
-    return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+    //return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+    return this.cartItems.reduce((total, item) => total + Number(item.quantity), 0);
+
   },
   totalPrice() {
     return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -140,6 +149,14 @@ beforeUnmount() {
 .v-img {
   border-radius: 4px; /* Rounded corners for the image */
 }
+.free-label {
+  background-color: #90ee90; /* Light green background */
+  color: white;
+  padding: 2px 8px;
+  border-radius: 15px; /* Oval shape */
+  font-size: 0.9em;
+}
+
 </style>
 
 

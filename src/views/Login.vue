@@ -57,12 +57,11 @@
 
           <v-btn
             color="teal-lighten-1"
-            class="text-bold"
+            class="text-bold google-btn"
             @click="signInWithGoogle"
             large
             block
           >
-            <img class="google-icon" alt="Google Logo" src="../assets/GoogleLogo.png"/>
             Sign In With Google
           </v-btn>
 
@@ -218,10 +217,8 @@ const signInWithGoogle = () => {
   font-weight: bold;
 }
 
-.google-icon {
-  height: 20px; /* or the size you want */
-  width: 20px; /* or the size you want */
-  margin-right: 3px; /* to add some space between the icon and the text */
+.google-btn {
+  margin-bottom: 10px; /* Increased space after the button */
 }
 </style>
 

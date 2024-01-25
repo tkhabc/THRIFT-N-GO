@@ -40,7 +40,7 @@
         <v-card>
   <v-card-title class="summary-title">Booking Summary</v-card-title>
   <v-card-text class="summary-text">
-    <div>{{ itemCount }} items</div>
+    <div>{{ parseInt(itemCount) }} items</div>
     <div>Total: RM{{ totalPrice }}</div>
   </v-card-text>
 </v-card>

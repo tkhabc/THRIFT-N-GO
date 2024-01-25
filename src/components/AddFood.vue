@@ -21,6 +21,12 @@
         </div>
       </div>
 
+      <!-- Restaurant Name Field -->
+      <div class="form-group">
+        <label for="restaurant-name" class="form-label">Name of Restaurant</label>
+        <input type="text" id="restaurant-name" v-model="newItem.name" autocomplete="off" required>
+      </div>
+
       <!-- Item Name Field -->
       <div class="form-group">
         <label for="item-name" class="form-label">Name of Food</label>
@@ -65,8 +71,15 @@
 
   
       <!-- Submit Button -->
-      <div class="button-container">
-        <button type="submit">Confirm & Add</button>
+      <div class="message-input">
+        <v-btn
+        @click="$router.go(-1)"
+        style="width: 80px; height: 50px; background-color: #1A6757" 
+        class="ma-2"
+        >
+        <v-icon icon="mdi-arrow-left" size="25"> </v-icon>
+        </v-btn>
+        <v-btn class="ma-2" style="width: 240px; height: 50px; position:absolute; right:40px" @click="addItem()">Confirm & Add</v-btn>
       </div>
 
     </form>
@@ -283,21 +296,44 @@ input[type="file"] {
   box-sizing: border-box; /* Includes padding in the height calculation */
 }
 
-.button-container {
-  display: flex;
-  justify-content: flex-end; /* Aligns the button to the right */
+.message-input {
+    display: flex;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background: #f8f8f8;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
-
-button[type="submit"] {
-  width: 100%;
-  padding: 10px 15px;
+  
+.message-input input {
+  flex-grow: 1;
+  padding:  15px;
+  border-radius: 25px;
+  border: 2px solid #ddd;
+  margin-right: 10px;
+}
+  
+.message-input button {
+  padding: 10px 20px;
+  border-radius: 25px;
   background-color: #1A6757;
   color: white;
   border: none;
-  border-radius: 20px;
   cursor: pointer;
-  font-size: 18px;
-  margin-top: 10px;
+  font-weight: bold;
+}
+
+button[type="submit"] {
+width: 100%;
+padding: 10px 15px;
+background-color: #1A6757;
+color: white;
+border: none;
+border-radius: 20px;
+cursor: pointer;
+font-size: 18px;
+margin-top: 10px;
 }
 
 button[type="submit"]:hover {

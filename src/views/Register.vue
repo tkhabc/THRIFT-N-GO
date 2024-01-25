@@ -63,7 +63,6 @@
                   large
                   block
                 >
-                  <img class="google-icon" alt="Google Logo" src="@/assets/GoogleLogo.png"/>
                   Sign Up With Google
                 </v-btn>
 
@@ -234,13 +233,6 @@ const signInWithGoogle = () => {
 .text-bold {
   font-weight: bold;
 }
-
-.google-icon {
-  height: 20px; /* Height of the Google icon */
-  width: 20px; /* Width of the Google icon */
-  margin-right: 8px; /* Space between the icon and the text */
-}
-
 /* Style for the buttons */
 .v-btn {
   font-size: 16px; /* Button text size */

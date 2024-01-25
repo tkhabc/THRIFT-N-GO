@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="12" md="8" lg="6">
         <v-card>
-          <v-card-title class="text-h5">Edit Item</v-card-title>
+          <v-card-title class="text-h5 font-weight-bold">Edit Item</v-card-title>
           <v-card-text>
             <v-form v-if="item" @submit.prevent="updateItem">
               <!-- Vuetify text fields for name and description -->
@@ -74,3 +74,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.font-weight-bold {
+  font-weight: bold;
+}
+</style>
+

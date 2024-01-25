@@ -6,15 +6,25 @@
         <v-card>
           <v-card-text v-if="profile">
             <v-form v-if="editing">
-              <v-text-field v-model="editableProfile.name" label="Name" :error-messages="errors.name"></v-text-field>
-              <v-text-field v-model="editableProfile.email" label="Email" @input="validateEmail" :error-messages="errors.email"></v-text-field>
-              <v-text-field v-model="editableProfile.age" label="Age" @input="validateAge" :error-messages="errors.age"></v-text-field>z
+              <v-text-field v-model="editableProfile.name" label="Name" 
+              :error-messages="errors.name"></v-text-field>
+              <v-text-field v-model="editableProfile.email" label="Email" @input="validateEmail" 
+              :error-messages="errors.email"></v-text-field>
+              <v-text-field v-model="editableProfile.age" label="Age" @input="validateAge" 
+              :error-messages="errors.age"></v-text-field>
+              <v-select v-model="editableProfile.gender" :items="genderItems" label="Gender" 
+              :error-messages="errors.gender"></v-select>
               <v-text-field v-model="editableProfile.address" label="Address"></v-text-field>
-              <v-text-field v-model="editableProfile.dob" label="Date of Birth" @input="validateDOB" :error-messages="errors.dob"></v-text-field>
-              <v-text-field v-model="editableProfile.phone" label="Phone" @input="validatePhone" :error-messages="errors.phone"></v-text-field>
-              <v-text-field v-model="editableProfile.facebook" label="Facebook Link" @input="validateFacebook" :error-messages="errors.facebook"></v-text-field>
-              <v-text-field v-model="editableProfile.instagram" label="Instagram Link" @input="validateInstagram" :error-messages="errors.instagram"></v-text-field>
+              <v-text-field v-model="editableProfile.dob" label="Date of Birth" @input="validateDOB" 
+              :error-messages="errors.dob"></v-text-field>
+              <v-text-field v-model="editableProfile.phone" label="Phone" @input="validatePhone" 
+              :error-messages="errors.phone"></v-text-field>
+              <v-text-field v-model="editableProfile.facebook" label="Facebook Link" @input="validateFacebook" 
+              :error-messages="errors.facebook"></v-text-field>
+              <v-text-field v-model="editableProfile.instagram" label="Instagram Link" @input="validateInstagram" 
+              :error-messages="errors.instagram"></v-text-field>
               <v-textarea v-model="editableProfile.biodata" label="Biodata"></v-textarea>
+              
               <v-btn color="primary" @click="saveProfile" :disabled="!isValid">Save</v-btn>
               <v-btn color="grey" @click="cancelEdit">Cancel</v-btn>
             </v-form>
@@ -34,6 +44,14 @@
                   </v-list-item-icon>
                   <v-list-item-content class="align-start">
                     <v-list-item-title>Age: {{ profile.age }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon color="green">mdi-gender-male</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content class="align-start">
+                    <v-list-item-title>Gender: {{ profile.gender }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
@@ -92,6 +110,9 @@
                     <v-list-item-title>About Me: {{ profile.biodata }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
+
+                <!-- Repeat for Age, Address, Date of Birth, etc. -->
+                <!-- Use appropriate icons and colors for each -->
                 <br><br>
               </v-list>
               <v-btn color="secondary" @click="editProfile">Edit Profile</v-btn>
@@ -117,6 +138,7 @@
         editing: false,
         errors: {},
         userId: null,
+        genderItems: ['Male', 'Female', 'Other'],
       };
     },
     computed: {

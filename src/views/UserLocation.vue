@@ -48,6 +48,15 @@
       };
     },
   
+    watch: {
+      address(newValue) {
+      this.$nextTick(() => {
+      if (this.$refs.autocomplete) {
+        this.$refs.autocomplete.value = newValue;
+      }
+    });
+  }
+},
     mounted() {
   //this.initializeAutocomplete();
   // Initialize the Google Places Autocomplete
@@ -61,6 +70,9 @@
   );
   autocomplete.addListener("place_changed", () => {
     var place = autocomplete.getPlace();
+    if (place && place.address_components) {
+      this.address = place.formatted_address; // Update the address input field
+    }
     this.showLocationOnTheMap(
       place.geometry.location.lat(),
       place.geometry.location.lng()
@@ -150,15 +162,21 @@
       },
       submitForm() {
   this.spinner = true;
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      this.calculateRoute(position.coords.latitude, position.coords.longitude);
-    }, error => {
-      this.error = "Unable to access your current location: " + error.message;
+  // Check if the address is not just the partial input
+  if (this.address && this.address !== 'queens') {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.calculateRoute(position.coords.latitude, position.coords.longitude);
+      }, error => {
+        this.error = "Unable to access your current location: " + error.message;
+        this.spinner = false;
+      });
+    } else {
+      this.error = "Geolocation is not supported by this browser.";
       this.spinner = false;
-    });
+    }
   } else {
-    this.error = "Geolocation is not supported by this browser.";
+    this.error = "Please select a valid address from the suggestions.";
     this.spinner = false;
   }
 },

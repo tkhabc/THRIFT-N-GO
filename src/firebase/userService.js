@@ -16,8 +16,8 @@ const UserServices = {
         const defaultProfile = {
           name: 'New User',
           email: '',
-          // Add more default properties as needed
         };
+        
         await setDoc(profileRef, defaultProfile);
         return defaultProfile;
       }
@@ -37,8 +37,6 @@ const UserServices = {
       return { status: 'error', message: error.message };
     }
   }
-  // Existing updateUserData method remains the same
-  // ...
 };
 
 export default UserServices;

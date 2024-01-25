@@ -4,7 +4,7 @@
       <v-row>
         <v-col>
           <div class="slider-caption">
-      <label for="distance-slider">Filter Items by Distance (up to 20 km)</label>
+      <label for="distance-slider">Filter Food by Distance (up to 20 km)</label>
     </div>
     <v-slider
       v-model="maxDistance"
@@ -29,12 +29,12 @@
       </v-row>
       <v-row>
         <v-col>
-          <input type="text" v-model="searchQuery" placeholder="Search items..." class="search-input">
+          <input type="text" v-model="searchQuery" placeholder="Search food..." class="search-input">
         </v-col>
       </v-row>
       <v-row class="tight-row-spacing">
         <v-col>
-          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Item</button>
+          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Food</button>
         </v-col>
       </v-row>
     </v-container> 
@@ -52,47 +52,47 @@
     </v-card>
   </v-dialog>
 
-    <v-row class="row-padding">
-      <v-col cols="6" xs="6" v-for="item in processAndFilterItems(items)" :key="item.id">
-        <!-- Add @click event here -->
-        <v-card :class="{'booked-item': item.booked, 'unavailable-item': item.quantity <= 0}" class="mx-auto clickable" @click="showModal(item)" style="position: relative;">
-          <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
-          <button class="edit-button traditional-button" v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
-          <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
-          <v-card-title>{{ item.name }}
-            <span class="item-quantity-display">{{ item.quantity }} left</span></v-card-title>
-          <v-card-text>
-            <div v-if="item.distance">{{ item.distance  < 0 ? 0 : item.distance }} away</div>
-            <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
-            <div v-else> RM {{ item.price }}</div>
-          </v-card-text>
-          <v-card-actions>
-            <v-row>
-              <v-col cols="6" class="bookButton">
-                <v-btn 
-                :color="getItemColor(item.quantity)" 
-                block 
-                @click.stop="item.quantity === 0 ? null : addToCart(item)"
-                :disabled="item.quantity === 0"
-                
-                >
-                  {{ getItemLabel(item.quantity) }}
-                </v-btn>
+  <v-row class="row-padding">
+    <v-col cols="6" xs="6" v-for="item in processAndFilterItems(items)" :key="item.id">
+      <!-- Add @click event here -->
+      <v-card :class="{'booked-item': item.booked, 'unavailable-item': item.quantity <= 0}" class="mx-auto clickable" @click="showModal(item)" style="position: relative;">
+        <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
+        <button class="edit-button traditional-button" v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
+        <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
+        <v-card-title>{{ item.name }}
+          <span class="item-quantity-display">{{ item.quantity }} left</span></v-card-title>
+        <v-card-text>
+          <div v-if="item.distance">{{ item.distance  < 0 ? 0 : item.distance }} away</div>
+          <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
+          <div v-else> RM {{ item.price }}</div>
+        </v-card-text>
+        <v-card-actions>
+          <v-row>
+            <v-col cols="6" class="bookButton">
+              <v-btn 
+              :color="getItemColor(item.quantity)" 
+              block 
+              @click.stop="item.quantity === 0 ? null : addToCart(item)"
+              :disabled="item.quantity === 0"
+              
+              >
+                {{ getItemLabel(item.quantity) }}
+              </v-btn>
 
-              </v-col>
-              <v-col cols="6" class="locationButton">
-                <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
-              </v-col>
-              <v-col cols="12" class="chatButton">
-                <v-btn color="white" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
-              </v-col>
-            </v-row>
-          </v-card-actions>
-          <div v-if="item.listingType === 'donate'" class="donation-badge">Donation</div>
-          <div v-if="item.booked" class="booked-badge">Booked</div>
-        </v-card>
-      </v-col>
-    </v-row>
+            </v-col>
+            <v-col cols="6" class="locationButton">
+              <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
+            </v-col>
+            <v-col cols="12" class="chatButton">
+              <v-btn color="white" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+        <div v-if="item.listingType === 'donate'" class="donation-badge">Donation</div>
+        <div v-if="item.booked" class="booked-badge">Booked</div>
+      </v-card>
+    </v-col>
+  </v-row>
     
     <ItemDetailsModal
       :item="selectedItem"
@@ -105,7 +105,7 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs, doc, deleteDoc, setDoc ,addDoc} from 'firebase/firestore' 
+import { collection, query, onSnapshot, doc, deleteDoc, setDoc, addDoc } from 'firebase/firestore';
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
@@ -220,18 +220,12 @@ async confirmBooking() {
       await addDoc(collection(db, "cartItems"), cartItem);
 
 },
-    async fetchItems() {
-      const q = query(collection(db, 'items'));
-      try {
-        const querySnapshot = await getDocs(q);
-        this.items = querySnapshot.docs.map(doc => ({ id: doc.id,booked: false, ...doc.data() }));
-    
-      } 
-      
-      catch (error) {
-        console.error("Error fetching items: ", error);
-      }
-    },
+async fetchItems() {
+  const q = query(collection(db, 'items'));
+  onSnapshot(q, (querySnapshot) => {
+    this.items = querySnapshot.docs.map(doc => ({ id: doc.id, booked: false, ...doc.data() }));
+  });
+},
    async updateItemQuantityInFirestore(item) {
     const newQuantity = item.quantity - this.selectedQuantity; // Calculate new quantity
     const itemRef = doc(db, "items", item.id);
@@ -511,7 +505,9 @@ async confirmBooking() {
   border: 2px solid #4CAF50; /* Green border for donation items */
 }
 .item-quantity-display {
-  margin-left: 10px; /* Space from the item name */
+  position: absolute; /* Position the label absolutely within the card */
+  top: 180px; /* Position from the bottom of the picture */
+  right: 0px; /* Position from the right side of the picture */
   background-color: #4CAF50; /* Green background for visibility */
   color: white; /* White text for contrast */
   font-weight: bold; /* Bold font */
@@ -519,10 +515,16 @@ async confirmBooking() {
   border-radius: 4px; /* Rounded corners */
   font-size: 0.8rem; /* Smaller font size */
 }
+
+.v-card .v-img {
+  position: relative;
+}
 .unavailable-item {
   filter: grayscale(70%); /* Apply a full grayscale filter */
   opacity: 0.3; /* Reduce the opacity */
   pointer-events: none; /* Prevents clicking on the card */
   cursor: not-allowed;
 }
+
+
 </style>

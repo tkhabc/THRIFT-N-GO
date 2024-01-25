@@ -2,11 +2,10 @@
   <v-app style="background: #FFFFFF">
     
     <template v-if="!notSignedIn">
+      <NavBar /> 
       <Cart :cartItems = "cart"></Cart>
       <ItemListing  @add-to-cart = "addToCart"></ItemListing>
     </template>
-    <NavBar /> 
-     <!-- // later hide it -->
 
     <v-main>
       <router-view></router-view>

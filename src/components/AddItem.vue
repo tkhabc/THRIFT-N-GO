@@ -44,14 +44,20 @@
       <!-- Quantity Field -->
       <div class="form-group">
         <label for="quantity" class="form-label">Quantity</label>
-        <input type="text" id="quantity" v-model="newItem.quantity" @input="validateNumber($event)" placeholder="" autocomplete="off" required>
+        <input type="text" id="quantity" v-model="newItem.quantity" @input="validateNumber($event)" placeholder="Integer only" autocomplete="off" required>
       </div>
 
 
       <!-- Price Field -->
       <div class="form-group">
         <label for="price" class="form-label">Price</label>
-        <input type="text" id="price" v-model="newItem.price" autocomplete="off" required>
+        <div class="input-with-prefix">
+        <span class="prefix">RM</span>
+        <input type="text" id="price" v-model="newItem.price" 
+        :disabled="isDonation" 
+        :placeholder="isDonation ? 'It is a donation' : ''"
+        autocomplete="off" required>
+        </div>
       </div>
   
       <!-- Location Address Field -->
@@ -86,7 +92,7 @@
         >
         <v-icon icon="mdi-arrow-left" size="25"> </v-icon>
         </v-btn>
-        <v-btn class="ma-2" style="width: 240px; height: 50px; position:absolute; right:40px" @click="addItem()">Confirm & Add</v-btn>
+        <v-btn class="ma-2" style="width: 240px; height: 50px; position:absolute; right:40px" @click="validateItem()">Confirm & Add</v-btn>
       </div>
 
     </form>
@@ -123,6 +129,18 @@ data() {
     errorMessage: '',
     userCurrentLocation: null, // Added to track the user's current location
   };
+},
+computed: {
+  isDonation() {
+    return this.newItem.listingType === 'donate';
+  },
+},
+watch: {
+  'newItem.listingType'(newType) {
+    if (newType === 'donate') {
+      this.newItem.price = ''; // Clear the price
+    }
+  },
 },
 
 methods: {
@@ -253,12 +271,25 @@ methods: {
     // Remove the photo from the array
     this.newItem.photos.splice(index, 1);
   },
+  validateItem() {
+    // Check if any of the required fields are empty
+    if (
+      this.newItem.name === '' ||
+      this.newItem.description === '' ||
+      this.newItem.condition === '' ||
+      this.newItem.quantity === '' ||
+      (this.newItem.price === '' && this.newItem.listingType==='sell')||
+      this.newItem.location === '' ||
+      this.newItem.listingType === '' ||
+      this.newItem.collectionMethod === ''
+    ) {
+      alert('Please fill in all the required fields.');
+    }
+    else{this.addItem();}
+    // If all required fields are filled, proceed to add the item
+    },
 
-  //  async submitForm() {
     
-    
-  // },
-
   resetForm() {
     // Clearing the form and revoking URLs
     this.newItem.photos.forEach(photo => URL.revokeObjectURL(photo.url));
@@ -467,6 +498,28 @@ button[type="submit"]:hover {
   .add-item-container {
     padding: 10px;
   }
+}
+.input-with-prefix {
+  display: flex;
+}
+
+.prefix {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+#price {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 0 4px 4px 0;
+  font-size: 16px;
+  padding: 10px;
 }
 
 </style>

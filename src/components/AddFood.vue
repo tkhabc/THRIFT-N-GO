@@ -23,8 +23,8 @@
 
       <!-- Restaurant Name Field -->
       <div class="form-group">
-        <label for="restaurant-name" class="form-label">Name of Restaurant</label>
-        <input type="text" id="restaurant-name" v-model="newItem.name" autocomplete="off" required>
+        <label for="shop-name" class="form-label">Name of Shop</label>
+        <input type="text" id="shop-name" v-model="newItem.name" autocomplete="off" required>
       </div>
 
       <!-- Item Name Field -->

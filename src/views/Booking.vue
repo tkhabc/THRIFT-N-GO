@@ -18,11 +18,11 @@
           <v-card-text>
             <div class="booking-item-image">
               <v-img 
-  :src="item.imageUrl" 
-  height="100" 
-  cover 
-  @error="imageLoadError"
-></v-img>
+              :src="item.imageUrl" 
+              height="100" 
+              cover 
+              @error="imageLoadError"
+            ></v-img>
             </div>
             <div>Price: RM{{ item.price }} x {{ item.quantity }}</div>
             <div>Time left: {{ calculateRemainingTime(item.addedAt) }}</div>
@@ -51,8 +51,6 @@
 
 
 <script>
-import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs, onSnapshot,doc,deleteDoc,addDoc } from 'firebase/firestore'
 import { cartStore } from '@/cartStore';
 
 export default {

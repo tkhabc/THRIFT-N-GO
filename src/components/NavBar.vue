@@ -55,10 +55,10 @@ export default {
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
       { title: 'Booking', path: '/booking' },
-      { title: 'Contact', path: '/contact' },
+      { title: 'Chat History', path: '/chatlist' },
       { title: 'UserLocation', path: '/userlocation' },
-      { title: 'ChatHistory', path: '/chathistory' },
-      { title: 'ChatList', path: '/chatlist' },
+      { title: 'Contact Us', path: '/contact' },
+      { title: 'ChatHistoryTesting', path: '/chathistory' },
       { title: 'Chat Testing', path: '/chattesting' },
     ]
   }),

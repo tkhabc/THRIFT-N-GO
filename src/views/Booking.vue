@@ -16,6 +16,14 @@
             {{ item.name }}
           </v-card-title>
           <v-card-text>
+            <div class="booking-item-image">
+              <v-img 
+  :src="item.imageUrl" 
+  height="100" 
+  cover 
+  @error="imageLoadError"
+></v-img>
+            </div>
             <div>Price: RM{{ item.price }} x {{ item.quantity }}</div>
             <div>Time left: {{ calculateRemainingTime(item.addedAt) }}</div>
           </v-card-text>
@@ -29,13 +37,13 @@
 
     <v-row justify="end">
       <v-col cols="12" md="4">
-        <v-card color="grey lighten-3">
-          <v-card-title>Booking Summary</v-card-title>
-          <v-card-text>
-            <div>{{ itemCount }} items</div>
-            <div>Total: RM{{ totalPrice }}</div>
-          </v-card-text>
-        </v-card>
+        <v-card>
+  <v-card-title class="summary-title">Booking Summary</v-card-title>
+  <v-card-text class="summary-text">
+    <div>{{ itemCount }} items</div>
+    <div>Total: RM{{ totalPrice }}</div>
+  </v-card-text>
+</v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -61,11 +69,12 @@ export default {
   }
   },
 
-  // data() {
-  //   return {
-  //    //cartItems: []
-  //   };
-  // },
+  data() {
+    return {
+      currentTime: Date.now(), // Add this new property
+      // ... other data properties
+    };
+  },
 
   methods: {
     removeFromCart(index) {
@@ -73,91 +82,66 @@ export default {
       console.log("Item removed from cart:", index);
     },
   
-  calculateRemainingTime(addedAt) {
-      const now = Date.now();
+    calculateRemainingTime(addedAt) {
       const duration = 30 * 60 * 1000; // 30 minutes in milliseconds
-      const timeLeft = addedAt + duration - now;
+      const timeLeft = addedAt + duration - this.currentTime; // Use currentTime
       if (timeLeft <= 0) {
         return "Time's up";
       }
       return this.formatTime(timeLeft);
     },
+  
+  
     formatTime(milliseconds) {
       const minutes = Math.floor(milliseconds / 60000);
       const seconds = ((milliseconds % 60000) / 1000).toFixed(0);
       return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
     },
-    forceUpdate() {
-    this.$forceUpdate(); // Force Vue to re-render the component
+    imageLoadError(event) {
+    console.error('Error loading image');
+    event.target.src = 'https://via.placeholder.com/100'; // Placeholder image
+  }
+
   },
 
-beforeDestroy() {
+beforeUnmount() {
   clearInterval(this.interval); // Clear the interval when the component is destroyed
-}
-  },
-  mounted() {
-  this.interval = setInterval(() => {
-    this.forceUpdate(); // Method to force a component update
-  }, 1000);
 },
   
-//     async deleteItem(documentId) {
-//   const docRef = doc(db, 'cart', documentId);
-
-//   try {
-//     // Delete the document from Firestore
-//     await deleteDoc(docRef);
-//     console.log("Document deleted from cart:", documentId);
-
-//     // Update the local cartItems array to reflect the deletion
-//   this.cartItems = this.cartItems.filter(item => item.id !== documentId);
-//   } catch (error) {
-//     console.error("Error deleting document from cart: ", error);
-//   }
-// },
-// async fetchCartItems() {
-//   const cartCollectionRef = collection(db, 'cart');
-//   try {
-//     const querySnapshot = await getDocs(cartCollectionRef);
-//     this.cartItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//     console.log("Cart items fetched:", this.cartItems);
-//   } catch (error) {
-//     console.error("Error fetching cart items:", error);
-//   }
-// },
-
-//   mounted() {
-//     this.fetchCartItems();
-//   },
-
-//   // Optional: Clean up the listener when the component is destroyed
-//   unmounted() {
-//     if (this.unsubscribe) {
-//       this.unsubscribe();
-//     }
-//   }
-// }
-// }
+  mounted() {
+    this.interval = setInterval(() => {
+      this.currentTime = Date.now(); // Update currentTime every second
+    }, 1000);
+  },
+  
 }
 </script>
 
 <style>
-  .orders-header {
-    padding: 5px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+.summary-title {
+  background-color: #1A6757; /* Replace with your navbar color */
+  color: white; /* Or any color that contrasts well with your background */
+  padding: 10px;
+}
 
-  .section-title {
-    font-size: 24px;
-    font-weight: bold;
-  }
+.summary-text {
+  background-color: #104a3e; /* A lighter or darker tone of your navbar color */
+  padding: 10px;
+  color: white;
+}
 
-  .empty-cart {
-    text-align: center;
-    padding: 20px;
-    font-style: italic;
-    color: grey;
-  }
+/* Additional styling to enhance the card appearance */
+.v-card {
+  border-radius: 5px; /* Rounded corners for the card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+.booking-item-image {
+  margin-bottom: 10px; /* Space below the image */
+}
+
+.v-img {
+  border-radius: 4px; /* Rounded corners for the image */
+}
 </style>
+
 

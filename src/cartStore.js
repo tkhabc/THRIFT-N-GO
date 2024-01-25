@@ -9,8 +9,9 @@ export const cartStore = reactive({
 
 
   addToCart(item, quantity) {
+    
     const timestamp = Date.now(); // Current time in milliseconds
-    this.items.push({ ...item, quantity: quantity, addedAt: timestamp });
+    this.items.push({ ...item, quantity: quantity, addedAt: timestamp ,imageUrl: item.photos[0].url});
     this.bookedItems.add(item.id); // Mark as booked
   },
     

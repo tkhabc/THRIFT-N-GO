@@ -225,6 +225,7 @@ async confirmBooking() {
       try {
         const querySnapshot = await getDocs(q);
         this.items = querySnapshot.docs.map(doc => ({ id: doc.id,booked: false, ...doc.data() }));
+    
       } 
       
       catch (error) {

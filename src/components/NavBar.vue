@@ -58,8 +58,8 @@ export default {
       { title: 'Chat History', path: '/chatlist' },
       { title: 'UserLocation', path: '/userlocation' },
       { title: 'Contact Us', path: '/contact' },
-      { title: 'ChatHistoryTesting', path: '/chathistory' },
-      { title: 'Chat Testing', path: '/chattesting' },
+      // { title: 'ChatHistoryTesting', path: '/chathistory' },
+      // { title: 'Chat Testing', path: '/chattesting' },
     ]
   }),
   methods: {

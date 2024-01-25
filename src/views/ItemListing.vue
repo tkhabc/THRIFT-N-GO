@@ -4,7 +4,7 @@
       <v-row>
         <v-col>
           <div class="slider-caption">
-      <label for="distance-slider">Filter Food by Distance (up to 20 km)</label>
+      <label for="distance-slider">Filter Item by Distance (up to 20 km)</label>
     </div>
     <v-slider
       v-model="maxDistance"
@@ -29,12 +29,12 @@
       </v-row>
       <v-row>
         <v-col>
-          <input type="text" v-model="searchQuery" placeholder="Search food..." class="search-input">
+          <input type="text" v-model="searchQuery" placeholder="Search item..." class="search-input">
         </v-col>
       </v-row>
       <v-row class="tight-row-spacing">
         <v-col>
-          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Food</button>
+          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Item</button>
         </v-col>
       </v-row>
     </v-container> 
@@ -525,6 +525,4 @@ async fetchItems() {
   pointer-events: none; /* Prevents clicking on the card */
   cursor: not-allowed;
 }
-
-
 </style>

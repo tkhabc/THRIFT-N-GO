@@ -104,6 +104,11 @@ const routes = [
     name: 'UserProfile',
     component: UserProfile
   },
+  {
+    path: '/myprofile',
+    name: 'MyProfile',
+    component: UserProfile
+  },
 ]
 
 const router = createRouter({

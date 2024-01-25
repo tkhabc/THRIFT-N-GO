@@ -55,14 +55,14 @@
     <v-row class="row-padding">
       <v-col cols="6" xs="6" v-for="item in processAndFilterItems(items)" :key="item.id">
         <!-- Add @click event here -->
-        <v-card :class="{'booked-item': item.booked}" class="mx-auto clickable" @click="showModal(item)" style="position: relative;">
+        <v-card :class="{'booked-item': item.booked, 'unavailable-item': item.quantity <= 0}" class="mx-auto clickable" @click="showModal(item)" style="position: relative;">
           <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
           <button class="edit-button traditional-button" v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
           <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
           <v-card-title>{{ item.name }}
-            <span class="item-quantity-display">{{ item.quantity }} in stock</span></v-card-title>
+            <span class="item-quantity-display">{{ item.quantity }} left</span></v-card-title>
           <v-card-text>
-            <div v-if="item.distance">{{ item.distance }} away</div>
+            <div v-if="item.distance">{{ item.distance  < 0 ? 0 : item.distance }} away</div>
             <div v-if="item.listingType === 'donate'">It's Free, Grab It Now！</div>
             <div v-else> RM {{ item.price }}</div>
           </v-card-text>
@@ -105,7 +105,7 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, getDocs, doc, deleteDoc, setDoc } from 'firebase/firestore' 
+import { collection, query, getDocs, doc, deleteDoc, setDoc ,addDoc} from 'firebase/firestore' 
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
@@ -132,16 +132,6 @@ export default {
   
     };
   },
-
-//   computed: {
-//     filteredItems() {
-//   return this.items.filter(item => {
-//     item.booked = cartStore.isItemBooked(item.id); // Update booked status
-//     return item.name && item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-//   });
-// },
-    
-//   },
 
   methods: {
     processAndFilterItems(items) {
@@ -216,13 +206,19 @@ async confirmBooking() {
       });
 
       // Add to cart and close dialog
-      cartStore.addToCart(this.selectedItemForBooking);
+      cartStore.addToCart(this.selectedItemForBooking, this.selectedQuantity);
       this.isQuantityDialogOpen = false;
       console.log("Quantity updated in Firestore and locally");
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
   }
+      const cartItem = {
+        itemId: this.selectedItemForBooking.id,
+        quantity: this.selectedQuantity
+      };
+      await addDoc(collection(db, "cartItems"), cartItem);
+
 },
     async fetchItems() {
       const q = query(collection(db, 'items'));
@@ -267,6 +263,28 @@ async confirmBooking() {
       this.$router.push('/additem');
     },
 
+    async goToChat(sellerId) {
+    const currentUserId = auth.currentUser.uid;
+
+    if (currentUserId === sellerId) {
+      console.log("Can't chat with yourself");
+      return;
+    }
+
+    try {
+      // createOrGetChatroom should return the chatroom ID
+      const chatroomId = await createOrGetChatroom(currentUserId, sellerId);
+
+      if (chatroomId) {
+        // Navigate to the chatroom
+        this.$router.push({ name: 'ChatRoom', params: { chatroomId } });
+      } else {
+        console.error("Failed to get or create chatroom");
+      }
+    } catch (error) {
+      console.error("Error in goToChat: ", error);
+    }
+  },
     goToLocation(item) {
       this.$router.push({ name: 'UserLocation', query: { location: item.location } });
     },
@@ -499,5 +517,11 @@ async confirmBooking() {
   padding: 3px 6px; /* Padding around the text */
   border-radius: 4px; /* Rounded corners */
   font-size: 0.8rem; /* Smaller font size */
+}
+.unavailable-item {
+  filter: grayscale(70%); /* Apply a full grayscale filter */
+  opacity: 0.3; /* Reduce the opacity */
+  pointer-events: none; /* Prevents clicking on the card */
+  cursor: not-allowed;
 }
 </style>

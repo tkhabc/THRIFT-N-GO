@@ -58,7 +58,7 @@
             else {
                 console.log("messagesContainer ref is not attached to a DOM element");
                 }
-        });
+         });
         };
 
       const loadMessages = async () => {

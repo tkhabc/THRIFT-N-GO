@@ -51,7 +51,7 @@ export default {
   data: () => ({
     drawer: false,
     menuItems: [
-      { title: 'UserProfile', path: '/userprofile' },
+      { title: 'UserProfile', path: '/myprofile' },
       { title: 'Food Listing', path: '/foodlisting' },
       { title: 'Item Listing', path: '/itemlisting' },
       { title: 'Booking', path: '/booking' },

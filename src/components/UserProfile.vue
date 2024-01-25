@@ -208,15 +208,25 @@
     },
     },
     mounted() {
-      const user = auth.currentUser;
-      if (user) {
-        this.userId = this.$route.params.userId;
-        this.fetchProfileData();
-      } else {
-        console.error('No user logged in');
-        // Handle not logged-in state, redirect or show message
-      }
+  // Check if a userId parameter is provided in the route
+  if (this.$route.params.userId) {
+    this.userId = this.$route.params.userId;
+  } else {
+    // If no userId parameter, use the current authenticated user's ID
+    // Make sure the authentication state is initialized
+    if (auth.currentUser) {
+      this.userId = auth.currentUser.uid;
+    } else {
+      console.error('No user logged in or user ID not available in route');
+      // Handle the scenario where no user is logged in
+      // Redirect to login page or show an error message
     }
+  }
+  // Call fetchProfileData only if userId is available
+  if (this.userId) {
+    this.fetchProfileData();
+  }
+}
   };
   </script>
   

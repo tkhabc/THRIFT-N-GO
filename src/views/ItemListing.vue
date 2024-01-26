@@ -55,8 +55,8 @@
   <v-row class="row-padding">
     <v-col cols="6" xs="6" v-for="item in processAndFilterItems(items)" :key="item.id">
       <!-- Add @click event here -->
-      <v-card :class="{'booked-item': item.booked, 'unavailable-item': item.quantity <= 0}" class="mx-auto clickable" @click="showModal(item)" style="position: relative;">
-        <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover></v-img>
+      <v-card :class="{'booked-item': item.booked, 'unavailable-item': item.quantity <= 0}" class="mx-auto clickable" style="position: relative;">
+        <v-img height="200" :src="getPhoto(item)" @error="imageLoadError" cover @click="showModal(item)"></v-img>
         <button class="edit-button traditional-button" v-if="isOwner(item.uid)" @click="editItem(item.id)">Edit</button>
         <button class="delete-button" v-if="isOwner(item.uid)" @click="deleteItem(item.id)">X</button>
         <v-card-title>{{ item.name }}

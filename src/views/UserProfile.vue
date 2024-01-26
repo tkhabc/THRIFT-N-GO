@@ -10,16 +10,15 @@
                 v-model="editableProfile.identity"
                 :items="['User', 'Food Seller']"
                 label="Please Choose Your Identity"
-                required
               ></v-select>
 
-              <v-text-field v-model="editableProfile.name" label="Name" 
+              <v-text-field v-model="editableProfile.name" label="Name" @input="validateName"
               :error-messages="errors.name"></v-text-field>
               <v-text-field v-model="editableProfile.email" label="Email" @input="validateEmail" 
               :error-messages="errors.email"></v-text-field>
               <v-text-field v-model="editableProfile.age" label="Age" @input="validateAge" 
               :error-messages="errors.age"></v-text-field>
-              <v-select v-model="editableProfile.gender" :items="genderItems" label="Gender" 
+              <v-select v-model="editableProfile.gender" :items="genderItems" label="Gender"  @input="validateGender"
               :error-messages="errors.gender"></v-select>
               <v-text-field v-model="editableProfile.address" label="Address"></v-text-field>
               <v-text-field v-model="editableProfile.dob" label="Date of Birth" @input="validateDOB" 
@@ -30,7 +29,7 @@
               :error-messages="errors.facebook"></v-text-field>
               <v-text-field v-model="editableProfile.instagram" label="Instagram Link" @input="validateInstagram" 
               :error-messages="errors.instagram"></v-text-field>
-              <v-textarea v-model="editableProfile.biodata" label="Biodata"></v-textarea>
+              <v-textarea v-model="editableProfile.biodata" label="Biodata" ></v-textarea>
               
               <v-btn color="primary" @click="saveProfile" :disabled="!isValid">Save</v-btn>
               <v-btn color="grey" @click="cancelEdit">Cancel</v-btn>
@@ -154,8 +153,9 @@
         editing: false,
         errors: {},
         userId: null,
-        genderItems: ['Male', 'Female', 'Other'],
+        genderItems: ['Male', 'Female', '-'],
         identity:'',
+        formErrorMessage: '',
       };
     },
     computed: {
@@ -181,20 +181,50 @@
         this.editableProfile = {...this.profile}; // Clone profile for editing
         this.errors = {};
       },
+
       async saveProfile() {
+        // Perform validation checks
+        this.validateName();
+        this.validateEmail();
+        this.validateAge();
+        this.validateGender();
+        this.validateDOB();
+        this.validatePhone();
+
         if (this.isValid) {
-          try {
-            await UserServices.updateUserData(this.userId, this.editableProfile);
-            this.profile = {...this.editableProfile};
-            this.editing = false;
-          } catch (error) {
-            console.error('Error updating profile:', error);
-          }
+      try {
+        await UserServices.updateUserData(this.userId, this.editableProfile);
+        this.profile = {...this.editableProfile};
+        this.editing = false;
+              } catch (error) {
+        console.error('Error updating profile:', error);
+              }
         }
-      },
+  },
       cancelEdit() {
         this.editing = false;
       },
+      validateName() {
+        if (!this.editableProfile.name || this.editableProfile.name.trim().length === 0) {
+          this.errors.name = 'Please enter your name.';
+        } else {
+          delete this.errors.name;
+        }
+      },
+      validateGender() {
+        if (!this.editableProfile.gender || this.editableProfile.gender.trim().length === 0) {
+          this.errors.gender = 'Please select a gender.';
+        } else {
+          delete this.errors.gender;
+        }
+      },
+      // validateAddress() {
+      //   if (!this.editableProfile.address || this.editableProfile.address.trim().length === 0) {
+      //     this.errors.address = 'Please enter your address.';
+      //   } else {
+      //     delete this.errors.address;
+      //   }
+      // },
       validateEmail() {
         if (!this.editableProfile.email || !/\S+@\S+\.\S+/.test(this.editableProfile.email)) {
           this.errors.email = 'Please enter a valid email.';

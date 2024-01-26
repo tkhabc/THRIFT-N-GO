@@ -62,10 +62,10 @@
         <v-card-title>{{ food.name }}
           <span class="item-quantity-display">{{ food.quantity }} left</span></v-card-title>
         <v-card-text>
+          <div class="price-display2" v-if="food.listingType === 'donate'">It's Free, Grab It Now!</div>
+          <div class="price-display" v-else>RM {{ food.price }}</div>       
           <div>{{ food.shop }}</div>
           <div v-if="food.distance">{{ food.distance  < 0 ? 0 : food.distance }} away</div>
-          <div v-if="food.listingType === 'donate'">It's Free, Grab It Now！</div>
-          <div v-else> RM {{ food.price }}</div>
         </v-card-text>
         <v-card-actions>
           <v-row>
@@ -436,7 +436,34 @@ async fetchFoods() {
   padding: 10px;
   background-color: #f9f9f9;
 }
-
+.price-display {
+    background-color: red; /* Red background for price */
+    color: white; /* White text for contrast */
+    padding: 2px 5px; /* Reduced padding around text */
+    border-radius: 4px; /* Rounded corners for aesthetic */
+    font-size: 1.5em; /* Slightly larger font size for emphasis */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    width: 100px; /* Fixed width for uniform appearance */
+    height: 33px; /* Fixed height for uniform appearance */
+    margin-top: 1px; /* Optional: Add some space above the price display */
+    text-align: center; /* Center the text within the box */
+  }
+  .price-display2 {
+    background-color: red; /* Red background for price */
+    color: white; /* White text for contrast */
+    padding: 2px 5px; /* Reduced padding around text */
+    border-radius: 4px; /* Rounded corners for aesthetic */
+    font-size: 1.1em; /* Slightly larger font size for emphasis */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    width: 130px; /* Fixed width for uniform appearance */
+    height: 33px; /* Fixed height for uniform appearance */
+    margin-top: 1px; /* Optional: Add some space above the price display */
+    text-align: center; /* Center the text within the box */
+  }
 .v-card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add shadow for depth */
   transition: 0.3s; /* Smooth transition for hover effects */
@@ -484,6 +511,10 @@ async fetchFoods() {
   line-height: 1 !important; 
   padding-bottom: 0; /* Remove padding at the bottom */
   margin-bottom: 0;
+  display: flex; /* Use flexbox for alignment */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center children horizontally */
+
 }
 
 .booked-item {

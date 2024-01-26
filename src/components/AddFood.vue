@@ -78,17 +78,14 @@
         </select>
       </div>
 
-      <div>
-        Collection Method: Only Pick-Up!
+      <div class="form-group">
+        <label for="reserved-duration" class="form-label">Reserved Duration (min)</label>
+        <input type="text" id="reserved-duration" v-model="newFood.reservedDuration" @input="validateDuration($event)" placeholder="Max 600 minutes (1 day)" autocomplete="off" required>
       </div>
 
-      <!-- <div class="form-group">
-        <label for="collection-method" class="form-label">Collection Method</label>
-        <select id="collection-method" v-model="newItem.collectionMethod" required>
-          <option value="pick-up">Pick-up</option>
-          <option value="delivery">Delivery</option>
-        </select>
-      </div> -->
+      <div class="form-group">
+        <label1 class="form-label" style="font-style: italic;">Collection Method: Only Pick-Up!</label1>
+      </div>
       
       <!-- Submit Button -->
       <div class="message-input">
@@ -293,6 +290,14 @@ methods: {
     else{this.addFood();}
     // If all required fields are filled, proceed to add the item
     },
+    validateDuration(event) {
+    let value = event.target.value.replace(/[^0-9]+/g, '');
+    if (value > 600) {
+      alert('Not more than 1 day');
+      value = '0';
+    }
+    this.newFood.reservedDuration = value;
+  },
 
     
   resetForm() {
@@ -340,11 +345,12 @@ mounted() {
 }
 
 .form-group label1 {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  font-size: 18px;
-}
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    font-style: italic; /* Added italics for 'Collection Method' */
+  }
 
 .drag-drop-area {
 padding: 20px;

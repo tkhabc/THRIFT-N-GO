@@ -22,6 +22,7 @@
       <p>Price: RM {{ item.price }}</p>
       <p v-if="item.location">Location: {{ item.location }}</p>
       <p v-if="item.collectionMethod">Collection Method: {{ item.collectionMethod }}</p>
+      <p v-if="item.reservedDuration">reserved Duration: {{ item.reservedDuration }}</p>
       <button @click="close">Close</button>
     </div>
   </div>

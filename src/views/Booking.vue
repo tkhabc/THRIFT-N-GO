@@ -12,6 +12,11 @@
       <v-col>
         <template v-for="item in filteredCartItems" :key="item.id">
           <v-card class="mb-3">
+            <div 
+              class="collection-method-label"
+              :class="{ 'food-label': item.collectionMethod === 'shop', 'item-label': item.collectionMethod !== 'shop' }">
+              {{ item.collectionMethod === 'shop' ? 'Food' : 'Item' }}
+            </div>
             <v-card-title>
               <v-icon left>mdi-cart</v-icon>
               {{ item.name }}
@@ -27,16 +32,18 @@
               </div>
               <div>
                 <template v-if="item.price === '' || item.price === 0">
-                  <span class="free-label">Free</span> x {{ item.quantity }}
+                  <span class="free-label">Free</span> x {{ item.bookedItem }}
                 </template>
                 <template v-else>
                   RM{{ item.price }} x {{ item.bookedItem }}
                 </template>
               </div>
-              <div>Time left: {{ calculateRemainingTime(item.addedAt) }}</div>
+              <div v-if="item.collectionMethod === 'shop'">
+                Time left: {{ calculateRemainingTime(item.addedAt) }}
+              </div>            
             </v-card-text>
             <v-card-actions>
-              <v-btn color="red" @click="removeFromCart(item.id, item.IdinItems,item.bookedUserId,item.bookedItem)">Remove</v-btn>
+              <v-btn color="red" @click="removeFromCart(item.id, item.IdinItems,item.bookedUserId,item.bookedItem,item.collectionMethod)">Remove</v-btn>
             </v-card-actions>
           </v-card>
         </template>
@@ -107,28 +114,35 @@ export default {
         this.isLoading = false;
       });
     },
-    async removeFromCart(itemId, IdinItems,bookedUserId,bookedItem) {
+    async removeFromCart(itemId, IdinItems,bookedUserId,bookedItem,collectionMethod) {
       // Check if the bookedUserId matches the current user's ID
       if (bookedUserId === this.currentUserId) {
         // Remove the item from the Firestore collection 'cartItems'
         const cartItemRef = doc(db, 'cartItems', itemId);
         const itemRef = doc(db, 'items', IdinItems);
-        try {
-          await updateDoc(itemRef, {
-            quantity: increment(bookedItem) // Use increment to increase the quantity
-          });
-          console.log("Item quantity updated in Firestore items:", itemId);
-        } catch (error) {
-          console.error("Error updating item quantity in Firestore items:", error);
+        const foodRef = doc(db, 'foods', IdinItems);
+        if (collectionMethod === 'shop') {
+          try {
+            await deleteDoc(foodRef);
+            console.log("Item removed from Firestore foods:", itemId);
+          } catch (error) {
+            console.log("Error removing item from Firestore foods:");
+          }
+        } else {
+          try {
+            await deleteDoc(itemRef);
+            console.log("Item removed from Firestore items:", itemId);
+          } catch (error) {
+            console.log("Error removing item from Firestore items:");
+          }
         }
+        
         try {
           await deleteDoc(cartItemRef);
           console.log("Item removed from Firestore cartItems:", itemId);
         } catch (error) {
           console.log("Error removing item from Firestore cartItems:");
-        }
-        
-        
+        }    
       }
     },
     calculateRemainingTime(addedAt) {
@@ -201,6 +215,27 @@ export default {
   padding: 2px 8px;
   border-radius: 15px; /* Oval shape */
   font-size: 0.9em;
+}
+.item-card {
+  position: relative; /* Needed for absolute positioning of the label */
+}
+
+.collection-method-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.food-label {
+  background-color: #2196F3; /* Blue background for Food */
+}
+
+.item-label {
+  background-color: #FFA500; /* Orange background for Item */
 }
 
 </style>

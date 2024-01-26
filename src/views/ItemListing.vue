@@ -353,7 +353,7 @@ async fetchItems() {
 
 .edit-button {
   position: absolute;
-  top: 12px;
+  top: 170px;
   left: 0px;
   z-index: 10; /* Ensure the button is above other elements */
 }
@@ -361,15 +361,15 @@ async fetchItems() {
   
 .delete-button {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 0;
+  right: 0;
   font-size: 0.9rem; 
   color: white;
   background-color: red; 
   border: none;
   border-radius: 50%; /* To make it look like a circle */
-  padding: 5px 7px; /*
-  line-height: 1; /* Aligns the text 'X' in the center */
+  padding: 0;
+  line-height:1.5em; /* Aligns the text 'X' in the center */
   width: 1.5em; /* Ensures the width is enough for the content */
   height: 1.5em; /* Ensures the height is equal to width to make a circle */
   text-align: center; /* Ensures the 'X' is centered */
@@ -505,8 +505,8 @@ async fetchItems() {
   top: 0px;
   left: 0px;
   z-index: 10;
-  background-color: #4CAF50; /* Green color for donation badge */
-  color: white;
+  background-color: yellow; /* Green color for donation badge */
+  color: black;
   padding: 5px;
   border-radius: 5px;
   font-size: 0.8rem;
@@ -517,12 +517,12 @@ async fetchItems() {
 }
 .item-quantity-display {
   position: absolute; /* Position the label absolutely within the card */
-  top: 180px; /* Position from the bottom of the picture */
+  top: 176.5px; /* Position from the bottom of the picture */
   right: 0px; /* Position from the right side of the picture */
   background-color: #4CAF50; /* Green background for visibility */
   color: white; /* White text for contrast */
   font-weight: bold; /* Bold font */
-  padding: 3px 6px; /* Padding around the text */
+  padding: 5px 6px; /* Padding around the text */
   border-radius: 4px; /* Rounded corners */
   font-size: 0.8rem; /* Smaller font size */
 }

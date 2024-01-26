@@ -109,7 +109,7 @@
 
 <script>
 import { db } from '@/firebase/firebaseInit'
-import { collection, query, onSnapshot, doc, deleteDoc, setDoc, addDoc } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, deleteDoc, setDoc, addDoc,serverTimestamp } from 'firebase/firestore';
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
@@ -200,17 +200,10 @@ async confirmBooking() {
     const newQuantity = this.selectedItemForBooking.quantity - this.selectedQuantity;
 
     try {
-      // Update Firestore for the item's quantity
       const itemRef = doc(db, "items", this.selectedItemForBooking.id);
-      await setDoc(itemRef, { quantity: newQuantity }, { merge: true });
-
-      // Update local items array
-      this.items = this.items.map(item => {
-        if (item.id === this.selectedItemForBooking.id) {
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      });
+        setDoc(itemRef, { quantity: newQuantity }, { merge: true })
+        .then(() => console.log("Quantity updated in Firestore"))
+        .catch(error => console.error("Error updating quantity:", error));
 
       // Add to cart and close dialog
       cartStore.addToCart(this.selectedItemForBooking, this.selectedQuantity);
@@ -225,6 +218,7 @@ async confirmBooking() {
         this.selectedItemForBooking.bookedUserId= currentUserId;
         this.selectedItemForBooking.quantity = newQuantity;
         this.selectedItemForBooking.bookedItem = this.selectedQuantity;
+        this.selectedItemForBooking.addedAt=serverTimestamp();
         // Add the cart item to Firestore
         await addDoc(collection(db, "cartItems"), this.selectedItemForBooking);
         console.log("Cart item added with user UID");
@@ -262,7 +256,7 @@ async fetchItems() {
       return item.photos[0].url; 
     } 
     else {
-      return 'https://loremflickr.com/640/360';
+      return 'https://via.placeholder.com/200';
       }
   },
 

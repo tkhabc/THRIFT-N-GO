@@ -99,8 +99,9 @@ const storeUserInFirestore = async (user) => {
     await setDoc(userRef, {
       username: user.displayName || 'Anonymous', // Use Google display name
       email: user.email,
+      profilePictureUrl: user.photoURL, 
       // Add other relevant user info
-    });
+    }, { merge: true });
   }
 };
 

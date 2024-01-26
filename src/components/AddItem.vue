@@ -124,7 +124,7 @@ data() {
       listingType: '', 
       collectionMethod: '',
       uid: '',
-      distance:null
+      distance:null,
     },
     errorMessage: '',
     userCurrentLocation: null, // Added to track the user's current location

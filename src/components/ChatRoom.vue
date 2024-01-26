@@ -64,11 +64,18 @@
       const loadMessages = async () => {
         const q = query(messagesRef, where('chatroomId', '==', props.chatroomId), orderBy('timestamp', 'asc')); // Sorting by timestamp
         onSnapshot(q, async (snapshot) => {
-            const messagePromises = snapshot.docs.map(async doc => {
-            const data = doc.data();
-            const username = await getUserById(data.senderId);
-            return { id: doc.id, username, ...data };
-            });
+          const messagePromises = snapshot.docs.map(async doc => {
+          const messageData = doc.data();
+          const userData = await getUserById(messageData.senderId);
+          return {
+            id: doc.id,
+            text: messageData.text, // The actual message text
+            timestamp: messageData.timestamp,
+            senderId: messageData.senderId,
+            username: userData.username, // Sender's username
+            userAvatar: userData.profilePictureUrl // Sender's profile picture
+          };
+        });
             messages.value = await Promise.all(messagePromises);
             nextTick(() => {
                 nextTick(() => {

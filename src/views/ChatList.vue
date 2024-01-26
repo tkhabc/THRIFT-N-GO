@@ -4,21 +4,34 @@
       <v-col cols="12" sm="8" md="6">
         <v-card class="elevation-12">
           <v-toolbar color="teal" dark>
-            <v-toolbar-title>Chat Rooms</v-toolbar-title>
+            <v-toolbar-title>Your ChatRooms</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-progress-circular indeterminate color="white" v-if="isLoading"></v-progress-circular>
           </v-toolbar>
+          <v-text-field
+            v-model="searchQuery"
+            label="Search Chat Rooms"
+            single-line
+            hide-details
+          ></v-text-field>
           <v-list v-if="!isLoading && chatrooms.length > 0">
             <v-list-item-group>
               <v-list-item v-for="chatroom in chatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" two-line>
-                <v-list-item-avatar>
+
+                <!-- <v-list-item-avatar v-if="chatroom.participantAvatar">
+                <img :src="chatroom.participantAvatar" alt="Profile Picture" >
+                </v-list-item-avatar> -->
+                
+                <v-list-item-avatar >
                   <v-icon>mdi-account-circle</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title class="font-weight-bold">{{ chatroom.participantName }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ chatroom.lastMessage }}</v-list-item-subtitle>
+                  <v-list-item-subtitle class="font-weight-bold">{{ chatroom.participantName }}</v-list-item-subtitle>
+                  <v-list-item-action-text>{{ formatChatroomTime(chatroom.lastMessageTime) }}</v-list-item-action-text>
+                  
+                  <v-list-item-title class="last-message">{{ chatroom.lastMessage }}</v-list-item-title>
                 </v-list-item-content>
-                <v-list-item-action-text>{{ chatroom.lastMessageTime }}</v-list-item-action-text>
+                
               </v-list-item>
               <v-divider v-for="(item, i) in chatrooms" :key="`divider-${i}`" inset></v-divider>
             </v-list-item-group>
@@ -31,11 +44,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { debounce } from 'lodash';
+import { ref, onMounted, computed, watch } from 'vue';
 import { db, auth } from '@/firebase/firebaseInit';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import router from '@/router/index';
 import { getUserById } from '@/firebase/chatService'; // Make sure this function exists
+import { formatDistanceToNow } from 'date-fns';
+
 
 export default {
 setup() {
@@ -43,22 +59,45 @@ setup() {
   const chatrooms = ref([]);
   const chatroomsRef = collection(db, 'chatrooms');
   let currentUserId = auth.currentUser?.uid; // Using optional chaining
+  const searchQuery = ref('');
 
   // Fetch participant names for each chatroom
   const fetchParticipantNames = async (chatroomsSnapshot) => {
     return Promise.all(chatroomsSnapshot.docs.map(async (doc) => {
       const chatroomData = doc.data();
       const otherUserId = chatroomData.userIds.find(id => id !== currentUserId);
-      const participantName = await getUserById(otherUserId); // Fetch the participant's name
+      const participantData = await getUserById(otherUserId); // Fetch the participant's name
       const lastMessage = chatroomData.lastMessageText;
+
+      let participantAvatar = '';
+      if (otherUserId === auth.currentUser.uid) {
+        participantAvatar = auth.currentUser.photoURL; // Current user's Google profile picture
+      } else {
+        participantAvatar = 'default-avatar.png';
+        // Here you would ideally fetch the other user's avatar URL from Firestore
+        // participantAvatar = ...;
+      }
       return {
         id: doc.id,
-        participantName,
+        participantName: participantData.username,
+        participantAvatar,
         lastMessage,
         ...chatroomData
       };
     }));
   };
+
+  const filteredChatrooms = computed(() => {
+      if (!searchQuery.value) return chatrooms.value;
+      return chatrooms.value.filter(chatroom =>
+        chatroom.participantName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        chatroom.lastMessage.toLowerCase().includes(searchQuery.value.toLowerCase())
+      );
+    });
+
+    watch(searchQuery, debounce(() => {
+      loadChatrooms();
+    }, 300));
 
   const loadChatrooms = async () => {
     isLoading.value = true;
@@ -76,15 +115,48 @@ setup() {
     router.push({ name: 'ChatRoom', params: { chatroomId } });
   };
 
-  return { chatrooms, goToChatroom, isLoading };
-}
+  
+// const formatChatroomTime = (timestamp) => {
+//   return formatDistanceToNow(timestamp.toDate(), { addSuffix: true });
+// };
 
+  return { chatrooms, goToChatroom, isLoading, searchQuery, filteredChatrooms };
+
+  
+},
+methods: {
+  formatChatroomTime(timestamp) {
+    if (!timestamp) {
+      // Return a default string or handle the case when timestamp is not available
+      return 'No date available';
+    }
+    try {
+      return formatDistanceToNow(timestamp.toDate(), { addSuffix: true });
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return 'Invalid date';
+    }
+  },
+    // ... other methods ...
+  },
 };
 </script>
   
 <style scoped>
+
+.v-list-item-avatar img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%; /* Makes the image circular */
+}
   .chatlist {
   /* Styling for the chat list container */
+}
+
+.last-message {
+  font-size: 1.2em; /* Adjust the size as needed */
+  color: #1A6757;
+  font-weight: bold;
 }
 
 .chatroom-entry {

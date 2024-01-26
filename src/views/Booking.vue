@@ -59,6 +59,9 @@
 
 <script>
 import { cartStore } from '@/cartStore';
+import { db } from '@/firebase/firebaseInit'
+import { collection, query, onSnapshot } from 'firebase/firestore';
+
 
 export default {
   name: 'Booking',

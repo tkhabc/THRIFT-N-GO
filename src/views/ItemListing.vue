@@ -74,17 +74,21 @@
               block 
               @click.stop="item.quantity === 0 ? null : addToCart(item)"
               :disabled="item.quantity === 0"
-              
+              v-if="!isOwner(item.uid)"  
               >
-                {{ getItemLabel(item.quantity) }}
+              {{ getItemLabel(item.quantity) }}
               </v-btn>
 
             </v-col>
             <v-col cols="6" class="locationButton">
-              <v-btn color="green" block @click="goToLocation(item)">Location</v-btn>
+              <v-btn color="green" block @click="goToLocation(item)" v-if="!isOwner(item.uid)">
+                Location
+              </v-btn>
             </v-col>
             <v-col cols="12" class="chatButton">
-              <v-btn color="white" block @click="goToChat(item.uid)">Chat with Seller</v-btn>
+              <v-btn color="white" block @click="goToChat(item.uid)" v-if="!isOwner(item.uid)">
+                Chat with Seller
+              </v-btn>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -182,9 +186,12 @@ export default {
 
     addToCart(item) {
     if (!cartStore.isItemBooked(item.id)) {
-      
+      console.log("not booked yet");
       this.selectedItemForBooking = item;
       this.isQuantityDialogOpen = true;
+    }
+    else{
+      console.log("Item already booked");
     }
 },
 async confirmBooking() {
@@ -193,10 +200,10 @@ async confirmBooking() {
     const newQuantity = this.selectedItemForBooking.quantity - this.selectedQuantity;
 
     try {
-      // Update Firestore
+      // Update Firestore for the item's quantity
       const itemRef = doc(db, "items", this.selectedItemForBooking.id);
       await setDoc(itemRef, { quantity: newQuantity }, { merge: true });
-      
+
       // Update local items array
       this.items = this.items.map(item => {
         if (item.id === this.selectedItemForBooking.id) {
@@ -209,17 +216,27 @@ async confirmBooking() {
       cartStore.addToCart(this.selectedItemForBooking, this.selectedQuantity);
       this.isQuantityDialogOpen = false;
       console.log("Quantity updated in Firestore and locally");
+
+      // Get the UID of the current user
+      const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+      // Check if a user is logged in
+      if (currentUserId) {
+        this.selectedItemForBooking.bookedUserId= currentUserId;
+        this.selectedItemForBooking.quantity = newQuantity;
+        this.selectedItemForBooking.bookedItem = this.selectedQuantity;
+        // Add the cart item to Firestore
+        await addDoc(collection(db, "cartItems"), this.selectedItemForBooking);
+        console.log("Cart item added with user UID");
+      } else {
+        console.error("No authenticated user found for adding to cart");
+      }
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Error in booking process:", error);
     }
   }
-      const cartItem = {
-        itemId: this.selectedItemForBooking.id,
-        quantity: this.selectedQuantity
-      };
-      await addDoc(collection(db, "cartItems"), cartItem);
-
 },
+
 async fetchItems() {
   const q = query(collection(db, 'items'));
   onSnapshot(q, (querySnapshot) => {

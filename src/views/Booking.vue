@@ -70,7 +70,8 @@ export default {
     filteredCartItems() {
       const items = this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
       console.log("Filtered Cart Items:", items);
-      return items;    },
+      return items;    
+    },
     currentUserId() {
       return auth.currentUser ? auth.currentUser.uid : null;
     },

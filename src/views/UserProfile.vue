@@ -6,6 +6,13 @@
         <v-card>
           <v-card-text v-if="profile">
             <v-form v-if="editing">
+              <v-select
+                v-model="editableProfile.identity"
+                :items="['User', 'Food Seller']"
+                label="Please Choose Your Identity"
+                required
+              ></v-select>
+
               <v-text-field v-model="editableProfile.name" label="Name" 
               :error-messages="errors.name"></v-text-field>
               <v-text-field v-model="editableProfile.email" label="Email" @input="validateEmail" 
@@ -38,6 +45,15 @@
                     <v-list-item-title>Name: {{ profile.name }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon color="green">mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content class="align-start">
+                    <v-list-item-title>Identity: {{ profile.identity }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+
                 <v-list-item>
                   <v-list-item-icon>
                     <v-icon color="green">mdi-calendar-month</v-icon>
@@ -139,6 +155,7 @@
         errors: {},
         userId: null,
         genderItems: ['Male', 'Female', 'Other'],
+        identity:'',
       };
     },
     computed: {

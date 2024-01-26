@@ -67,8 +67,6 @@
 </div>
 </template>
 
-fddfdf
-
 <script setup>
 import router from '@/router';
 import {auth, signInWithEmailAndPassword, db} from '@/firebase/firebaseInit'

@@ -115,7 +115,6 @@ data() {
     newItem: {
       photos: [], 
       name: '',
-      typeOfItem: '',
       description: '',  
       condition: '',
       quantity: '',
@@ -197,7 +196,7 @@ methods: {
       // Store the newItem object in Firestore
       await addDoc(collection(db, 'items'), this.newItem);
       this.resetForm();
-      this.$router.push('/itemlisting');
+      this.$router.push('//foodlisting');
       alert('Item added successfully');
     } catch (error) {
       console.error('Error adding document: ', error);

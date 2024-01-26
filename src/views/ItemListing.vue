@@ -187,15 +187,10 @@ export default {
     },
 
     addToCart(item) {
-    if (!cartStore.isItemBooked(item.id)) {
-      console.log("not booked yet");
       this.selectedItemForBooking = item;
       this.isQuantityDialogOpen = true;
-    }
-    else{
-      console.log("Item already booked");
-    }
-},
+    },
+
 async confirmBooking() {
   if (this.selectedItemForBooking) {
     // Calculate new quantity

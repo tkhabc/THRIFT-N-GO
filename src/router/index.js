@@ -9,12 +9,12 @@ import ItemListing from '@/views/ItemListing.vue'
 import AddFood from '@/components/AddFood.vue'
 import AddItem from '@/components/AddItem.vue'
 import UserLocation from '@/views/UserLocation.vue'
-import ChatHistory from '@/views/ChatHistory.vue'
 import EditItem from '@/components/EditItem.vue'
+import EditFood from '@/components/EditFood.vue'
 import ChatRoom from '@/components/ChatRoom.vue'
-import ChatList from '@/views/ChatList.vue'
-import ChatTesting from '@/views/ChatTesting.vue'
-import UserProfile from '@/components/UserProfile.vue'
+import ChatHistory from '@/views/ChatHistory.vue'
+import UserProfile from '@/views/UserProfile.vue'
+import OrderManagement from '@/views/OrderManagement.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
@@ -73,14 +73,15 @@ const routes = [
     component: UserLocation
   },
   {
-    path: '/chathistory',
-    name: 'ChatHistory',
-    component: ChatHistory
-  },
-  {
-    path: '/edit-item/:itemId',
+    path: '/edititem/:itemId',
     name: 'EditItem',
     component: EditItem,
+    props: true
+  },
+  {
+    path: '/editfood/:foodId',
+    name: 'EditFood',
+    component: EditFood,
     props: true
   },
   {
@@ -90,14 +91,9 @@ const routes = [
     props: true
   },
   {
-    path: '/chatlist',
-    name: 'ChatList',
-    component: ChatList
-  },
-  {
-    path: '/chattesting',
-    name: 'ChatTesting',
-    component: ChatTesting
+    path: '/chathistory',
+    name: 'ChatHistory',
+    component: ChatHistory
   },
   {
     path: '/userprofile/:userId',
@@ -108,6 +104,11 @@ const routes = [
     path: '/myprofile',
     name: 'MyProfile',
     component: UserProfile
+  },
+  {
+    path: '/ordermanagement',
+    name: 'OrderManagement',
+    component: OrderManagement
   },
 ]
 

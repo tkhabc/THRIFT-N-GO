@@ -1,5 +1,3 @@
-// UserServices.js
-
 import { db } from './firebaseInit';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 

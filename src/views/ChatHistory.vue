@@ -1,146 +1,235 @@
 <template>
-    <div class="chat-history">
-      <div class="title-container">
-        <h1 class="chat-history-title">Chat History</h1>
-      </div>
-      <div class="search-container">
-        <input type="text" placeholder="Search messages, people" class="search-bar"/>
-      </div>
-      <div class="chat-list">
-        <div 
-          v-for="(chat, index) in chats" 
-          :key="chat.id" 
-          class="chat-item" 
-          @click="index === 0 ? navigateToChat(chat.id) : null"
-        >
-          <div class="chat-info">
-            <div class="chat-name">{{ chat.name }}</div>
-            <div class="chat-preview">{{ chat.preview }}</div>
-          </div>
-          <div class="chat-timestamp">{{ chat.timestamp }}</div>
-        </div>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        chats: [
-          {
-            id: 1,
-            name: 'Annie Tan',
-            preview: 'That’s great! Can I come collect it...',
-            timestamp: '10:30 AM',
-          },
-          {
-            id: 2,
-            name: 'Jennifer Lawrence',
-            preview: 'Hi there! Is this still available?',
-            timestamp: '08:45 PM',
-          },
-          {
-            id: 3,
-            name: 'Olivia Foster',
-            preview: 'See you at the pick-up!',
-            timestamp: 'Yesterday',
-          },
-          {
-            id: 4,
-            name: 'Jackson Adams',
-            preview: 'Can you pick up the item at USM...',
-            timestamp: 'Yesterday',
-          },
-          {
-            id: 5,
-            name: 'Ethan Sullivan',
-            preview: 'The item is still available.',
-            timestamp: 'Yesterday',
-          },
-        ],
-        hover: null, // To track hover state
-        };
-    },
-    methods: {
-        navigateToChat(chatId) {
-        // This assumes you have a named route 'Chat' set up in your router configuration.
-        this.$router.push({ name: 'Chat', params: { id: chatId } });
-        },
-    },
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+        <v-card class="elevation-12">
+          <v-toolbar color="teal" dark>
+            <v-toolbar-title>Your ChatRooms</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-progress-circular indeterminate color="white" v-if="isLoading"></v-progress-circular>
+          </v-toolbar>
+          <v-text-field
+            v-model="searchQuery"
+            label="Search Chat Rooms"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-list v-if="!isLoading && chatrooms.length > 0">
+            <v-list-item-group>
+              <v-list-item v-for="chatroom in chatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" two-line>
+
+                <!-- <v-list-item-avatar v-if="chatroom.participantAvatar">
+                <img :src="chatroom.participantAvatar" alt="Profile Picture" >
+                </v-list-item-avatar> -->
+                <v-badge
+                :content="chatroom.unreadCount"
+                color="red"
+                overlap
+                class="notification-badge"
+                v-if="chatroom.unreadCount > 0">
+                </v-badge>
+                <v-list-item-avatar >
+                  <v-icon>mdi-account-circle</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="font-weight-bold">{{ chatroom.participantName }}</v-list-item-subtitle>
+                  <v-list-item-action-text>{{ formatChatroomTime(chatroom.lastMessageTime) }}</v-list-item-action-text>
+                  
+                  <v-list-item-title class="last-message">{{ chatroom.lastMessage }}</v-list-item-title>
+                </v-list-item-content>
+                
+              </v-list-item>
+              <v-divider v-for="(item, i) in chatrooms" :key="`divider-${i}`" inset></v-divider>
+            </v-list-item-group>
+          </v-list>
+          <v-subheader v-else-if="!isLoading">{{ chatrooms.length === 0 ? 'No chat rooms available' : 'Loading chat rooms...' }}</v-subheader>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import { debounce } from 'lodash';
+import { ref, onMounted, computed, watch } from 'vue';
+import { db, auth } from '@/firebase/firebaseInit';
+import { collection, query, where, onSnapshot, getDocs } from 'firebase/firestore';
+import router from '@/router/index';
+import { getUserById } from '@/firebase/chatService'; // Make sure this function exists
+import { formatDistanceToNow } from 'date-fns';
+
+
+export default {
+setup() {
+  const isLoading = ref(true);
+  const chatrooms = ref([]);
+  const chatroomsRef = collection(db, 'chatrooms');
+  let currentUserId = auth.currentUser?.uid; // Using optional chaining
+  const searchQuery = ref('');
+
+  // Fetch participant names for each chatroom
+  const fetchParticipantNames = async (doc) => {
+  const chatroomData = doc.data();
+  const otherUserId = chatroomData.userIds.find(id => id !== currentUserId);
+  const participantData = await getUserById(otherUserId); // Fetch the participant's name
+
+  return {
+    participantName: participantData.username,
+    participantAvatar: participantData.profilePictureUrl,
+    lastMessage: chatroomData.lastMessage,
+    lastMessageTime: chatroomData.lastMessageTime
   };
-  </script>
+};
+
+  const filteredChatrooms = computed(() => {
+      if (!searchQuery.value) return chatrooms.value;
+      return chatrooms.value.filter(chatroom =>
+        chatroom.participantName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        chatroom.lastMessage.toLowerCase().includes(searchQuery.value.toLowerCase())
+      );
+    });
+
+    watch(searchQuery, debounce(() => {
+      loadChatrooms();
+    }, 300));
+
+const loadChatrooms = async () => {
+  isLoading.value = true;
+  const q = query(chatroomsRef, where('userIds', 'array-contains', currentUserId));
+  onSnapshot(q, async (snapshot) => {
+    const chatroomsWithNamesPromises = snapshot.docs.map(async (doc) => {
+      const chatroomInfo = await fetchParticipantNames(doc);
+
+      // Query to count unread messages
+      const unreadQuery = query(
+        collection(db, 'messages'), 
+        where('chatroomId', '==', doc.id), 
+        where('read', '==', false),
+        where('senderId', '!=', currentUserId)
+        );
+      const unreadSnapshot = await getDocs(unreadQuery);
+
+      return {
+        id: doc.id,
+        ...chatroomInfo,
+        unreadCount: unreadSnapshot.docs.length // Add unreadCount property
+      };
+    });
+
+    chatrooms.value = await Promise.all(chatroomsWithNamesPromises);
+    isLoading.value = false;
+  });
+};
+
+
+  onMounted(loadChatrooms);
+
+  const goToChatroom = (chatroomId) => {
+    router.push({ name: 'ChatRoom', params: { chatroomId } });
+  };
+
   
-  <style scoped>
-.chat-history {
-  font-family: 'Arial', sans-serif;
-  color: #333;
-  max-width: 400px;
-  margin: auto;
-  background: #fff;
-}
+// const formatChatroomTime = (timestamp) => {
+//   return formatDistanceToNow(timestamp.toDate(), { addSuffix: true });
+// };
 
-.title-container {
-  padding: 10px 16px;
-  text-align: center;
-}
+  return { chatrooms, goToChatroom, isLoading, searchQuery, filteredChatrooms };
 
-.chat-history-title {
-  margin: 0;
-  color: #1A6757;
-  font-size: 1.3rem;
-}
+  
+},
+methods: {
+  formatChatroomTime(timestamp) {
+    if (!timestamp) {
+      // Return a default string or handle the case when timestamp is not available
+      return 'No date available';
+    }
+    try {
+      return formatDistanceToNow(timestamp.toDate(), { addSuffix: true });
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return 'Invalid date';
+    }
+  },
+    // ... other methods ...
+  },
+};
+</script>
+  
+<style scoped>
 
-.search-container {
-  padding: 10px;
-}
-
-.search-bar {
+.v-list-item-avatar img {
   width: 100%;
+  height: auto;
+  border-radius: 50%; /* Makes the image circular */
+}
+.notification-badge {
+  animation: pulse 1s infinite;
+  /* You can adjust the color and size as per your design */
+  --v-badge-background-color: red !important;
+  --v-badge-color: white !important;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.last-message {
+  font-size: 1.2em; /* Adjust the size as needed */
+  color: #1A6757;
+  font-weight: bold;
+}
+
+.chatroom-entry {
+  /* Styling for each chatroom entry */
   padding: 10px;
-  border: none;
-  border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.chat-list {
-  overflow-y: auto;
-  max-height: 500px;
-}
-
-.chat-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid #ccc;
   cursor: pointer;
 }
 
-.chat-item:hover, .chat-item.hovered {
-  background-color: #f2f2f2;
-}
-
-.chat-info {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.chat-name {
+.chatroom-participant {
+  /* Styling for participant name */
   font-weight: bold;
-  color: #1A6757;
 }
 
-.chat-preview {
+.last-message {
+  /* Styling for the last message preview */
   color: #666;
-  font-size: 0.9rem;
 }
 
-.chat-timestamp {
+.chatroom-timestamp {
+  /* Styling for the timestamp */
   color: #999;
-  font-size: 0.8rem;
-  margin-left: auto;
+  font-size: 0.8em;
+}
+
+.v-card-title {
+  background-color: #1A6757; /* Your theme color */
+  color: white;
+}
+.v-list-item--active {
+  background-color: #EEEEEE; /* Highlight color for active chat rooms */
+}
+
+.v-card {
+  border-radius: 16px; /* Rounded corners for the card */
+}
+.v-toolbar {
+  border-radius: 16px 16px 0 0; /* Rounded corners for the toolbar */
+}
+.v-list-item {
+  margin-bottom: 2px; /* Spacing between list items */
+}
+.v-divider {
+  margin: 0; /* Remove default margin of divider */
 }
 </style>
-  

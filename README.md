@@ -4,7 +4,9 @@ We developed a project called Thrift N Go to overcome the wastage problem by off
 ## Thrift N Go Website Link
 ```
 https://thriftngo.netlify.app/
-**Make sure to reduce your viewport to mobile size or press F12 to inspect/open developer tools
+*Make sure to reduce your viewport to mobile size or press F12 to inspect/open developer tools.
+*For now we create the app based on dimension of Iphone 14 pro max, we will make it responsive in the future, sorry for any inconvenience.
+*On desktop/laptop, the scale and resolution should be set to 125% and 1920x1080 respectively
 ```
 
 ## Project setup

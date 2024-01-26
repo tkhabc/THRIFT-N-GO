@@ -21,7 +21,7 @@
                 <!-- <v-list-item-avatar v-if="chatroom.participantAvatar">
                 <img :src="chatroom.participantAvatar" alt="Profile Picture" >
                 </v-list-item-avatar> -->
-                
+                <v-badge :content="chatroom.unreadCount" v-if="chatroom.unreadCount > 0"></v-badge>
                 <v-list-item-avatar >
                   <v-icon>mdi-account-circle</v-icon>
                 </v-list-item-avatar>
@@ -47,7 +47,7 @@
 import { debounce } from 'lodash';
 import { ref, onMounted, computed, watch } from 'vue';
 import { db, auth } from '@/firebase/firebaseInit';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, getDocs } from 'firebase/firestore';
 import router from '@/router/index';
 import { getUserById } from '@/firebase/chatService'; // Make sure this function exists
 import { formatDistanceToNow } from 'date-fns';
@@ -62,30 +62,18 @@ setup() {
   const searchQuery = ref('');
 
   // Fetch participant names for each chatroom
-  const fetchParticipantNames = async (chatroomsSnapshot) => {
-    return Promise.all(chatroomsSnapshot.docs.map(async (doc) => {
-      const chatroomData = doc.data();
-      const otherUserId = chatroomData.userIds.find(id => id !== currentUserId);
-      const participantData = await getUserById(otherUserId); // Fetch the participant's name
-      const lastMessage = chatroomData.lastMessageText;
+  const fetchParticipantNames = async (doc) => {
+  const chatroomData = doc.data();
+  const otherUserId = chatroomData.userIds.find(id => id !== currentUserId);
+  const participantData = await getUserById(otherUserId); // Fetch the participant's name
 
-      let participantAvatar = '';
-      if (otherUserId === auth.currentUser.uid) {
-        participantAvatar = auth.currentUser.photoURL; // Current user's Google profile picture
-      } else {
-        participantAvatar = 'default-avatar.png';
-        // Here you would ideally fetch the other user's avatar URL from Firestore
-        // participantAvatar = ...;
-      }
-      return {
-        id: doc.id,
-        participantName: participantData.username,
-        participantAvatar,
-        lastMessage,
-        ...chatroomData
-      };
-    }));
+  return {
+    participantName: participantData.username,
+    participantAvatar: participantData.profilePictureUrl,
+    lastMessage: chatroomData.lastMessage,
+    lastMessageTime: chatroomData.lastMessageTime
   };
+};
 
   const filteredChatrooms = computed(() => {
       if (!searchQuery.value) return chatrooms.value;
@@ -99,15 +87,34 @@ setup() {
       loadChatrooms();
     }, 300));
 
-  const loadChatrooms = async () => {
-    isLoading.value = true;
-    const q = query(chatroomsRef, where('userIds', 'array-contains', currentUserId));
-    onSnapshot(q, async (snapshot) => {
-      const chatroomsWithNames = await fetchParticipantNames(snapshot);
-      chatrooms.value = chatroomsWithNames;
+const loadChatrooms = async () => {
+  isLoading.value = true;
+  const q = query(chatroomsRef, where('userIds', 'array-contains', currentUserId));
+  onSnapshot(q, async (snapshot) => {
+    const chatroomsWithNamesPromises = snapshot.docs.map(async (doc) => {
+      const chatroomInfo = await fetchParticipantNames(doc);
+
+      // Query to count unread messages
+      const unreadQuery = query(
+        collection(db, 'messages'), 
+        where('chatroomId', '==', doc.id), 
+        where('read', '==', false),
+        where('senderId', '!=', currentUserId)
+        );
+      const unreadSnapshot = await getDocs(unreadQuery);
+
+      return {
+        id: doc.id,
+        ...chatroomInfo,
+        unreadCount: unreadSnapshot.docs.length // Add unreadCount property
+      };
     });
+
+    chatrooms.value = await Promise.all(chatroomsWithNamesPromises);
     isLoading.value = false;
-  };
+  });
+};
+
 
   onMounted(loadChatrooms);
 

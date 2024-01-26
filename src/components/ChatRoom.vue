@@ -28,7 +28,7 @@
   import { getUserById, sendMessage, sendMessage as sendChatMessage} from '@/firebase/chatService'
   import { ref, onMounted, computed, nextTick } from 'vue'
   import { db, auth } from '@/firebase/firebaseInit'
-  import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
+  import { collection, query, where, onSnapshot, orderBy, getDocs, updateDoc, doc } from 'firebase/firestore'
   import router from '@/router/index'
 
   
@@ -61,6 +61,17 @@
          });
         };
 
+        const markMessagesAsRead = async () => {
+  const unreadMessagesQuery = query(collection(db, 'messages'), where('chatroomId', '==', props.chatroomId), where('read', '==', false), where('senderId', '!=', auth.currentUser.uid));
+  const querySnapshot = await getDocs(unreadMessagesQuery);
+  querySnapshot.forEach((document) => {
+    const messageDocRef = doc(db, 'messages', document.id);
+    updateDoc(messageDocRef, {
+      read: true
+    });
+  });
+};
+
       const loadMessages = async () => {
         const q = query(messagesRef, where('chatroomId', '==', props.chatroomId), orderBy('timestamp', 'asc')); // Sorting by timestamp
         onSnapshot(q, async (snapshot) => {
@@ -83,6 +94,7 @@
                 });
             });
         });
+        await markMessagesAsRead();
         };
 
       onMounted(loadMessages);

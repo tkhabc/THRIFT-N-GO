@@ -32,7 +32,8 @@ export const sendMessage = async (chatroomId, senderId, text) => {
     chatroomId,
     senderId,
     text,
-    timestamp
+    timestamp,
+    read: false
   };
 
   await addDoc(messagesRef, messageData);

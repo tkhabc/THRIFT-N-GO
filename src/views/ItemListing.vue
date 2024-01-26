@@ -114,6 +114,8 @@ import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
 import { auth } from "@/firebase/firebaseInit"
 import { createOrGetChatroom } from "@/firebase/chatService"
+import { omit } from 'lodash'; // Import the omit function
+
 
 export default {
   name: 'ItemListing',
@@ -206,7 +208,7 @@ async confirmBooking() {
         .catch(error => console.error("Error updating quantity:", error));
 
       // Add to cart and close dialog
-      cartStore.addToCart(this.selectedItemForBooking, this.selectedQuantity);
+      //cartStore.addToCart(this.selectedItemForBooking, this.selectedQuantity);
       this.isQuantityDialogOpen = false;
       console.log("Quantity updated in Firestore and locally");
 
@@ -216,12 +218,15 @@ async confirmBooking() {
       // Check if a user is logged in
       if (currentUserId) {
         this.selectedItemForBooking.bookedUserId= currentUserId;
-        this.selectedItemForBooking.quantity = newQuantity;
         this.selectedItemForBooking.bookedItem = this.selectedQuantity;
         this.selectedItemForBooking.addedAt=serverTimestamp();
+        this.selectedItemForBooking.IdinItems = this.selectedItemForBooking.id;
+        const selectedItemWithoutProperty = omit(this.selectedItemForBooking, 'id','quantity');
+        await addDoc(collection(db, 'cartItems'), selectedItemWithoutProperty);
         // Add the cart item to Firestore
-        await addDoc(collection(db, "cartItems"), this.selectedItemForBooking);
+        //await addDoc(collection(db, "cartItems"), this.selectedItemForBooking);
         console.log("Cart item added with user UID");
+        console.log("Cart item added with IdinItems",this.selectedItemForBooking.IdinItems);
       } else {
         console.error("No authenticated user found for adding to cart");
       }

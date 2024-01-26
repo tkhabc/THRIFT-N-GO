@@ -36,7 +36,7 @@
               <div>Time left: {{ calculateRemainingTime(item.addedAt) }}</div>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="red" @click="removeFromCart(item.id, item.bookedUserId)">Remove</v-btn>
+              <v-btn color="red" @click="removeFromCart(item.id, item.IdinItems,item.bookedUserId,item.bookedItem)">Remove</v-btn>
             </v-card-actions>
           </v-card>
         </template>
@@ -47,40 +47,43 @@
 
     <v-row justify="end">
       <v-col cols="12" md="4">
-        <!-- <v-card>
+        <v-card>
           <v-card-title class="summary-title">Booking Summary</v-card-title>
           <v-card-text class="summary-text">
             <div>{{ parseInt(itemCount) }} items</div>
             <div>Total: RM{{ totalPrice }}</div>
           </v-card-text>
-        </v-card> -->
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { cartStore } from '@/cartStore';
+
 import { db, auth } from '@/firebase/firebaseInit';
-import { collection, query, onSnapshot } from 'firebase/firestore';
+import { collection, query, onSnapshot,updateDoc, doc, increment,deleteDoc } from 'firebase/firestore';
 
 export default {
   name: 'Booking',
   computed: {
     filteredCartItems() {
-      return this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
-    },
+      const items = this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
+      console.log("Filtered Cart Items:", items);
+      return items;    },
     currentUserId() {
       return auth.currentUser ? auth.currentUser.uid : null;
     },
-    cartItems() {
-      return cartStore.items;
-    },
+    
     itemCount() {
-      return this.cartItems.reduce((total, item) => total + Number(item.quantity), 0);
+      return this.filteredCartItems.reduce((total, item) => total + Number(item.bookedItem), 0);
     },
     totalPrice() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      const total = this.filteredCartItems.reduce((total, item) => total + (item.price * item.bookedItem), 0);
+      console.log("Total Price:", total);
+
+      // Convert to a string with two decimal places
+      return total.toFixed(2);
     }
   },
   data() {
@@ -103,8 +106,29 @@ export default {
         this.isLoading = false;
       });
     },
-    removeFromCart(index, userId) {
-      // Implement your removal logic here
+    async removeFromCart(itemId, IdinItems,bookedUserId,bookedItem) {
+      // Check if the bookedUserId matches the current user's ID
+      if (bookedUserId === this.currentUserId) {
+        // Remove the item from the Firestore collection 'cartItems'
+        const cartItemRef = doc(db, 'cartItems', itemId);
+        const itemRef = doc(db, 'items', IdinItems);
+        try {
+          await updateDoc(itemRef, {
+            quantity: increment(bookedItem) // Use increment to increase the quantity
+          });
+          console.log("Item quantity updated in Firestore items:", itemId);
+        } catch (error) {
+          console.error("Error updating item quantity in Firestore items:", error);
+        }
+        try {
+          await deleteDoc(cartItemRef);
+          console.log("Item removed from Firestore cartItems:", itemId);
+        } catch (error) {
+          console.log("Error removing item from Firestore cartItems:");
+        }
+        
+        
+      }
     },
     calculateRemainingTime(addedAt) {
       const duration = 30 * 60 * 1000; // 30 minutes in milliseconds

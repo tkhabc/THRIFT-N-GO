@@ -487,7 +487,7 @@ async fetchFoods() {
 }
 
 .booked-item {
-  opacity: 0.6; /* Makes the card slightly transparent */
+  opacity: 0.5; /* Makes the card slightly transparent */
   border: 2px solid grey; /* Adds a grey border to indicate it's booked */
 }
 

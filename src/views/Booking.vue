@@ -39,7 +39,7 @@
                 </template>
               </div>
               <div v-if="item.collectionMethod === 'shop'">
-                Time left: {{ calculateRemainingTime(item.addedAt) }}
+                Time left: {{ calculateRemainingTime(item.addedAt,item.reservedDuration) }}
               </div>            
             </v-card-text>
             <v-card-actions>
@@ -114,39 +114,29 @@ export default {
         this.isLoading = false;
       });
     },
-    async removeFromCart(itemId, IdinItems,bookedUserId,bookedItem,collectionMethod) {
-      // Check if the bookedUserId matches the current user's ID
-      if (bookedUserId === this.currentUserId) {
-        // Remove the item from the Firestore collection 'cartItems'
-        const cartItemRef = doc(db, 'cartItems', itemId);
-        const itemRef = doc(db, 'items', IdinItems);
-        const foodRef = doc(db, 'foods', IdinItems);
-        if (collectionMethod === 'shop') {
-          try {
-            await deleteDoc(foodRef);
-            console.log("Item removed from Firestore foods:", itemId);
-          } catch (error) {
-            console.log("Error removing item from Firestore foods:");
-          }
-        } else {
-          try {
-            await deleteDoc(itemRef);
-            console.log("Item removed from Firestore items:", itemId);
-          } catch (error) {
-            console.log("Error removing item from Firestore items:");
-          }
-        }
-        
-        try {
-          await deleteDoc(cartItemRef);
-          console.log("Item removed from Firestore cartItems:", itemId);
-        } catch (error) {
-          console.log("Error removing item from Firestore cartItems:");
-        }    
-      }
-    },
-    calculateRemainingTime(addedAt) {
-      const duration = 30 * 60 * 1000; // 30 minutes in milliseconds
+    async removeFromCart(itemId, IdinItems, bookedUserId, bookedItem, collectionMethod) {
+  // Check if the bookedUserId matches the current user's ID
+  if (bookedUserId === this.currentUserId) {
+    const cartItemRef = doc(db, 'cartItems', itemId);
+    const itemRef = doc(db, collectionMethod === 'shop' ? 'foods' : 'items', IdinItems);
+    
+    try {
+      // Update the item's quantity in Firestore
+      await updateDoc(itemRef, { 
+        quantity: increment(bookedItem) 
+      });
+      console.log(`Item quantity updated in Firestore ${collectionMethod === 'shop' ? 'foods' : 'items'}:`, IdinItems);
+
+      // Remove the item from the cart
+      await deleteDoc(cartItemRef);
+      console.log("Item removed from Firestore cartItems:", itemId);
+    } catch (error) {
+      console.log(`Error updating item quantity in Firestore ${collectionMethod === 'shop' ? 'foods' : 'items'}:`, error);
+    }    
+  }
+},
+    calculateRemainingTime(addedAt, reservedDuration) {
+      const duration = reservedDuration * 60 * 1000; // Convert minutes to milliseconds
       if (!addedAt) return "No timer set";
 
       const timeLeft = addedAt + duration - this.currentTime;
@@ -155,6 +145,16 @@ export default {
       }
       return this.formatTime(timeLeft);
     },
+  //   checkCountdownEnd() {
+  //   this.filteredCartItems.forEach(item => {
+  //     const timeLeft = this.calculateRemainingTime(item.addedAt, item.reservedDuration);
+  //     if (timeLeft === "Time's up") {
+  //       this.$store.dispatch('triggerNotification', {
+  //         message: `Time's up for your booking: ${item.name}`
+  //       });
+  //     }
+  //   });
+  // },
     formatTime(milliseconds) {
       const minutes = Math.floor(milliseconds / 60000);
       const seconds = ((milliseconds % 60000) / 1000).toFixed(0);
@@ -172,11 +172,12 @@ export default {
     clearInterval(this.interval);
   },
   mounted() {
-    this.fetchCartItems();
-    this.interval = setInterval(() => {
-      this.currentTime = Date.now();
-    }, 1000);
-  }
+  this.fetchCartItems();
+  this.interval = setInterval(() => {
+    this.currentTime = Date.now();
+    this.checkCountdownEnd(); // Add this line
+  }, 1000);
+}
 };
 </script>
 

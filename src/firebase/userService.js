@@ -12,8 +12,7 @@ const UserServices = {
       } else {
         // If profile does not exist, create a new one with default values
         const defaultProfile = {
-          name: 'New User',
-          email: '',
+      
         };
         
         await setDoc(profileRef, defaultProfile);

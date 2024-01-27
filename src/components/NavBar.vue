@@ -51,11 +51,9 @@
 import { ref, onMounted } from 'vue';
 import { auth, onAuthStateChanged, signOut } from '@/firebase/firebaseInit';
 import router from '@/router';
-import UserServices from '@/firebase/userService'
 
 const drawer = ref(false);
 const isLoggedIn = ref(false);
-const userProfileCompleted = ref(false);
 
 const menuItems = ref([
   { title: 'UserProfile', path: '/myprofile' },
@@ -78,13 +76,9 @@ const getActiveClass = (path) => {
   return router.currentRoute.value.path === path ? 'active-item' : '';
 };
 
-onMounted(async () => {
-  onAuthStateChanged(auth, async (user) => {
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
     isLoggedIn.value = !!user;
-    if (user) {
-      const userProfile = await UserServices.getUserData(user.uid);
-      userProfileCompleted.value = userProfile.profileCompleted;
-    }
   });
 });
 
@@ -97,18 +91,4 @@ const handleSignOut = async () => {
     console.error('Sign out error:', error);
   }
 };
-
 </script>
-
-<style scoped>
-.white--text {
-  color: #FFFFFF !important; 
-}
-.black--text {
-  color: #000000 !important;
-}
-
-.v-list-item.active-item:not(.v-list-item--disabled) {
-  background-color: #E0E0E0 !important;
-}
-</style>

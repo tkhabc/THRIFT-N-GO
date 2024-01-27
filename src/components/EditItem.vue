@@ -94,6 +94,7 @@ export default {
     // Perform the update
     if (Object.keys(updateData).length > 0) {
       await updateDoc(cartItemRef, updateData);
+      console.log(`Cart item ${docSnapshot.id} successfully updated based on item data!`);
     }
   });
   console.log("Cart item(s) successfully updated based on item data!");

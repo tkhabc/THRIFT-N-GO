@@ -12,7 +12,7 @@ const UserServices = {
       } else {
         // If profile does not exist, create a new one with default values
         const defaultProfile = {
-          profileCompleted: false,
+      
         };
         
         await setDoc(profileRef, defaultProfile);
@@ -23,12 +23,6 @@ const UserServices = {
       throw error;
     }
   },
-
-  isProfileComplete: async (userId) => {
-    const profileRef = doc(db, 'profiles', userId);
-    const profileSnap = await getDoc(profileRef);
-    return profileSnap.exists() && profileSnap.data().profileComplete;
-},
 
   updateUserData: async (userId, profileData) => {
     try {
@@ -41,5 +35,4 @@ const UserServices = {
     }
   }
 };
-
 export default UserServices;

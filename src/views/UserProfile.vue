@@ -192,18 +192,14 @@
         this.validatePhone();
 
         if (this.isValid) {
-        try {
-          // Update the profileCompleted flag
-          this.editableProfile.profileCompleted = true;
-
-          await UserServices.updateUserData(this.userId, this.editableProfile);
-          this.profile = {...this.editableProfile};
-          this.editing = false;
-          this.$router.push('/foodlisting');
-        } catch (error) {
-          console.error('Error updating profile:', error);
+      try {
+        await UserServices.updateUserData(this.userId, this.editableProfile);
+        this.profile = {...this.editableProfile};
+        this.editing = false;
+              } catch (error) {
+        console.error('Error updating profile:', error);
+              }
         }
-      }
   },
       cancelEdit() {
         this.editing = false;
@@ -296,6 +292,7 @@
 }
   };
   </script>
+  
   
 <!-- <style scoped>
 /* .align-start {

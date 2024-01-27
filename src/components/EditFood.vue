@@ -21,7 +21,7 @@
         </v-card>
         <br><br>
         <div>
-        <v-btn color="#1A6757" @click="updateItem" class="mr-4">Update Food</v-btn> <v-btn color="#1A6757" @click="$router.go(-1)">Return</v-btn>
+        <v-btn color="#1A6757" @click="updateFood" class="mr-4">Update Food</v-btn> <v-btn color="#1A6757" @click="$router.go(-1)">Return</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -32,7 +32,7 @@
 
 
 <script>
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc,query,where,getDocs,collection} from 'firebase/firestore';
 import { db } from '@/firebase/firebaseInit';
 
 export default {
@@ -67,10 +67,38 @@ export default {
       await updateDoc(docRef, this.food);
       console.log("food successfully updated!");
       // Navigation or success message
+      await this.updateRelatedCartItems(this.foodId, this.food);
+     
     } catch (error) {
       console.error("Error updating food: ", error);
     }
   },
+  async updateRelatedCartItems(foodId, updatedFoodData) {
+  const cartItemsQuery = query(collection(db, "cartItems"), where("IdinItems", "==", foodId));
+  const querySnapshot = await getDocs(cartItemsQuery);
+
+  querySnapshot.forEach(async (docSnapshot) => {
+    const cartItemRef = doc(db, "cartItems", docSnapshot.id);
+    const cartItemData = docSnapshot.data();
+
+    // Prepare the data to update
+    let updateData = {};
+    for (let key in updatedFoodData) {
+      if (Object.prototype.hasOwnProperty.call(cartItemData, key)) {
+        updateData[key] = updatedFoodData[key];
+        console.log(`Updating cart item ${docSnapshot.id} with ${key}: ${updatedFoodData[key]}`);
+      }
+
+    }
+
+    // Perform the update
+    if (Object.keys(updateData).length > 0) {
+      await updateDoc(cartItemRef, updateData);
+      console.log(`Cart item ${docSnapshot.id} successfully updated based on item data!`);
+    }
+  });
+  console.log("Cart item(s) successfully updated based on item data!");
+},
     // ... methods to handle item updating ...
   }
 }

@@ -79,8 +79,8 @@
       </div>
 
       <div class="form-group">
-        <label for="reserved-duration" class="form-label">Reserved Duration (min)</label>
-        <input type="text" id="reserved-duration" v-model="newFood.reservedDuration" @input="validateDuration($event)" placeholder="Max 600 minutes (1 day)" autocomplete="off" required>
+        <label for="reserved-duration" class="form-label">Reserved Duration (hrs)</label>
+        <input type="text" id="reserved-duration" v-model="newFood.reservedDuration" @input="validateDuration($event)" placeholder="Max 24 hours" autocomplete="off" required>
       </div>
 
       <div class="form-group">
@@ -292,7 +292,7 @@ methods: {
     },
     validateDuration(event) {
     let value = event.target.value.replace(/[^0-9]+/g, '');
-    if (value > 600) {
+    if (value > 1000) {
       alert('Not more than 1 day');
       value = '0';
     }

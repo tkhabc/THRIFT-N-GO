@@ -135,16 +135,16 @@ export default {
     }    
   }
 },
-    calculateRemainingTime(addedAt, reservedDuration) {
-      const duration = reservedDuration * 60 * 1000; // Convert minutes to milliseconds
-      if (!addedAt) return "No timer set";
+calculateRemainingTime(addedAt, reservedDuration) {
+  const duration = reservedDuration * 1000; // Convert seconds to milliseconds
+  if (!addedAt) return "No timer set";
 
-      const timeLeft = addedAt + duration - this.currentTime;
-      if (timeLeft <= 0) {
-        return "Time's up";
-      }
-      return this.formatTime(timeLeft);
-    },
+  const timeLeft = addedAt + duration - this.currentTime;
+  if (timeLeft <= 0) {
+    return "Time's up";
+  }
+  return this.formatTime(timeLeft);
+},
   //   checkCountdownEnd() {
   //   this.filteredCartItems.forEach(item => {
   //     const timeLeft = this.calculateRemainingTime(item.addedAt, item.reservedDuration);
@@ -175,7 +175,6 @@ export default {
   this.fetchCartItems();
   this.interval = setInterval(() => {
     this.currentTime = Date.now();
-    this.checkCountdownEnd(); // Add this line
   }, 1000);
 }
 };

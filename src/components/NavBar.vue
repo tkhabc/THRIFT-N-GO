@@ -51,9 +51,11 @@
 import { ref, onMounted } from 'vue';
 import { auth, onAuthStateChanged, signOut } from '@/firebase/firebaseInit';
 import router from '@/router';
+import UserServices from '@/firebase/userService'
 
 const drawer = ref(false);
 const isLoggedIn = ref(false);
+const userProfileCompleted = ref(false);
 
 const menuItems = ref([
   { title: 'UserProfile', path: '/myprofile' },
@@ -76,9 +78,13 @@ const getActiveClass = (path) => {
   return router.currentRoute.value.path === path ? 'active-item' : '';
 };
 
-onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
+onMounted(async () => {
+  onAuthStateChanged(auth, async (user) => {
     isLoggedIn.value = !!user;
+    if (user) {
+      const userProfile = await UserServices.getUserData(user.uid);
+      userProfileCompleted.value = userProfile.profileCompleted;
+    }
   });
 });
 

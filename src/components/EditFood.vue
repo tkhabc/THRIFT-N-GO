@@ -65,7 +65,7 @@ export default {
     const docRef = doc(db, "foods", this.foodId);
     try {
       await updateDoc(docRef, this.food);
-      console.log("Dood successfully updated!");
+      console.log("food successfully updated!");
       // Navigation or success message
     } catch (error) {
       console.error("Error updating food: ", error);

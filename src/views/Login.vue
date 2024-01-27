@@ -71,8 +71,9 @@
 import router from '@/router';
 import {auth, signInWithEmailAndPassword, db} from '@/firebase/firebaseInit'
 import {GoogleAuthProvider, signInWithPopup} from "firebase/auth"
-import {ref} from 'vue';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import {ref} from 'vue'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import UserServices from '@/firebase/userService'
 
 const storeUserInFirestore = async (user) => {
   const userRef = doc(db, 'users', user.uid);
@@ -104,16 +105,22 @@ const goToRegister = () => {
   router.push('/register')
 }
 
-const register = () => {
-  signInWithEmailAndPassword(auth, email.value, password.value)
-  .then((userCredential) => {
-    console.log("Successfully logged in!")
-    console.log(auth.currentUser)
-    router.push('/foodlisting')
-  })
-  .catch((error) => {
+const checkProfileCompletionAndRedirect = async (user) => {
+  const userProfile = await UserServices.getUserData(auth.currentUser.uid);
+  if (!userProfile.profileCompleted) {
+    router.push(`/userprofile/${auth.currentUser.uid}`);
+  } else {
+    router.push('/foodlisting');
+  }
+};
+
+const register = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    await checkProfileCompletionAndRedirect(auth.currentUser);
+  } catch (error) {
     console.log(error.code);
-    switch(error.code){
+    switch (error.code) {
       case "auth/invalid-email":
         errMsg.value = "Invalid email address format.";
         break;
@@ -129,24 +136,19 @@ const register = () => {
       default:
         errMsg.value = "Email or password is incorrect.";
     }
-  });
-}
+  }
+};
 
-const signInWithGoogle = () => {
+const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-  .then((result) => {
-    console.log("Successfully logged in!")
-    console.log(result.user)
-    router.push('/foodlisting')
-  })
-  .catch((error) => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    await checkProfileCompletionAndRedirect(result.user);
+  } catch (error) {
     console.log(error.code);
     alert(error.message);
-  });
-
-  const googleLogo = require('@/assets/GoogleLogo.png');
-}
+  }
+};
 
 </script>
 

@@ -31,7 +31,7 @@
 
 
 <script>
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc,query,where,getDocs,collection } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseInit';
 
 export default {
@@ -66,10 +66,40 @@ export default {
       await updateDoc(docRef, this.item);
       console.log("Item successfully updated!");
       // Navigation or success message
+
+      // Now, update related cart items
+        await this.updateRelatedCartItems(this.itemId, this.item);
     } catch (error) {
       console.error("Error updating item: ", error);
     }
   },
+  async updateRelatedCartItems(itemId, updatedItemData) {
+  const cartItemsQuery = query(collection(db, "cartItems"), where("IdinItems", "==", itemId));
+  const querySnapshot = await getDocs(cartItemsQuery);
+
+  querySnapshot.forEach(async (docSnapshot) => {
+    const cartItemRef = doc(db, "cartItems", docSnapshot.id);
+    const cartItemData = docSnapshot.data();
+
+    // Prepare the data to update
+    let updateData = {};
+    for (let key in updatedItemData) {
+      if (Object.prototype.hasOwnProperty.call(cartItemData, key)) {
+        updateData[key] = updatedItemData[key];
+        console.log(`Updating cart item ${docSnapshot.id} with ${key}: ${updatedItemData[key]}`);
+      }
+
+    }
+
+    // Perform the update
+    if (Object.keys(updateData).length > 0) {
+      await updateDoc(cartItemRef, updateData);
+    }
+  });
+  console.log("Cart item(s) successfully updated based on item data!");
+},
+
+
     // ... methods to handle item updating ...
   }
 }

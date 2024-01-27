@@ -100,6 +100,7 @@ export default {
       fetchedCartItems: [],
       isLoading: true,
       unsubscribe: null,
+      messageShown: false,
     };
   },
   methods: {
@@ -136,15 +137,20 @@ export default {
   }
 },
 calculateRemainingTime(addedAt, reservedDuration) {
-  const duration = reservedDuration * 1000; // Convert seconds to milliseconds
-  if (!addedAt) return "No timer set";
+    const duration = reservedDuration * 1000; // Convert seconds to milliseconds
+    if (!addedAt) return "No timer set";
 
-  const timeLeft = addedAt + duration - this.currentTime;
-  if (timeLeft <= 0) {
-    return "Time's up";
-  }
-  return this.formatTime(timeLeft);
-},
+    const timeLeft = addedAt + duration - this.currentTime;
+    if (timeLeft <= 0) {
+      if(!this.messageShown){   // Dispatch Vuex action or mutation to show the global message
+      this.$store.commit('setMessage', 'Time up, food removed');
+      this.$store.commit('setIsMessageVisible', true);}
+      this.messageShown = true; // Set a flag to indicate the message is shown
+      return "Time's up";
+    }
+    this.messageShown = false; // Reset the flag
+    return this.formatTime(timeLeft);
+  },
   //   checkCountdownEnd() {
   //   this.filteredCartItems.forEach(item => {
   //     const timeLeft = this.calculateRemainingTime(item.addedAt, item.reservedDuration);

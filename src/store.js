@@ -13,6 +13,10 @@ export const store = new Vuex.Store({
     users: {},
     session: { currentUser:getUser},
     errors: null,
+    isMessageVisible: false, // New state property
+    message: '' ,
+    currentTime: Date.now(),
+    messageShown: false,
     
   },
   getters: {
@@ -22,6 +26,18 @@ export const store = new Vuex.Store({
     errors: state => state.errors
   },
   mutations: {
+    setCurrentTime(state) {
+      state.currentTime = Date.now();
+    },
+    setMessageShown(state, shown) {
+      state.messageShown = shown;
+    },
+    setIsMessageVisible(state, isVisible) {
+      state.isMessageVisible = isVisible;
+    },
+    setMessage(state, message) {
+      state.message = message;
+    },
     
     ADD_CURRENT_USER (state, payload) {
       const currentUser = {

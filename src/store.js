@@ -5,7 +5,6 @@ let getUser = undefined;
 if (window.currentUser) {
   getUser = window.currentUser;
 }
-h 
 
 export const store = new Vuex.Store({
   state: {

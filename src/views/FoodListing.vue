@@ -437,7 +437,7 @@ async fetchFoods() {
   background-color: #f9f9f9;
 }
 .price-display {
-    background-color: red; /* Red background for price */
+    background-color: #4CAF50; /* Red background for price */
     color: white; /* White text for contrast */
     padding: 2px 5px; /* Reduced padding around text */
     border-radius: 4px; /* Rounded corners for aesthetic */
@@ -451,7 +451,7 @@ async fetchFoods() {
     text-align: center; /* Center the text within the box */
   }
   .price-display2 {
-    background-color: red; /* Red background for price */
+    background-color: #4CAF50; /* Red background for price */
     color: white; /* White text for contrast */
     padding: 2px 5px; /* Reduced padding around text */
     border-radius: 4px; /* Rounded corners for aesthetic */
@@ -459,7 +459,7 @@ async fetchFoods() {
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center content horizontally */
     align-items: center; /* Center content vertically */
-    width: 130px; /* Fixed width for uniform appearance */
+    width: 170px; /* Fixed width for uniform appearance */
     height: 33px; /* Fixed height for uniform appearance */
     margin-top: 1px; /* Optional: Add some space above the price display */
     text-align: center; /* Center the text within the box */

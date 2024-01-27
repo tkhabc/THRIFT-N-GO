@@ -17,8 +17,9 @@
 
     <v-navigation-drawer location="right" width="0" v-model="drawer">
     <v-list dense>
+
       <v-list-item 
-        v-for="item in menuItems" 
+        v-for="item in filteredMenuItems" 
         :key="item.title" 
         link 
         :to="item.path" 
@@ -33,8 +34,7 @@
         </v-list-item-content>
       </v-list-item>
 
-      <!-- v-if="isLoggedIn" inside the button -->
-      <v-list-item >  
+      <v-list-item v-if="isLoggedIn">   
               <v-list-item-content>
                 <v-list-item-title>
                   <v-btn @click="handleSignOut">Sign Out</v-btn>
@@ -48,23 +48,32 @@
 
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { auth, onAuthStateChanged, signOut } from '@/firebase/firebaseInit';
+import UserServices from '@/firebase/userService' // Adjust the path as per your project structure
 import router from '@/router';
 
 const drawer = ref(false);
 const isLoggedIn = ref(false);
+const profile = ref(null);
 
 const menuItems = ref([
-  { title: 'UserProfile', path: '/myprofile' },
-  { title: 'Food Listing', path: '/foodlisting' },
-  { title: 'Item Listing', path: '/itemlisting' },
-  { title: 'Booking', path: '/booking' },
-  { title: 'Chat History', path: '/chathistory' },
-  { title: 'UserLocation', path: '/userlocation' },
-  { title: 'Contact Us', path: '/contact' },
-  { title: 'Order Management', path: '/ordermanagement' },
+  { title: 'UserProfile', path: '/myprofile', visibleTo: ['User', 'Food Seller'] },
+  { title: 'Food Listing', path: '/foodlisting', visibleTo: ['User', 'Food Seller'] },
+  { title: 'Item Listing', path: '/itemlisting', visibleTo: ['User'] },
+  { title: 'Booking', path: '/booking', visibleTo: ['User'] },
+  { title: 'Chat History', path: '/chathistory', visibleTo: ['User', 'Food Seller'] },
+  { title: 'Location', path: '/userlocation', visibleTo: ['User', 'Food Seller'] },
+  { title: 'Contact Us', path: '/contact', visibleTo: ['User', 'Food Seller'] },
+  { title: 'Order Management', path: '/ordermanagement', visibleTo: ['User', 'Food Seller'] },
 ]);
+
+const filteredMenuItems = computed(() => {
+  if (!profile.value) {
+    return [];
+  }
+  return menuItems.value.filter(item => item.visibleTo.includes(profile.value.identity));
+});
 
 // Replace navigateToHome method
 const navigateToHome = () => {
@@ -76,9 +85,17 @@ const getActiveClass = (path) => {
   return router.currentRoute.value.path === path ? 'active-item' : '';
 };
 
-onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
+onMounted(async () => {
+  onAuthStateChanged(auth, async (user) => {
     isLoggedIn.value = !!user;
+    if (user) {
+      try {
+        const userData = await UserServices.getUserData(user.uid);
+        profile.value = userData;
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
   });
 });
 

@@ -1,6 +1,6 @@
 <template>
   <v-app style="background: #FFFFFF">
-    
+    <GlobalMessage />
     <template v-if="!notSignedIn">
       <NavBar /> 
       <Cart :cartItems = "cart"></Cart>
@@ -18,10 +18,13 @@
   import NavBar from '@/components/NavBar.vue'
   import ItemListing from './views/ItemListing.vue';
   import Cart from './views/Booking.vue';
+  import GlobalMessage from './components/GlobalMessage.vue';
+
   export default {
     name: 'App',
     components: {
-    NavBar
+    NavBar,
+    GlobalMessage
   },
   data() {
     return {

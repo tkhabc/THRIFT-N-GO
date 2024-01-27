@@ -39,7 +39,7 @@
                 </template>
               </div>
               <div v-if="item.collectionMethod === 'shop'">
-                Time left: {{ calculateRemainingTime(item.addedAt,item.reservedDuration) }}
+                Time left: {{ calculateRemainingTime(item) }}
               </div>            
             </v-card-text>
             <v-card-actions>
@@ -136,31 +136,27 @@ export default {
     }    
   }
 },
-calculateRemainingTime(addedAt, reservedDuration) {
-    const duration = reservedDuration * 1000; // Convert seconds to milliseconds
-    if (!addedAt) return "No timer set";
+calculateRemainingTime(item) {
+    const duration = item.reservedDuration * 1000; // Convert seconds to milliseconds
+    if (!item.addedAt) return "No timer set";
 
-    const timeLeft = addedAt + duration - this.currentTime;
+    const timeLeft = item.addedAt + duration - this.currentTime;
     if (timeLeft <= 0) {
-      if(!this.messageShown){   // Dispatch Vuex action or mutation to show the global message
-      this.$store.commit('setMessage', 'Time up, food removed');
-      this.$store.commit('setIsMessageVisible', true);}
-      this.messageShown = true; // Set a flag to indicate the message is shown
+      if (!this.messageShown) {
+        const message = `Time's up for ${item.name}, ${item.bookedItem} item(s) removed`;
+        this.$store.commit('setMessage', message);
+        this.$store.commit('setIsMessageVisible', true);
+        this.messageShown = true; // Set a flag to indicate the message is shown
+
+        // Call removeFromCart for this item
+        this.removeFromCart(item.id, item.IdinItems, item.bookedUserId, item.bookedItem, item.collectionMethod);
+      }
       return "Time's up";
     }
     this.messageShown = false; // Reset the flag
     return this.formatTime(timeLeft);
   },
-  //   checkCountdownEnd() {
-  //   this.filteredCartItems.forEach(item => {
-  //     const timeLeft = this.calculateRemainingTime(item.addedAt, item.reservedDuration);
-  //     if (timeLeft === "Time's up") {
-  //       this.$store.dispatch('triggerNotification', {
-  //         message: `Time's up for your booking: ${item.name}`
-  //       });
-  //     }
-  //   });
-  // },
+  
     formatTime(milliseconds) {
       const minutes = Math.floor(milliseconds / 60000);
       const seconds = ((milliseconds % 60000) / 1000).toFixed(0);

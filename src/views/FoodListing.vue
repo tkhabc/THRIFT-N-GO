@@ -50,9 +50,9 @@
         <v-btn color="red darken-1" text @click="isQuantityDialogOpen = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+    </v-dialog>
 
-  <v-row class="row-padding">
+   <v-row class="row-padding">
     <v-col cols="6" xs="6" v-for="food in processAndFilterFoods(foods)" :key="food.id">
       <!-- Add @click event here -->
       <v-card :class="{'booked-item': food.booked, 'unavailable-item': food.quantity <= 0}" class="mx-auto clickable" style="position: relative;">
@@ -97,7 +97,7 @@
         <div v-if="food.booked" class="booked-badge">Booked</div>
       </v-card>
     </v-col>
-  </v-row>
+   </v-row>
     
     <ItemDetailsModal
       :item="selectedItem"

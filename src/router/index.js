@@ -25,7 +25,7 @@ const routes = [
     name: 'Landing',
     component: Landing,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
   {

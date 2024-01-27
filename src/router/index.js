@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import UserServices from '@/firebase/userService.js'
 
 import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
@@ -131,18 +132,28 @@ const getCurrentUser = () => {
   })
 }
 
-router.beforeEach(async(to , from , next) => {
-  if(to.matched.some((record) => record.meta.requiresAuth)){
-    if (await getCurrentUser){
-      next()
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const currentUser = await getCurrentUser();
+
+  if (currentUser) {
+    const userProfile = await UserServices.getUserData(currentUser.uid);
+    
+    if (!userProfile.profileCompleted && to.name !== 'UserProfile') {
+      // Redirect first-time users to UserProfile
+      next({ name: 'UserProfile', params: { userId: currentUser.uid } });
+    } else {
+      // Proceed as normal for users with a completed profile
+      next();
     }
-    else{
-      alert("You must be logged in to see this page");
-      next('/')
+  } else {
+    // Redirect to login for unauthenticated users trying to access protected routes
+    if (requiresAuth && to.name !== 'Login' && to.name !== 'Register') {
+      next('/login');
+    } else {
+      next();
     }
   }
-  else{
-    next()
-  }
-})
+});
+
 export default router

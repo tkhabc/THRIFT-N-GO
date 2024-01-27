@@ -193,6 +193,7 @@
 
         if (this.isValid) {
       try {
+        this.editableProfile.profileCompleted = true;
         await UserServices.updateUserData(this.userId, this.editableProfile);
         this.profile = {...this.editableProfile};
         this.editing = false;

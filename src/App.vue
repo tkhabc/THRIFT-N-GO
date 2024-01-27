@@ -19,6 +19,8 @@
   import ItemListing from './views/ItemListing.vue';
   import Cart from './views/Booking.vue';
   import GlobalMessage from './components/GlobalMessage.vue';
+  import {auth} from './firebase/firebaseInit';
+  import UserServices from '@/firebase/userService'
 
   export default {
     name: 'App',
@@ -28,10 +30,29 @@
   },
   data() {
     return {
+      showNavBar: true,
       cart: [] // Initialize cart as an empty array
     }
   },
+  async mounted() {
+    this.checkUserProfile();
+  },
+  watch: {
+    '$route': function() {
+      this.checkUserProfile();
+    }
+  },
+
   methods: {
+    async checkUserProfile() {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const userProfile = await UserServices.getUserData(currentUser.uid);
+        this.showNavBar = userProfile.profileCompleted;
+      } else {
+        this.showNavBar = false;
+      }
+    },
     addToCart(item) {
       this.cart.push(item);
       console.log('Cart updated:', this.cart);

@@ -7,7 +7,14 @@
         </header>
       </v-col>
     </v-row>
-    
+    <div class="notifications">
+    <custom-notification
+      v-for="(notification, index) in notifications"
+      :key="index"
+      :message="notification.message"
+      @close="removeNotification(index)"
+    ></custom-notification>
+  </div>
     <v-row>
       <v-col>
         <template v-for="item in filteredCartItems" :key="item.id">
@@ -70,9 +77,13 @@
 
 import { db, auth } from '@/firebase/firebaseInit';
 import { collection, query, onSnapshot,updateDoc, doc, increment,deleteDoc } from 'firebase/firestore';
+//import Notification from '@/components/Notification.vue';
 
 export default {
   name: 'Booking',
+  components: {
+    //Notification,
+  },
   computed: {
     filteredCartItems() {
       const items = this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
@@ -101,9 +112,19 @@ export default {
       isLoading: true,
       unsubscribe: null,
       messageShown: false,
+      notifications: [],
     };
   },
   methods: {
+    // Function to add a new notification
+    addNotification(message) {
+      this.notifications.push({ message });
+    },
+
+    // Function to remove a notification by index
+    removeNotification(index) {
+      this.notifications.splice(index, 1);
+    },
     fetchCartItems() {
       const q = query(collection(db, 'cartItems'));
       this.unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -178,7 +199,8 @@ calculateRemainingTime(item) {
   this.interval = setInterval(() => {
     this.currentTime = Date.now();
   }, 1000);
-}
+},
+
 };
 </script>
 

@@ -63,7 +63,7 @@
           <span class="item-quantity-display">{{ item.quantity }} left</span></v-card-title>
         <v-card-text>
           <div class="price-display2" v-if="item.listingType === 'donate'">It's Free, Grab It Now!</div>
-          <div class="price-display" v-else>RM {{ item.price }}</div>
+          <div class="price-display" v-else>RM {{ item.price }}</div><br>
           <div v-if="item.distance">{{ item.distance  < 0 ? 0 : item.distance }} away</div>
           
         </v-card-text>
@@ -473,31 +473,33 @@ async fetchItems() {
   margin-bottom: 0; /* Adjust bottom margin as needed */
 }
 .price-display {
-    background-color: red; /* Red background for price */
+    background-color: #4CAF50; /* Red background for price */
     color: white; /* White text for contrast */
     padding: 2px 5px; /* Reduced padding around text */
-    border-radius: 4px; /* Rounded corners for aesthetic */
-    font-size: 1.5em; /* Slightly larger font size for emphasis */
+    border-radius: 50px; /* Rounded corners for aesthetic */
+    font-size: 1em; /* Slightly larger font size for emphasis */
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center content horizontally */
     align-items: center; /* Center content vertically */
-    width: 100px; /* Fixed width for uniform appearance */
-    height: 33px; /* Fixed height for uniform appearance */
-    margin-top: 1px; /* Optional: Add some space above the price display */
+    width: 80px; /* Fixed width for uniform appearance */
+    height: 25px; /* Fixed height for uniform appearance */
+    margin-top: -2px;
+    margin-bottom: -5px; /* Optional: Add some space above the price display */
     text-align: center; /* Center the text within the box */
   }
   .price-display2 {
-    background-color: red; /* Red background for price */
+    background-color: #4CAF50; /* Red background for price */
     color: white; /* White text for contrast */
     padding: 2px 5px; /* Reduced padding around text */
-    border-radius: 4px; /* Rounded corners for aesthetic */
-    font-size: 1.1em; /* Slightly larger font size for emphasis */
+    border-radius: 50px; /* Rounded corners for aesthetic */
+    font-size: 1em; /* Slightly larger font size for emphasis */
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center content horizontally */
     align-items: center; /* Center content vertically */
-    width: 130px; /* Fixed width for uniform appearance */
-    height: 33px; /* Fixed height for uniform appearance */
-    margin-top: 1px; /* Optional: Add some space above the price display */
+    width: 167px; /* Fixed width for uniform appearance */
+    height: 26px; /* Fixed height for uniform appearance */
+    margin-top: -2px;
+    margin-bottom: -5px; /* Optional: Add some space above the price display */
     text-align: center; /* Center the text within the box */
   }
 
@@ -542,6 +544,7 @@ async fetchItems() {
   padding: 5px;
   border-radius: 5px;
   font-size: 0.8rem;
+  font-weight: bold;
 }
 
 .donation-item {

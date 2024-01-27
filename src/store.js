@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
     errors: null,
     isMessageVisible: false, // New state property
     message: '' ,
+   
     
     
   },
@@ -24,6 +25,7 @@ export const store = new Vuex.Store({
     errors: state => state.errors
   },
   mutations: {
+    
     
     setIsMessageVisible(state, isVisible) {
       state.isMessageVisible = isVisible;

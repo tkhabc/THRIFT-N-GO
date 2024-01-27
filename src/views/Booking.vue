@@ -7,14 +7,7 @@
         </header>
       </v-col>
     </v-row>
-    <div class="notifications">
-    <custom-notification
-      v-for="(notification, index) in notifications"
-      :key="index"
-      :message="notification.message"
-      @close="removeNotification(index)"
-    ></custom-notification>
-  </div>
+    
     <v-row>
       <v-col>
         <template v-for="item in filteredCartItems" :key="item.id">
@@ -71,18 +64,26 @@
       </v-col>
     </v-row>
   </v-container>
+  <v-dialog v-model="notification.visible" v-for="(notification, index) in notifications" :key="index">
+    <v-card>
+      <v-card-title v-html="notification.message"></v-card-title>
+      <v-card-actions>
+        <v-btn color="red" @click="removeNotification(index)">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 
 import { db, auth } from '@/firebase/firebaseInit';
 import { collection, query, onSnapshot,updateDoc, doc, increment,deleteDoc } from 'firebase/firestore';
-//import Notification from '@/components/Notification.vue';
+
 
 export default {
   name: 'Booking',
   components: {
-    //Notification,
+    
   },
   computed: {
     filteredCartItems() {
@@ -118,23 +119,81 @@ export default {
   methods: {
     // Function to add a new notification
     addNotification(message) {
-      this.notifications.push({ message });
+      this.notifications.push({ message, visible: true });
     },
 
     // Function to remove a notification by index
     removeNotification(index) {
-      this.notifications.splice(index, 1);
+    if (index >= 0 && index < this.notifications.length) {
+      this.notifications[index].visible = false;
+      // Optionally, remove the notification from the array after a delay
+      setTimeout(() => this.notifications.splice(index, 1), 300); // 300 ms delay
+    }
     },
     fetchCartItems() {
       const q = query(collection(db, 'cartItems'));
+     
       this.unsubscribe = onSnapshot(q, (querySnapshot) => {
+      // Store the previous state
+        const oldCartItems = this.fetchedCartItems.reduce((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+        }, {});
+
+        
         this.fetchedCartItems = querySnapshot.docs.map(doc => {
           const data = doc.data();
           const addedAtTime = data.addedAt ? data.addedAt.toMillis() : null;
           return { id: doc.id, ...data, addedAt: addedAtTime };
         });
+        // Compare with old data and create notifications for changes
+        // Inside your fetchCartItems method
+
+// Compare with old data and create notifications for changes
+this.fetchedCartItems.forEach(newItem => {
+  const oldItem = oldCartItems[newItem.id];
+  if (oldItem) {
+    let changeMessages = [];
+
+    // Check for changes in 'name'
+    if (newItem.name !== oldItem.name) {
+      changeMessages.push(`${oldItem.name} has a new name: ${newItem.name}`);
+    }
+
+    // Special handling for 'listingType' and 'price'
+    if (newItem.listingType === 'donate' && oldItem.listingType !== 'donate') {
+      changeMessages.push(`${newItem.name} is free now.`);
+    } else if (newItem.price !== oldItem.price) {
+      changeMessages.push(`${newItem.name} has a new price: RM${newItem.price}`);
+    }
+
+    // Check for changes in other properties
+    if (newItem.description !== oldItem.description) {
+      changeMessages.push(`${newItem.name} has a new description.`);
+    }
+    if (newItem.location !== oldItem.location) {
+      changeMessages.push(`${newItem.name} has a new location.`);
+    }
+    if (newItem.collectionMethod !== oldItem.collectionMethod) {
+      changeMessages.push(`${newItem.name} has a new collection method.`);
+    }
+    if (newItem.listingType !== oldItem.listingType && newItem.listingType !== 'donate') {
+      changeMessages.push(`${newItem.name} has a new listing type: ${newItem.listingType}.`);
+    }
+
+    // Combine all change messages into one notification, if there are any changes
+    if (changeMessages.length > 0) {
+      const combinedMessage = changeMessages.join('<br>');
+      this.addNotification(combinedMessage);
+      console.log("Combined Message:", combinedMessage);
+    }
+  }
+
+});
+
         this.isLoading = false;
       });
+      
     },
     async removeFromCart(itemId, IdinItems, bookedUserId, bookedItem, collectionMethod) {
   // Check if the bookedUserId matches the current user's ID
@@ -209,6 +268,21 @@ calculateRemainingTime(item) {
 </style>
 
 <style>
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.notification {
+  background-color: #f4f4f4;
+  border-left: 4px solid #2196F3;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 .summary-title {
   background-color: #1A6757; /* Replace with your navbar color */
   color: white; /* Or any color that contrasts well with your background */
@@ -261,6 +335,9 @@ calculateRemainingTime(item) {
 .item-label {
   background-color: #FFA500; /* Orange background for Item */
 }
+
+  /* Style your dialog here */
+
 
 </style>
 

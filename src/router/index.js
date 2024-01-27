@@ -42,7 +42,8 @@ const routes = [
   {
     path: '/booking',
     name: 'Booking',
-    component: Booking
+    component: Booking,
+    meta: { requiresIdentity: 'User' }
   },
   {
     path: '/contact',
@@ -110,7 +111,8 @@ const routes = [
   {
     path: '/ordermanagement',
     name: 'OrderManagement',
-    component: OrderManagement
+    component: OrderManagement,
+    meta: { requiresIdentity: 'Food Seller' }
   },
 ]
 

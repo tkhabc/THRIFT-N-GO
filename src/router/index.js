@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+
 import Landing from '@/views/Landing.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
@@ -15,7 +17,6 @@ import ChatRoom from '@/components/ChatRoom.vue'
 import ChatHistory from '@/views/ChatHistory.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import OrderManagement from '@/views/OrderManagement.vue'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 
 const routes = [
@@ -144,12 +145,5 @@ router.beforeEach(async(to , from , next) => {
     next()
   }
 })
-
-// if(localStorage.getItem('jwt') == null){
-//   next({
-//     path: '/login',
-//     params: { nextUrl: to.fullPath }
-//   })
-// }
 
 export default router

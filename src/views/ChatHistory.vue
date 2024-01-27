@@ -10,13 +10,13 @@
           </v-toolbar>
           <v-text-field
             v-model="searchQuery"
-            label="Search Chat Rooms"
+            label="Search For Name or Messages"
             single-line
             hide-details
           ></v-text-field>
           <v-list v-if="!isLoading && chatrooms.length > 0">
             <v-list-item-group>
-              <v-list-item v-for="chatroom in chatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" two-line>
+              <v-list-item v-for="chatroom in filteredChatrooms" :key="chatroom.id" @click="goToChatroom(chatroom.id)" two-line>
 
                 <!-- <v-list-item-avatar v-if="chatroom.participantAvatar">
                 <img :src="chatroom.participantAvatar" alt="Profile Picture" >
@@ -39,7 +39,7 @@
                 </v-list-item-content>
                 
               </v-list-item>
-              <v-divider v-for="(item, i) in chatrooms" :key="`divider-${i}`" inset></v-divider>
+              <v-divider v-for="(item, i) in filteredChatrooms" :key="`divider-${i}`" inset></v-divider>
             </v-list-item-group>
           </v-list>
           <v-subheader v-else-if="!isLoading">{{ chatrooms.length === 0 ? 'No chat rooms available' : 'Loading chat rooms...' }}</v-subheader>

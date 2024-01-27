@@ -5,7 +5,7 @@ let getUser = undefined;
 if (window.currentUser) {
   getUser = window.currentUser;
 }
-
+h 
 
 export const store = new Vuex.Store({
   state: {
@@ -15,8 +15,7 @@ export const store = new Vuex.Store({
     errors: null,
     isMessageVisible: false, // New state property
     message: '' ,
-    currentTime: Date.now(),
-    messageShown: false,
+    
     
   },
   getters: {
@@ -26,12 +25,7 @@ export const store = new Vuex.Store({
     errors: state => state.errors
   },
   mutations: {
-    setCurrentTime(state) {
-      state.currentTime = Date.now();
-    },
-    setMessageShown(state, shown) {
-      state.messageShown = shown;
-    },
+    
     setIsMessageVisible(state, isVisible) {
       state.isMessageVisible = isVisible;
     },

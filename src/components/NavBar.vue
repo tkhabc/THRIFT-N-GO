@@ -46,58 +46,51 @@
 
 </template>
 
-<script>
-export default {
-  data: () => ({
-    drawer: false,
-    menuItems: [
-      { title: 'UserProfile', path: '/myprofile' },
-      { title: 'Food Listing', path: '/foodlisting' },
-      { title: 'Item Listing', path: '/itemlisting' },
-      { title: 'Booking', path: '/booking' },
-      { title: 'Chat History', path: '/chathistory' },
-      { title: 'UserLocation', path: '/userlocation' },
-      { title: 'Contact Us', path: '/contact' },
-      { title: 'Order Management', path: '/ordermanagement' },
-    ]
-  }),
-  methods: {
-    navigateToHome() {
-      this.$router.push('/');
-    },
-
-    getActiveClass(path) {
-      return this.$route.path === path ? 'active-item' : '';
-    }
-  }
-};
-</script>
 
 <script setup>
-import {onMounted, ref} from 'vue'
-import {auth, onAuthStateChanged, signOut} from '@/firebase/firebaseInit'
-import router from '@/router'
+import { ref, onMounted } from 'vue';
+import { auth, onAuthStateChanged, signOut } from '@/firebase/firebaseInit';
+import router from '@/router';
 
+const drawer = ref(false);
 const isLoggedIn = ref(false);
 
+const menuItems = ref([
+  { title: 'UserProfile', path: '/myprofile' },
+  { title: 'Food Listing', path: '/foodlisting' },
+  { title: 'Item Listing', path: '/itemlisting' },
+  { title: 'Booking', path: '/booking' },
+  { title: 'Chat History', path: '/chathistory' },
+  { title: 'UserLocation', path: '/userlocation' },
+  { title: 'Contact Us', path: '/contact' },
+  { title: 'Order Management', path: '/ordermanagement' },
+]);
+
+// Replace navigateToHome method
+const navigateToHome = () => {
+  router.push('/');
+};
+
+// Replace getActiveClass method
+const getActiveClass = (path) => {
+  return router.currentRoute.value.path === path ? 'active-item' : '';
+};
+
 onMounted(() => {
-
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      isLoggedIn.value = true
-    } 
-    else {
-      isLoggedIn.value = false
-    }
-  })
-})
+    isLoggedIn.value = !!user;
+  });
+});
 
-const handleSignOut = () => {
-  signOut(auth).then(() => {
-    router.push('/login')
-    console.log("Successfully signed out!")
-  })
-}
+const handleSignOut = async () => {
+  try {
+    await signOut(auth);
+    console.log("Successfully signed out!");
+    router.push('/login');
+  } catch (error) {
+    console.error('Sign out error:', error);
+  }
+};
 
 </script>
 

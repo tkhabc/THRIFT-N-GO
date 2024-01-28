@@ -20,8 +20,8 @@
         </v-card>
         <br><br>
         <div>
-        <v-btn color="#1A6757" @click="updateItem" class="mr-4">Update Item</v-btn> 
-        <v-btn color="#1A6757" @click="$router.go(-1)">Return</v-btn>
+          <v-btn color="#1A6757" class="mr-13" @click="$router.go(-1)">Return</v-btn>
+          <v-btn color="#1A6757" @click="updateItem" class="mr-2">Update Food</v-btn>
         </div>
       </v-col>
     </v-row>

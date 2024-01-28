@@ -66,7 +66,7 @@
   </v-container>
   <v-dialog v-model="notification.visible" v-for="(notification, index) in notifications" :key="index">
     <v-card>
-      <v-card-title v-html="notification.message"></v-card-title>
+      <div v-html="notification.message"></div>
       <v-card-actions>
         <v-btn color="red" @click="removeNotification(index)">Close</v-btn>
       </v-card-actions>
@@ -86,6 +86,9 @@ export default {
     
   },
   computed: {
+    notifications() {
+      return this.$store.state.notifications;
+    },
     filteredCartItems() {
       const items = this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
       console.log("Filtered Cart Items:", items);
@@ -113,23 +116,31 @@ export default {
       isLoading: true,
       unsubscribe: null,
       messageShown: false,
-      notifications: [],
+      //notifications: [],
     };
   },
   methods: {
-    // Function to add a new notification
     addNotification(message) {
-      this.notifications.push({ message, visible: true });
+      this.$store.dispatch('addNotification', { message, visible: true });
     },
 
-    // Function to remove a notification by index
+    // Use Vuex action to remove a notification
     removeNotification(index) {
-    if (index >= 0 && index < this.notifications.length) {
-      this.notifications[index].visible = false;
-      // Optionally, remove the notification from the array after a delay
-      setTimeout(() => this.notifications.splice(index, 1), 300); // 300 ms delay
-    }
+      this.$store.dispatch('removeNotification', index);
     },
+    // Function to add a new notification
+    // addNotification(message) {
+    //   this.notifications.push({ message, visible: true });
+    // },
+
+    // Function to remove a notification by index
+    // removeNotification(index) {
+    // if (index >= 0 && index < this.notifications.length) {
+    //   this.notifications[index].visible = false;
+    //   // Optionally, remove the notification from the array after a delay
+    //   setTimeout(() => this.notifications.splice(index, 1), 300); // 300 ms delay
+    // }
+    // },
     fetchCartItems() {
       const q = query(collection(db, 'cartItems'));
      
@@ -184,13 +195,14 @@ this.fetchedCartItems.forEach(newItem => {
     // Combine all change messages into one notification, if there are any changes
     if (changeMessages.length > 0) {
       const combinedMessage = changeMessages.join('<br>');
+      
       this.addNotification(combinedMessage);
       console.log("Combined Message:", combinedMessage);
     }
   }
 
 });
-
+    
         this.isLoading = false;
       });
       
@@ -263,9 +275,7 @@ calculateRemainingTime(item) {
 };
 </script>
 
-<style scoped>
-/* Add your component-specific styles here */
-</style>
+
 
 <style>
 .notification-container {

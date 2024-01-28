@@ -7,7 +7,7 @@
     </template>
 
     <template v-slot:append>
-      <v-app-bar-nav-icon class="white--text" @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon color="white" class="white--text" @click="drawer = !drawer"></v-app-bar-nav-icon>
     </template>    
     
     <v-app-bar-title :style="{ color: '#FFFFFF' }">THRIFT N GO</v-app-bar-title>

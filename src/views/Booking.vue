@@ -47,7 +47,7 @@
             </v-card-actions>
           </v-card>
         </template>
-        <div v-if="isLoading" class="loading">Loading...</div>
+        <div v-if="isLoading" class="loading"></div>
         <div v-else-if="filteredCartItems.length === 0" class="empty-cart">You did not book any food or item.</div>
       </v-col>
     </v-row>
@@ -138,7 +138,7 @@ export default {
           const addedAtTime = data.addedAt ? data.addedAt.toMillis() : null;
           return { id: doc.id, ...data, addedAt: addedAtTime };
         });
-        this.isLoading = false;
+        this.isLoading = true;
       });
     },
     

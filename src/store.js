@@ -139,10 +139,10 @@ export const store = new Vuex.Store({
           console.log('Change detected:', change.type, change.doc.data());
           if (change.type === "modified") {
             const newItem = change.doc.data();
-            const oldItem = state.oldCartItems[change.doc.id];
-             //const oldItemProxy = state.oldCartItems[change.doc.id];
+            //const oldItem = state.oldCartItems[change.doc.id];
+             const oldItemProxy = state.oldCartItems[change.doc.id];
             // // // Convert Proxy object to a plain object
-             // const oldItem = oldItemProxy ? JSON.parse(JSON.stringify(oldItemProxy)) : null;           
+             const oldItem = oldItemProxy ? JSON.parse(JSON.stringify(oldItemProxy)) : null;           
              console.log('New item:', newItem);
             console.log('Old item:', oldItem);
   

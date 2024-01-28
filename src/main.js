@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
 import App from './App.vue'
+import { createApp, reactive, provide } from 'vue'
 import router from './router'
 import {store} from './store'
 import firebase from './firebase/firebaseInit'
@@ -9,6 +9,10 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+
+const globalState = reactive({
+  userProfileCompleted: false,
+});
 
 const vuetify = createVuetify({
   components,
@@ -31,6 +35,7 @@ const vuetify = createVuetify({
 createApp(App)
     .use(store)
     .use(router)
+    .provide('globalState', globalState)
     .use(Vuex)
     .use(firebase)
     .use(vuetify)

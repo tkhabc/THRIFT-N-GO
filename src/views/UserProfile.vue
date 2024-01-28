@@ -142,9 +142,15 @@
   <script>
   import UserServices from '@/firebase/userService'
   import { auth } from '@/firebase/firebaseInit'
+  import { inject, } from 'vue';
   
   export default {
     name: 'UserProfile',
+
+    setup() {
+    const globalState = inject('globalState');
+    return { globalState };
+  },
     
     data() {
       return {
@@ -195,6 +201,7 @@
       try {
         this.editableProfile.profileCompleted = true;
         await UserServices.updateUserData(this.userId, this.editableProfile);
+        this.globalState.userProfileCompleted = true;
         this.profile = {...this.editableProfile};
         this.editing = false;
               } catch (error) {

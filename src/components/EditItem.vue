@@ -40,9 +40,6 @@
   </v-dialog>
 </template>
 
-
-
-
 <script>
 import { doc, getDoc, updateDoc,query,where,getDocs,collection } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseInit';

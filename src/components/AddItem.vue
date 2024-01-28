@@ -44,7 +44,7 @@
       <!-- Quantity Field -->
       <div class="form-group">
         <label for="quantity" class="form-label">Quantity</label>
-        <input type="text" id="quantity" v-model="newItem.quantity" @input="validateNumber($event)" placeholder="Integer only" autocomplete="off" required>
+        <input type="text" id="quantity" v-model="newItem.quantity" @input="validateNumber($event)" autocomplete="off" required>
       </div>
 
 
@@ -196,7 +196,7 @@ methods: {
       // Store the newItem object in Firestore
       await addDoc(collection(db, 'items'), this.newItem);
       this.resetForm();
-      this.$router.push('//foodlisting');
+      this.$router.push('/itemlisting');
       alert('Item added successfully');
     } catch (error) {
       console.error('Error adding document: ', error);

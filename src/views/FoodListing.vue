@@ -144,7 +144,12 @@ export default {
 
   methods: {
     processAndFilterFoods(foods) {
-    return foods.filter(food => {
+      const currentUserUID = auth.currentUser ? auth.currentUser.uid : null;
+      return foods.filter(food => {
+
+        if (this.userProfile && this.userProfile.identity === 'Food Seller' && food.uid !== currentUserUID) {
+          return false;
+        }
       // Convert distance to a number and check if it's within the maxDistance
       const distanceKm = parseFloat(food.distance);
       const isWithinDistance = !isNaN(distanceKm) && distanceKm <= this.maxDistance;

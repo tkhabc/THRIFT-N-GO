@@ -54,6 +54,8 @@ export default {
       originalFood: {}, // To store the original food data for comparison
     };
   },
+  
+  
   created() {
     this.loadFood();
   },

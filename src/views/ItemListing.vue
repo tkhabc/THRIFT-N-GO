@@ -33,8 +33,13 @@
         </v-col>
       </v-row>
       <v-row class="tight-row-spacing">
-        <v-col>
-          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Item</button>
+        <v-col cols="3">
+          <v-row>
+          <v-switch color="green" v-model="showOwnItemsOnly" label="My Items"></v-switch>
+        </v-row>
+        </v-col>
+        <v-col cols="6">
+          <button class="add-item-button" @click="goToAddItem">Sell/Donate Your Item</button>     
         </v-col>
       </v-row>
     </v-container> 
@@ -135,14 +140,18 @@ export default {
       maxDistance: 20,
       isQuantityDialogOpen: false,
     selectedQuantity: 1, // Default quantity
-    selectedItemForBooking: null// To keep track of the item being booked
-  
+    selectedItemForBooking: null,// To keep track of the item being booked
+    showOwnItemsOnly: false,
     };
   },
 
   methods: {
     processAndFilterItems(items) {
+      const currentUserUID = auth.currentUser ? auth.currentUser.uid : null;
     return items.filter(item => {
+      if (this.showOwnItemsOnly && item.uid !== currentUserUID) {
+        return false;
+      }
       // Convert distance to a number and check if it's within the maxDistance
       const distanceKm = parseFloat(item.distance);
       const isWithinDistance = !isNaN(distanceKm) && distanceKm <= this.maxDistance;

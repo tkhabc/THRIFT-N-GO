@@ -33,7 +33,7 @@
         </v-col>
       </v-row>
       <v-row class="tight-row-spacing">
-        <v-col>
+        <v-col v-if="userProfile && userProfile.identity === 'Food Seller'">
           <button class="add-item-button" @click="goToAddFood">Sell/Donate Your Food</button>
         </v-col>
       </v-row>
@@ -109,13 +109,13 @@
 
 
 <script>
-import { db } from '@/firebase/firebaseInit'
+import { db, auth } from '@/firebase/firebaseInit'
 import { collection, query, onSnapshot, doc, deleteDoc, setDoc, addDoc,serverTimestamp } from 'firebase/firestore';
 import { cartStore } from '@/cartStore'
 import ItemDetailsModal from '@/components/ItemDetailsModal.vue'
-import { auth } from "@/firebase/firebaseInit"
 import { createOrGetChatroom } from "@/firebase/chatService"
 import { omit } from 'lodash'; // Import the omit function
+import UserServices from '@/firebase/userService';
 
 
 export default {
@@ -134,9 +134,11 @@ export default {
       isModalVisible: false,
       maxDistance: 20,
       isQuantityDialogOpen: false,
-    selectedQuantity: 1, // Default quantity
-    selectedItemForBooking: null// To keep track of the item being booked
-  
+      selectedQuantity: 1, // Default quantity
+      selectedItemForBooking: null,// To keep track of the item being booked
+      userProfile: {
+      identity: ''
+    },
     };
   },
 
@@ -232,6 +234,17 @@ async confirmBooking() {
   }
 },
 
+async fetchUserProfile() {
+      if (auth.currentUser) {
+        try {
+          const userData = await UserServices.getUserData(auth.currentUser.uid);
+          this.userProfile = userData;
+        } catch (error) {
+          console.error('Error fetching profile data:', error);
+        }
+      }
+    },
+
 async fetchFoods() {
   const q = query(collection(db, 'foods'));
   onSnapshot(q, (querySnapshot) => {
@@ -307,6 +320,7 @@ async fetchFoods() {
 
   mounted() {
     this.fetchFoods();
+    this.fetchUserProfile();
   }
 };
 </script>
@@ -327,7 +341,8 @@ async fetchFoods() {
 }
 
 .distance-slider {
-  margin-top: 10px;
+  margin-top: -5px;
+  margin-bottom: -30px;
 }
 
 .locationButton{

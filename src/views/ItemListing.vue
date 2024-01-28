@@ -327,7 +327,8 @@ async fetchItems() {
 }
 
 .distance-slider {
-  margin-top: 10px;
+  margin-top: -5px;
+  margin-bottom: -30px
 }
 
 .locationButton{

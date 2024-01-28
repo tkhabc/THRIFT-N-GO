@@ -63,10 +63,10 @@ const menuItems = ref([
   { title: 'Food Listing', path: '/foodlisting', visibleTo: ['User', 'Food Seller'] },
   { title: 'Item Listing', path: '/itemlisting', visibleTo: ['User'] },
   { title: 'Booking', path: '/booking', visibleTo: ['User'] },
+  { title: 'Order Management', path: '/ordermanagement', visibleTo: ['User', 'Food Seller'] },
   { title: 'Chat History', path: '/chathistory', visibleTo: ['User', 'Food Seller'] },
   { title: 'Location', path: '/userlocation', visibleTo: ['User', 'Food Seller'] },
   { title: 'Contact Us', path: '/contact', visibleTo: ['User', 'Food Seller'] },
-  { title: 'Order Management', path: '/ordermanagement', visibleTo: ['User', 'Food Seller'] },
 ]);
 
 const updateUserProfile = async () => {

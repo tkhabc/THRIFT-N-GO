@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
 import App from './App.vue'
+import { createApp, reactive, provide } from 'vue'
 import router from './router'
 import {store} from './store'
 import firebase from './firebase/firebaseInit'
@@ -12,6 +12,11 @@ import * as directives from 'vuetify/directives'
 store.dispatch('fetchCartItems').then(() => {
   store.dispatch('listenToCartItems');
 });
+
+const globalState = reactive({
+  userProfileCompleted: false,
+});
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -33,6 +38,7 @@ const vuetify = createVuetify({
 createApp(App)
     .use(store)
     .use(router)
+    .provide('globalState', globalState)
     .use(Vuex)
     .use(firebase)
     .use(vuetify)

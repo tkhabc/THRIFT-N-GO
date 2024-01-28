@@ -48,7 +48,7 @@
 
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, inject, watch } from 'vue';
 import { auth, onAuthStateChanged, signOut } from '@/firebase/firebaseInit';
 import UserServices from '@/firebase/userService' // Adjust the path as per your project structure
 import router from '@/router';
@@ -56,9 +56,10 @@ import router from '@/router';
 const drawer = ref(false);
 const isLoggedIn = ref(false);
 const profile = ref(null);
+const globalState = inject('globalState');
 
 const menuItems = ref([
-  { title: 'UserProfile', path: '/myprofile', visibleTo: ['User', 'Food Seller'] },
+  { title: 'User Profile', path: '/myprofile', visibleTo: ['User', 'Food Seller'] },
   { title: 'Food Listing', path: '/foodlisting', visibleTo: ['User', 'Food Seller'] },
   { title: 'Item Listing', path: '/itemlisting', visibleTo: ['User'] },
   { title: 'Booking', path: '/booking', visibleTo: ['User'] },
@@ -68,8 +69,26 @@ const menuItems = ref([
   { title: 'Order Management', path: '/ordermanagement', visibleTo: ['User', 'Food Seller'] },
 ]);
 
+const updateUserProfile = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const userData = await UserServices.getUserData(user.uid);
+      profile.value = userData;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+};
+
+watch(() => globalState.userProfileCompleted, (newVal) => {
+  if (newVal) {
+    updateUserProfile();
+  }
+});
+
 const filteredMenuItems = computed(() => {
-  if (!profile.value) {
+  if (!globalState.userProfileCompleted || !profile.value) {
     return [];
   }
   return menuItems.value.filter(item => item.visibleTo.includes(profile.value.identity));

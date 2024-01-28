@@ -15,6 +15,7 @@
 </template>
 
 <script>
+  import { inject } from 'vue';
   import NavBar from '@/components/NavBar.vue'
   import ItemListing from './views/ItemListing.vue';
   import Cart from './views/Booking.vue';
@@ -28,6 +29,12 @@
     NavBar,
     GlobalMessage
   },
+
+  setup() {
+    const globalState = inject('globalState');
+    return { globalState };
+  },
+
   data() {
     return {
       showNavBar: true,
@@ -48,6 +55,7 @@
       const currentUser = auth.currentUser;
       if (currentUser) {
         const userProfile = await UserServices.getUserData(currentUser.uid);
+        this.globalState.userProfileCompleted = userProfile.profileCompleted;
         this.showNavBar = userProfile.profileCompleted;
       } else {
         this.showNavBar = false;

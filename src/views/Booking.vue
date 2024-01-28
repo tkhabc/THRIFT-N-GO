@@ -87,13 +87,15 @@ export default {
   },
   computed: {
     notifications() {
+      console.log('Notifications:', this.$store.state.notifications);
       return this.$store.state.notifications;
     },
     filteredCartItems() {
-      const items = this.fetchedCartItems.filter(item => item.bookedUserId === this.currentUserId);
-      console.log("Filtered Cart Items:", items);
-      return items;    
-    },
+    // Use cartItems from Vuex store
+    const items = this.$store.state.cartItems.filter(item => item.bookedUserId === this.currentUserId);
+    console.log("Filtered Cart Items:", items);
+    return items;    
+  },
     currentUserId() {
       return auth.currentUser ? auth.currentUser.uid : null;
     },
@@ -116,7 +118,7 @@ export default {
       isLoading: true,
       unsubscribe: null,
       messageShown: false,
-      //notifications: [],
+      
     };
   },
   methods: {
@@ -128,85 +130,84 @@ export default {
     removeNotification(index) {
       this.$store.dispatch('removeNotification', index);
     },
-    // Function to add a new notification
-    // addNotification(message) {
-    //   this.notifications.push({ message, visible: true });
-    // },
-
-    // Function to remove a notification by index
-    // removeNotification(index) {
-    // if (index >= 0 && index < this.notifications.length) {
-    //   this.notifications[index].visible = false;
-    //   // Optionally, remove the notification from the array after a delay
-    //   setTimeout(() => this.notifications.splice(index, 1), 300); // 300 ms delay
-    // }
-    // },
     fetchCartItems() {
       const q = query(collection(db, 'cartItems'));
-     
       this.unsubscribe = onSnapshot(q, (querySnapshot) => {
-      // Store the previous state
-        const oldCartItems = this.fetchedCartItems.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-        }, {});
-
-        
         this.fetchedCartItems = querySnapshot.docs.map(doc => {
           const data = doc.data();
           const addedAtTime = data.addedAt ? data.addedAt.toMillis() : null;
           return { id: doc.id, ...data, addedAt: addedAtTime };
         });
-        // Compare with old data and create notifications for changes
-        // Inside your fetchCartItems method
-
-// Compare with old data and create notifications for changes
-this.fetchedCartItems.forEach(newItem => {
-  const oldItem = oldCartItems[newItem.id];
-  if (oldItem) {
-    let changeMessages = [];
-
-    // Check for changes in 'name'
-    if (newItem.name !== oldItem.name) {
-      changeMessages.push(`${oldItem.name} has a new name: ${newItem.name}`);
-    }
-
-    // Special handling for 'listingType' and 'price'
-    if (newItem.listingType === 'donate' && oldItem.listingType !== 'donate') {
-      changeMessages.push(`${newItem.name} is free now.`);
-    } else if (newItem.price !== oldItem.price) {
-      changeMessages.push(`${newItem.name} has a new price: RM${newItem.price}`);
-    }
-
-    // Check for changes in other properties
-    if (newItem.description !== oldItem.description) {
-      changeMessages.push(`${newItem.name} has a new description.`);
-    }
-    if (newItem.location !== oldItem.location) {
-      changeMessages.push(`${newItem.name} has a new location.`);
-    }
-    if (newItem.collectionMethod !== oldItem.collectionMethod) {
-      changeMessages.push(`${newItem.name} has a new collection method.`);
-    }
-    if (newItem.listingType !== oldItem.listingType && newItem.listingType !== 'donate') {
-      changeMessages.push(`${newItem.name} has a new listing type: ${newItem.listingType}.`);
-    }
-
-    // Combine all change messages into one notification, if there are any changes
-    if (changeMessages.length > 0) {
-      const combinedMessage = changeMessages.join('<br>');
-      
-      this.addNotification(combinedMessage);
-      console.log("Combined Message:", combinedMessage);
-    }
-  }
-
-});
-    
         this.isLoading = false;
       });
-      
     },
+    
+//    fetchCartItems() {
+//       const q = query(collection(db, 'cartItems'));
+     
+// //       this.unsubscribe = onSnapshot(q, (querySnapshot) => {
+// //       // Store the previous state
+// //         const oldCartItems = this.fetchedCartItems.reduce((acc, item) => {
+// //         acc[item.id] = item;
+// //         return acc;
+// //         }, {});
+
+        
+//         this.fetchedCartItems = querySnapshot.docs.map(doc => {
+//           const data = doc.data();
+//           const addedAtTime = data.addedAt ? data.addedAt.toMillis() : null;
+//           return { id: doc.id, ...data, addedAt: addedAtTime };
+//         });
+//         // Compare with old data and create notifications for changes
+//         // Inside your fetchCartItems method
+
+// // Compare with old data and create notifications for changes
+// this.fetchedCartItems.forEach(newItem => {
+//   const oldItem = oldCartItems[newItem.id];
+//   if (oldItem) {
+//     let changeMessages = [];
+
+//     // Check for changes in 'name'
+//     if (newItem.name !== oldItem.name) {
+//       changeMessages.push(`${oldItem.name} has a new name: ${newItem.name}`);
+//     }
+
+//     // Special handling for 'listingType' and 'price'
+//     if (newItem.listingType === 'donate' && oldItem.listingType !== 'donate') {
+//       changeMessages.push(`${newItem.name} is free now.`);
+//     } else if (newItem.price !== oldItem.price) {
+//       changeMessages.push(`${newItem.name} has a new price: RM${newItem.price}`);
+//     }
+
+//     // Check for changes in other properties
+//     if (newItem.description !== oldItem.description) {
+//       changeMessages.push(`${newItem.name} has a new description.`);
+//     }
+//     if (newItem.location !== oldItem.location) {
+//       changeMessages.push(`${newItem.name} has a new location.`);
+//     }
+//     if (newItem.collectionMethod !== oldItem.collectionMethod) {
+//       changeMessages.push(`${newItem.name} has a new collection method.`);
+//     }
+//     if (newItem.listingType !== oldItem.listingType && newItem.listingType !== 'donate') {
+//       changeMessages.push(`${newItem.name} has a new listing type: ${newItem.listingType}.`);
+//     }
+
+//     // Combine all change messages into one notification, if there are any changes
+//     if (changeMessages.length > 0) {
+//       const combinedMessage = changeMessages.join('<br>');
+      
+//       this.addNotification(combinedMessage);
+//       console.log("Combined Message:", combinedMessage);
+//     }
+//   }
+
+// });
+    
+        //this.isLoading = false;
+//       });
+      
+    
     async removeFromCart(itemId, IdinItems, bookedUserId, bookedItem, collectionMethod) {
   // Check if the bookedUserId matches the current user's ID
   if (bookedUserId === this.currentUserId) {
@@ -266,7 +267,9 @@ calculateRemainingTime(item) {
     clearInterval(this.interval);
   },
   mounted() {
-  this.fetchCartItems();
+  
+  this.$store.dispatch('fetchCartItems');
+  this.$store.dispatch('listenToCartItems');
   this.interval = setInterval(() => {
     this.currentTime = Date.now();
   }, 1000);

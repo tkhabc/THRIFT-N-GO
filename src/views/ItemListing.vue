@@ -193,6 +193,13 @@ export default {
     },
 
 async confirmBooking() {
+  if (!this.selectedItemForBooking) {
+      console.error("No item selected for booking");
+      return;
+    }
+    else{
+      console.log("Item selected for booking");
+    }
   if (this.selectedItemForBooking) {
     // Calculate new quantity
     const newQuantity = this.selectedItemForBooking.quantity - this.selectedQuantity;

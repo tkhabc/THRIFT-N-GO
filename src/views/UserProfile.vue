@@ -31,8 +31,8 @@
               :error-messages="errors.instagram"></v-text-field>
               <v-textarea v-model="editableProfile.biodata" label="Biodata" ></v-textarea>
               
-              <v-btn color="primary" @click="saveProfile" :disabled="!isValid">Save</v-btn>
-              <v-btn color="grey" @click="cancelEdit">Cancel</v-btn>
+              <v-btn color="#1A6757" class='mx-6' @click="cancelEdit">Cancel</v-btn>
+              <v-btn color="#1A6757" class='mx-10' @click="saveProfile" :disabled="!isValid">Save</v-btn>
             </v-form>
             <div v-else>
               <v-list dense>

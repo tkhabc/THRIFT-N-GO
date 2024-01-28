@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
     errors: null,
     isMessageVisible: false, // New state property
     message: '' ,
+    notifications:[],
    
     
     
@@ -25,6 +26,14 @@ export const store = new Vuex.Store({
     errors: state => state.errors
   },
   mutations: {
+    ADD_NOTIFICATION(state, notification) {
+      state.notifications.push(notification);
+    },
+    
+    // Mutation to remove a notification
+    REMOVE_NOTIFICATION(state, index) {
+      state.notifications.splice(index, 1);
+    },
     
     
     setIsMessageVisible(state, isVisible) {
@@ -75,6 +84,14 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    addNotification({ commit }, notification) {
+      commit('ADD_NOTIFICATION', notification);
+    },
+    
+    // Action to remove a notification
+    removeNotification({ commit }, index) {
+      commit('REMOVE_NOTIFICATION', index);
+    },
   
     addListing (context) {
       context.commit('ADD_LISTING');

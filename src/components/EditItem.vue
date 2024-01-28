@@ -13,18 +13,31 @@
               <v-text-field v-model="item.quantity" label="Quantity" outlined dense></v-text-field>
               <v-text-field v-model="item.price" label="Price" outlined dense></v-text-field>
               <v-text-field v-model="item.location" label="Location Address" outlined dense></v-text-field>
-              <v-text-field v-model="item.listingType" label="Type of Listing" :items="['Sell', 'Donate']" outlined dense></v-text-field>
-              <v-text-field v-model="item.collectionMethod" label="Collection Method" :items="['Pickup', 'Delivery']" outlined dense></v-text-field>
+              <v-select v-model="item.listingType" label="Type of Listing" :items="['Sell', 'Donate']" outlined dense></v-select>
+              <v-select v-model="item.collectionMethod" label="Collection Method" :items="['Pickup', 'Delivery']" outlined dense></v-select>
             </v-form>
           </v-card-text>
         </v-card>
         <br><br>
         <div>
-        <v-btn color="#1A6757" @click="updateItem" class="mr-4">Update Item</v-btn> <v-btn color="#1A6757" @click="$router.go(-1)">Return</v-btn>
+        <v-btn color="#1A6757" @click="updateItem" class="mr-4">Update Item</v-btn> 
+        <v-btn color="#1A6757" @click="$router.go(-1)">Return</v-btn>
         </div>
       </v-col>
     </v-row>
   </v-container>
+  <v-dialog v-model="dialog" persistent max-width="290">
+    <v-card>
+      <v-card-title class="headline">Update Successful</v-card-title>
+      <v-card-text>
+        {{ successMessage }}
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="green darken-1" text @click="dialog = false">OK</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 
@@ -38,7 +51,11 @@ export default {
   props: ['itemId'],
   data() {
     return {
-      item: {title:'', description:'',} // This will hold the item data for editing
+      item: {title:'', description:'',} ,
+      // This will hold the item data for editing
+      dialog: false, // Controls the visibility of the dialog
+      successMessage: '', // Stores the success message
+      originalItem: {}, // To store the original item data for comparison
       // ... other data properties ...
     };
   },
@@ -58,6 +75,8 @@ export default {
     } catch (error) {
       console.log("Error getting item:", error);
     }
+    // Store the original item data for later comparison
+    this.originalItem = JSON.parse(JSON.stringify(this.item));
   },
 
   async updateItem() {
@@ -72,7 +91,25 @@ export default {
     } catch (error) {
       console.error("Error updating item: ", error);
     }
+    this.showSuccessMessage();
   },
+  showSuccessMessage() {
+      let changedProperties = [];
+      for (let key in this.item) {
+        if (key === 'photos') continue;
+        if (this.item[key] !== this.originalItem[key]) {
+          changedProperties.push(key);
+        }
+      }
+
+      this.successMessage = `Updated successfully!`;
+    if (changedProperties.length > 0) {
+      this.successMessage += ` Changed properties: ${changedProperties.join(', ')}`;
+    } else {
+      this.successMessage += ` No properties were changed.`;
+    }
+    this.dialog = true;
+    },
   async updateRelatedCartItems(itemId, updatedItemData) {
   const cartItemsQuery = query(collection(db, "cartItems"), where("IdinItems", "==", itemId));
   const querySnapshot = await getDocs(cartItemsQuery);
